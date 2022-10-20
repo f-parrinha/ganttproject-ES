@@ -4,5 +4,5 @@ GanttProject is an open-source desktop project scheduling and management tool. I
 
 
 
-## License
+## License 
 GanttProject is distributed under GPLv3
