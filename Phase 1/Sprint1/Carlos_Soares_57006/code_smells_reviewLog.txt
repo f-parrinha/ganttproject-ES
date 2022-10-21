@@ -1,0 +1,12 @@
+Reviewer: Francisco Parrinha 58360
+
+Points:
+    1. It shows a good code snippet
+
+    2. It shows the exact location of code
+
+    3. It shows a good rationale for the chosen code smell
+
+    4. It shows good refactoring solutions
+
+    R: Overall, I agree with the decisions taken
