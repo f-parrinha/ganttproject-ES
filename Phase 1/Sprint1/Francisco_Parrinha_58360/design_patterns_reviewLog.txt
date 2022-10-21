@@ -1,0 +1,3 @@
+Reviewer: Pedro Inácio 59184
+
+1, 2 and 3: Every single designed pattern is well identified, with reasonable references and very briefely reviews the pattern in the beggining wich is always a plus.
