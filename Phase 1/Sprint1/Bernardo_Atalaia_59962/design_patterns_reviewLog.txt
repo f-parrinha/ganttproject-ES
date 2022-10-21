@@ -1,0 +1,10 @@
+Reviewer: Francisco Parrinha 58360
+
+Points:
+    1. It illustrates the code snippet
+
+    2. The location is very clear
+
+    3.  The rationale is very well explained. It also explains what the design pattern is
+
+    R: Overall, I agree with the chosen design patterns

@@ -1,0 +1,12 @@
+Reviewer: Francisco Parrinha 58360
+
+    1. It has good code snippets, they are very clear
+
+    2. It does not show the exact location of the code smell
+
+    3. The explanation of the rationale is very clear
+
+    4. It offers refactoring solutions to every code smell
+
+
+    R: I agree with all the code smells in this document
