@@ -1,0 +1,6 @@
+Reviewer: Francisco Parrinha 58360
+
+1. Good code snippets. Always displays a screenshot
+2. The exact code location is always displayed
+3. Good explanation of why it is a code smell
+4. Good refactoring solutions
