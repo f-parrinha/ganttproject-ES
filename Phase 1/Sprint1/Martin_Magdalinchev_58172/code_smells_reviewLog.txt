@@ -1,6 +1,9 @@
-Reviewer: Francisco Parrinha 58360
+Reviewer: Carlos Soares 59184
 
-1. Good code snippets. Always displays a screenshot
-2. The exact code location is always displayed
-3. Good explanation of why it is a code smell
-4. Good refactoring solutions
+1. - Very good two different examples. The first one is smaller than the second, but still it can be refactored in a
+smaller method with auxiliar functions. The second one is clearly a long method (with 126 lines) and, for sure, it can
+be simplified.
+
+2. - Good and succint identification and possible solution of 3 different types of code smell found in one class.
+
+3. - This code smell is pretty obvious as the coordinates should be encapsuled.
