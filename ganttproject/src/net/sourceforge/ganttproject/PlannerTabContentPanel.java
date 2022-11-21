@@ -15,24 +15,22 @@ import java.awt.*;
  * Change this class to be like the Planner tab
  *
  */
-public class PlannerTabContentPanel extends ChartTabContentPanel implements GPView {
+public class PlannerTabContentPanel extends TabContentPanel implements GPView {
+
     private TreeTableContainer myTreeFacade;
-    private Component myPlanner;
+    private Component myPlannerChart;
     private JComponent myTabContentPanel;
 
-    // For the updated class
-    private PlannerStatistics statistics;
-    //private TaskManager taskManager = new TaskManagerImpl();
-
-    PlannerTabContentPanel(IGanttProject project, UIFacade workbenchFacade, TreeTableContainer plannerTree,
-                                 Component planner) {
+    public PlannerTabContentPanel(IGanttProject project, UIFacade workbenchFacade, TreeTableContainer resourceTree,
+                                  Component plannerChart){
         super(project, workbenchFacade, workbenchFacade.getResourceChart());
-        myTreeFacade = plannerTree;
-        myPlanner = planner;
-        addTableResizeListeners(plannerTree.getTreeComponent(), myTreeFacade.getTreeTable().getScrollPane().getViewport());
 
-        //statistics = new PlannerStatistics(taskManager);
+        myTreeFacade = resourceTree;
+        myPlannerChart = plannerChart;
+
+        System.out.println("Hello World!");
     }
+
 
     JComponent getComponent() {
         if (myTabContentPanel == null) {
@@ -42,25 +40,25 @@ public class PlannerTabContentPanel extends ChartTabContentPanel implements GPVi
     }
 
     @Override
+    protected Component getChartComponent() {
+        return myPlannerChart;
+    }
+
+    @Override
+    protected Component getTreeComponent() {
+        return myTreeFacade.getTreeComponent();
+    }
+
+    @Override
     protected Component createButtonPanel() {
         ToolbarBuilder builder = new ToolbarBuilder()
-                .withHeight(24)
+                .withHeight(100) // Undo to 24
                 .withSquareButtons()
                 .withDpiOption(getUiFacade().getDpiOption())
                 .withLafOption(getUiFacade().getLafOption(), null);
         myTreeFacade.addToolbarActions(builder);
         final GPToolbar toolbar = builder.build();
         return toolbar.getToolbar();
-    }
-
-    @Override
-    protected Component getChartComponent() {
-        return myPlanner;
-    }
-
-    @Override
-    protected Component getTreeComponent() {
-        return myTreeFacade.getTreeComponent();
     }
 
     @Override

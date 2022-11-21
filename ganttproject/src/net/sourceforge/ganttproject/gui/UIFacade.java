@@ -115,6 +115,10 @@ public interface UIFacade {
 
   TimelineChart getResourceChart();
 
+  /**
+   * ADD NEW PANNEL CHART HERE
+   */
+
   Chart getActiveChart();
 
   /** @return the index of the displayed tab. */

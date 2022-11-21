@@ -18,26 +18,18 @@ along with GanttProject.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sourceforge.ganttproject;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import biz.ganttproject.core.chart.render.TextLengthCalculatorImpl;
-
 import net.sourceforge.ganttproject.font.Fonts;
 import net.sourceforge.ganttproject.gui.UIConfiguration;
 import net.sourceforge.ganttproject.task.BlankLineNode;
 import net.sourceforge.ganttproject.task.Task;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
 
 class TaskTreeImageGenerator {
   private GanttTree2 myTreeView;
@@ -152,7 +144,7 @@ class TaskTreeImageGenerator {
           // Make alternating background pattern
           // TODO Define background color for the alternating rows (and use that
           // everywhere)
-          g.setColor(new Color(0.933f, 0.933f, 0.933f));
+          g.setColor(new Color(0.233f, 0.933f, 0.933f)); // 0.933f
           g.fillRect(0, state.y, getWidth() - state.rowHeight / 2, state.rowHeight);
         }
         g.setColor(Color.black);

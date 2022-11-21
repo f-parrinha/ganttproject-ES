@@ -367,7 +367,7 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
      * ADD NEW TAB HERE
      * ------------------------------------------------------
      */
-    myPlannerTabContent = new PlannerTabContentPanel(getProject(), getUIFacade(), getResourcePanel(),
+    myPlannerTabContent = new PlannerTabContentPanel(getProject(), getUIFacade(), getPlannerPanel(),
             getResourcePanel().area);
     getViewManager().createView(myPlannerTabContent, new ImageIcon(getClass().getResource("/icons/tasks_16.gif")));
     getViewManager().toggleVisible(myPlannerTabContent);
@@ -912,12 +912,24 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
   }
 
   /**
+   * ADDS A PLANNER PANEL
+   */
+  public GanttResourcePanel getPlannerPanel() {
+    if (this.resp == null) {
+      this.resp = new GanttResourcePanel(this, getUIFacade());
+      this.resp.init();
+      myRowHeightAligners.add(this.resp.getRowHeightAligner());
+      //getHumanResourceManager().addView(this.resp);
+    }
+    return this.resp;
+  }
+
+  /**
    * Adds the resource panel
    *
    *
    *  MAYBE TO ADD A NEW PLANNER TAB WE HAVE TO ADD A NEW getResourcePanel
    *
-   * @return
    */
   public GanttResourcePanel getResourcePanel() {
     if (this.resp == null) {

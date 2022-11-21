@@ -90,10 +90,11 @@ public class PlannerStatistics {
      */
     private long countDaysSinceMonth(int startMonth, int currentMonth, int currentYear) {
         long total = 0;
-        int[] daysInMonth = currentYear % 4 == 0 ? new int[]{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} :
-                new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};  // Checks leap year
 
         for (int i = startMonth; i < currentMonth; i++) {
+            int[] daysInMonth = i % 4 == 0 ? new int[]{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} :
+                    new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};  // Checks leap year
+
             total += daysInMonth[i - 1];
         }
 
