@@ -49,6 +49,13 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author Francisco Parrinha
+ *
+ * TODO:
+ *      1. Check what can be removed
+ *      2. This class is the copy of GanttResourcePanel, make it unique to the planner
+ */
 public class PlannerPanel extends TreeTableContainer<HumanResource, ResourceTreeTable, ResourceTreeTableModel>
         implements ResourceView, ResourceContext, AssignmentContext, ResourceTreeUIFacade {
 
@@ -57,7 +64,7 @@ public class PlannerPanel extends TreeTableContainer<HumanResource, ResourceTree
     private final ResourceActionSet myResourceActionSet;
     private final GanttProjectBase.RowHeightAligner myRowHeightAligner;
 
-    public ResourceLoadGraphicArea area;
+    public PannelLoadGraphicArea area;
 
     private GPAction myTaskPropertiesAction;
 
@@ -100,7 +107,7 @@ public class PlannerPanel extends TreeTableContainer<HumanResource, ResourceTree
         getTreeTable().setRowHeight(20);
 
         getTreeTable().insertWithLeftyScrollBar(this);
-        area = new ResourceLoadGraphicArea(prj, prj.getZoomManager(), this) {
+        area = new PannelLoadGraphicArea(prj, prj.getZoomManager(), this) {
             @Override
             public boolean isExpanded(HumanResource hr) {
                 return getResourceTreeTable().isExpanded(hr);

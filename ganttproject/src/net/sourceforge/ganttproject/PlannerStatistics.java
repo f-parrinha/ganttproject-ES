@@ -4,6 +4,13 @@ import net.sourceforge.ganttproject.task.TaskManager;
 
 import java.util.Date;
 
+/**
+ * @author Francisco Parrinha
+ *
+ * TODO:
+ *      1. Add event listeners to capture the right statistics
+ *          - Maybe make observer class (?)
+ */
 public class PlannerStatistics {
 
     /**

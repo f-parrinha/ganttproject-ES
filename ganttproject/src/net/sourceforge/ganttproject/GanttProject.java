@@ -186,7 +186,7 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
    * ------------------------------------------------------
    */
 
-  private  PlannerTabContentPanel myPlannerTabContent;
+  private PlannerChartContentPanel myPlannerTabContent;
 
   private List<RowHeightAligner> myRowHeightAligners = Lists.newArrayList();
 
@@ -374,8 +374,7 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
     getViewManager().toggleVisible(myResourceChartTabContent);
 
     // Adds Planner tab
-    myPlannerTabContent = new PlannerTabContentPanel(getProject(), getUIFacade(), getPlannerPanel(),
-            getPlannerPanel().area);
+    myPlannerTabContent = new PlannerChartContentPanel(getUIFacade(), getPlannerPanel(), myTaskManager);
     getViewManager().createView(myPlannerTabContent, new ImageIcon(getClass().getResource("/icons/tasks_16.gif")));
     getViewManager().toggleVisible(myPlannerTabContent);
 
