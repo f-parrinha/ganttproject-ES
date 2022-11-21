@@ -911,6 +911,14 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
     }
   }
 
+  /**
+   * Adds the resource panel
+   *
+   *
+   *  MAYBE TO ADD A NEW PLANNER TAB WE HAVE TO ADD A NEW getResourcePanel
+   *
+   * @return
+   */
   public GanttResourcePanel getResourcePanel() {
     if (this.resp == null) {
       this.resp = new GanttResourcePanel(this, getUIFacade());
