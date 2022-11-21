@@ -175,6 +175,14 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
 
   private ResourceChartTabContentPanel myResourceChartTabContent;
 
+  /**
+   * ------------------------------------------------------
+   * ADD NEW PLANNER TAB VARIABLE HERE
+   * ------------------------------------------------------
+   */
+
+  private  PlannerTabContentPanel myPlannerTabContent;
+
   private List<RowHeightAligner> myRowHeightAligners = Lists.newArrayList();
 
   private final WeekendCalendarImpl myCalendar = new WeekendCalendarImpl();
@@ -353,6 +361,16 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
         getResourcePanel().area);
     getViewManager().createView(myResourceChartTabContent, new ImageIcon(getClass().getResource("/icons/res_16.gif")));
     getViewManager().toggleVisible(myResourceChartTabContent);
+
+    /**
+     * ------------------------------------------------------
+     * ADD NEW TAB HERE
+     * ------------------------------------------------------
+     */
+    myPlannerTabContent = new PlannerTabContentPanel(getProject(), getUIFacade(), getResourcePanel(),
+            getResourcePanel().area);
+    getViewManager().createView(myPlannerTabContent, new ImageIcon(getClass().getResource("/icons/tasks_16.gif")));
+    getViewManager().toggleVisible(myPlannerTabContent);
 
     addComponentListener(new ComponentAdapter() {
       @Override
@@ -658,6 +676,7 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
     // deleteAction);
     UIUtil.registerActions(myGanttChartTabContent.getComponent(), true, newAction, propertiesAction, deleteAction);
     UIUtil.registerActions(myResourceChartTabContent.getComponent(), true, newAction, propertiesAction, deleteAction);
+
     getTabs().addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
