@@ -129,6 +129,11 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
    */
   private GanttResourcePanel resp;
 
+  /**
+   * ADD PLANNER PANNEL HERE
+   */
+  private PlannerPanel plannerp;
+
   private final EditMenu myEditMenu;
 
   private final ProjectMenu myProjectMenu;
@@ -351,24 +356,26 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
     HelpMenu helpMenu = new HelpMenu(getProject(), getUIFacade(), getProjectUIFacade());
     bar.add(helpMenu.createMenu());
 
+    /**
+     * Adds tabs - GantChart tab, ResourceChart tab and Planner tab
+     */
     System.err.println("4. creating views...");
+
+    // Adds GanttChart tab
     myGanttChartTabContent = new GanttChartTabContentPanel(getProject(), getUIFacade(), getTree(), area.getJComponent(),
         getUIConfiguration());
     getViewManager().createView(myGanttChartTabContent, new ImageIcon(getClass().getResource("/icons/tasks_16.gif")));
     getViewManager().toggleVisible(myGanttChartTabContent);
 
+    // Adds ResourceChart tab
     myResourceChartTabContent = new ResourceChartTabContentPanel(getProject(), getUIFacade(), getResourcePanel(),
-        getResourcePanel().area);
+            getResourcePanel().area);
     getViewManager().createView(myResourceChartTabContent, new ImageIcon(getClass().getResource("/icons/res_16.gif")));
     getViewManager().toggleVisible(myResourceChartTabContent);
 
-    /**
-     * ------------------------------------------------------
-     * ADD NEW TAB HERE
-     * ------------------------------------------------------
-     */
+    // Adds Planner tab
     myPlannerTabContent = new PlannerTabContentPanel(getProject(), getUIFacade(), getPlannerPanel(),
-            getResourcePanel().area);
+            getPlannerPanel().area);
     getViewManager().createView(myPlannerTabContent, new ImageIcon(getClass().getResource("/icons/tasks_16.gif")));
     getViewManager().toggleVisible(myPlannerTabContent);
 
@@ -914,14 +921,13 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
   /**
    * ADDS A PLANNER PANEL
    */
-  public GanttResourcePanel getPlannerPanel() {
-    if (this.resp == null) {
-      this.resp = new GanttResourcePanel(this, getUIFacade());
-      this.resp.init();
-      myRowHeightAligners.add(this.resp.getRowHeightAligner());
-      //getHumanResourceManager().addView(this.resp);
+  public PlannerPanel getPlannerPanel() {
+    if (this.plannerp == null) {
+      this.plannerp = new PlannerPanel(this, getUIFacade());
+      this.plannerp.init();
+      myRowHeightAligners.add(this.plannerp.getRowHeightAligner());
     }
-    return this.resp;
+    return this.plannerp;
   }
 
   /**
