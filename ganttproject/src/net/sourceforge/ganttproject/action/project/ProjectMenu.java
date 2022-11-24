@@ -34,12 +34,12 @@ public class ProjectMenu extends JMenu {
   private final PrintAction myPrintAction;
   private OpenProjectAction myOpenProjectAction;
 
+
   public ProjectMenu(final GanttProject project, JMenu mru, String key) {
     super(GPAction.createVoidAction(key));
     myNewProjectAction = new NewProjectAction(project);
     mySaveProjectAction = new SaveProjectAction(project);
     myPrintAction = new PrintAction(project);
-
     ProjectPropertiesAction projectSettingsAction = new ProjectPropertiesAction(project);
     myOpenProjectAction = new OpenProjectAction(project.getProject(), project.getProjectUIFacade());
     SaveProjectAsAction saveProjectAsAction = new SaveProjectAsAction(project);
