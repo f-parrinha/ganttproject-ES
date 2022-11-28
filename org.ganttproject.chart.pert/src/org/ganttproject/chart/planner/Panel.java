@@ -34,7 +34,7 @@ import java.util.Date;
 
 import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 
-public abstract class PertChart extends JPanel implements Chart {
+public abstract class Panel extends JPanel implements Chart {
   /** Task manager used to build PERT chart. It provides data. */
   TaskManager myTaskManager;
   private IntegerOption myDpi;
@@ -42,7 +42,7 @@ public abstract class PertChart extends JPanel implements Chart {
   private Font myBaseFont;
   private Font myBoldFont;
 
-  PertChart() {
+  Panel() {
   }
 
   @Override

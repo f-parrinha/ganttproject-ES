@@ -1,80 +1,134 @@
+/*
+GanttProject is an opensource project management tool.
+Copyright (C) 2005-2011 Bernoit Baranne, Julien Seiler, GanttProject Team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package org.ganttproject.chart.planner;
 
 import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.IGanttProject;
+import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
 import net.sourceforge.ganttproject.language.GanttLanguage;
-import net.sourceforge.ganttproject.task.TaskManager;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.Date;
 
-
-
-
 /**
- * THIS ONE WILL BE THE PLANNER CLASS
+ * PERT chart implementation where nodes are tasks and links succession
+ * relations.
  *
- * USE THE OTHERS TO GET INSPIRATION
+ * @author bbaranne
+ * @author Julien Seiler
+ *
  */
-public class PlannerPanel extends PertChart {
+public class PlannerPanel extends Panel {
 
-    private TaskManager myTaskManager;
-    private GanttLanguage language;
+  /** USEFUL FOR EXPORTATION ? */
+  private int myMaxX = 1;
+  private int myMaxY = 1;
 
 
-    @Override
-    public IGanttProject getProject() {
-        return null;
+  private final static GanttLanguage language = GanttLanguage.getInstance();
+
+  /** Cannot remove this. WHY? */
+  private final JScrollPane myScrollPane;
+
+  public PlannerPanel() {
+    setBackground(Color.WHITE.brighter());
+
+    myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+  }
+
+  @Override
+  protected void buildPlanner() {
+    setBackground(Color.BLUE);
+  }
+
+  @Override
+  public void buildImage(GanttExportSettings settings, ChartImageVisitor imageVisitor) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public RenderedImage getRenderedImage(GanttExportSettings settings) {
+    BufferedImage image = new BufferedImage(getMaxX(), getMaxY(), BufferedImage.TYPE_INT_RGB);
+    Graphics g = image.getGraphics();
+    g.fillRect(0, 0, getMaxX(), getMaxY());
+    paint(g);
+    return image;
+  }
+
+  @Override
+  public String getName() {
+    return language.getText("plannerLongName");
+  }
+
+  @Override
+  public void reset() {
+  }
+
+  @Override
+  public void paint(Graphics g) {
+    this.buildPlanner();
+    super.paint(g);
+  }
+
+  @Override
+  public Object getAdapter(Class adapter) {
+    if (adapter.equals(Chart.class)) {
+      return this;
     }
 
-    @Override
-    public void buildImage(GanttExportSettings ganttExportSettings, ChartImageVisitor chartImageVisitor) {
-
+    if (adapter.equals(Container.class)) {
+      return myScrollPane;
     }
+    return null;
+  }
 
-    @Override
-    public RenderedImage getRenderedImage(GanttExportSettings ganttExportSettings) {
-        return null;
-    }
+  /**
+   * Max and min coordinates in the graphics that paints the graphical nodes and
+   * arrows.
+   */
+  private int getMaxX() {
+    return myMaxX;
+  }
 
-    @Override
-    public void setStartDate(Date date) {
 
-    }
+  private int getMaxY() {
+    return myMaxY;
+  }
 
-    @Override
-    public void setDimensions(int i, int i1) {
+  @Override
+  public IGanttProject getProject() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    }
+  @Override
+  public void setDimensions(int height, int width) {
+    // TODO Auto-generated method stub
+  }
 
-    @Override
-    /**
-     * Returns the tab's name
-     */
-    public String getName() {
-        return language.getText("plannerLongName");
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        this.buildPlanner();
-        super.paint(g);
-    }
-
-    @Override
-    public void reset() {
-
-    }
-
-    @Override
-    protected void buildPlanner() {
-        System.out.println("Build");
-    }
-
-    @Override
-    public Object getAdapter(Class aClass) {
-        return null;
-    }
+  @Override
+  public void setStartDate(Date startDate) {
+    // TODO Auto-generated method stub
+  }
 }
