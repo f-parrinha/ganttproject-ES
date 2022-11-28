@@ -21,6 +21,7 @@ package org.ganttproject.chart.planner;
 import biz.ganttproject.core.option.*;
 import com.google.common.base.Preconditions;
 import net.sourceforge.ganttproject.IGanttProject;
+import net.sourceforge.ganttproject.PlannerStatistics;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.chart.ChartSelection;
 import net.sourceforge.ganttproject.chart.ChartSelectionListener;
@@ -37,6 +38,7 @@ import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 public abstract class Panel extends JPanel implements Chart {
   /** Task manager used to build PERT chart. It provides data. */
   TaskManager myTaskManager;
+  protected PlannerStatistics statistics;
   private IntegerOption myDpi;
   private FontOption myChartFontOption;
   private Font myBaseFont;
@@ -48,6 +50,7 @@ public abstract class Panel extends JPanel implements Chart {
   @Override
   public void init(IGanttProject project, IntegerOption dpiOption, FontOption chartFontOption) {
     myTaskManager = project.getTaskManager();
+    statistics = new PlannerStatistics(myTaskManager);
     myDpi = Preconditions.checkNotNull(dpiOption);
     myChartFontOption = chartFontOption;
     myChartFontOption.addChangeValueListener(new ChangeValueListener() {
