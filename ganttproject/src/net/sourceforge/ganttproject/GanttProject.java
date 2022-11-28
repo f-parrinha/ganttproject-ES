@@ -129,11 +129,6 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
    */
   private GanttResourcePanel resp;
 
-  /**
-   * ADD PLANNER PANNEL HERE
-   */
-  private PlannerPanel plannerp;
-
   private final EditMenu myEditMenu;
 
   private final ProjectMenu myProjectMenu;
@@ -179,14 +174,6 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
   private GanttChartTabContentPanel myGanttChartTabContent;
 
   private ResourceChartTabContentPanel myResourceChartTabContent;
-
-  /**
-   * ------------------------------------------------------
-   * ADD NEW PLANNER TAB VARIABLE HERE
-   * ------------------------------------------------------
-   */
-
-  private PlannerChartContentPanel myPlannerTabContent;
 
   private List<RowHeightAligner> myRowHeightAligners = Lists.newArrayList();
 
@@ -372,11 +359,6 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
             getResourcePanel().area);
     getViewManager().createView(myResourceChartTabContent, new ImageIcon(getClass().getResource("/icons/res_16.gif")));
     getViewManager().toggleVisible(myResourceChartTabContent);
-
-    // Adds Planner tab
-    myPlannerTabContent = new PlannerChartContentPanel(getUIFacade(), getPlannerPanel(), myTaskManager);
-    getViewManager().createView(myPlannerTabContent, new ImageIcon(getClass().getResource("/icons/tasks_16.gif")));
-    getViewManager().toggleVisible(myPlannerTabContent);
 
     addComponentListener(new ComponentAdapter() {
       @Override
@@ -918,18 +900,6 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
       // This can happen when running in a sandbox (Java WebStart)
       System.err.println(e + ": " + e.getMessage());
     }
-  }
-
-  /**
-   * ADDS A PLANNER PANEL
-   */
-  public PlannerPanel getPlannerPanel() {
-    if (this.plannerp == null) {
-      this.plannerp = new PlannerPanel(this, getUIFacade());
-      this.plannerp.init();
-      myRowHeightAligners.add(this.plannerp.getRowHeightAligner());
-    }
-    return this.plannerp;
   }
 
   /**
