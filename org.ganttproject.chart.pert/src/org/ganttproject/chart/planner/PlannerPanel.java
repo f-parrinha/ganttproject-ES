@@ -21,7 +21,6 @@ package org.ganttproject.chart.planner;
 import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.chart.Chart;
-import net.sourceforge.ganttproject.PlannerStatistics;
 import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 
@@ -44,16 +43,15 @@ public class PlannerPanel extends Panel {
   /** Useful for exportation */
   private int myMaxX = 1;
   private int myMaxY = 1;
-
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
   /** Cannot remove this. WHY? */
-  private final JScrollPane myScrollPane;
+  private final JPanel myPanel;
 
   public PlannerPanel() {
     setBackground(new Color(233, 233, 233));
 
-    myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    myPanel = this;
   }
 
   /** Use this to initialize Planner variables, like statistics */
@@ -92,22 +90,24 @@ public class PlannerPanel extends Panel {
     super.paint(g);
 
     this.buildPlanner();
+    int rectWidth = myPanel.getWidth()*2/5 - 50*myPanel.getWidth()/1920;
+    int rectHeight = myPanel.getHeight() - 30*myPanel.getHeight()/1080;
 
-    int rectWidth = 400;
-    int rectHeight = 400;
+    int offsetX = 50*rectWidth/1920;
+    int offsetY = 50*rectHeight/1080;
 
-    int offsetX = 100;
-    int offsetY = 50;
-
-    int fontSize = 20;
+    int fontSize = 25*myPanel.getWidth()/1920;
 
     g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth,rectHeight, 50, 50);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - offsetX, rectHeight - offsetY, 50, 50);
 
     g.setColor(Color.DARK_GRAY);
-
     g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
-    g.drawString("Total Tasks: " + statistics.getTotalTasks(), (rectWidth + offsetX - fontSize)/ 2, offsetY * 2);
+    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + offsetX, offsetY + rectHeight/6);
+    g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/6);
+    g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/6);
+    g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/6);
+    g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
   }
 
   @Override
@@ -117,7 +117,7 @@ public class PlannerPanel extends Panel {
     }
 
     if (adapter.equals(Container.class)) {
-      return myScrollPane;
+      return myPanel;
     }
     return null;
   }
