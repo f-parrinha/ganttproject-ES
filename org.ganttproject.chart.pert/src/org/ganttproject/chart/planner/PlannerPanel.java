@@ -59,7 +59,7 @@ public class PlannerPanel extends Panel {
   /** Use this to initialize Planner variables, like statistics */
   @Override
   protected void buildPlanner() {
-    setBackground(Color.CYAN); // Remove this, or set to new Color (233, 233, 233)
+    setBackground(new Color (233, 233, 233));
   }
 
   @Override
