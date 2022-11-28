@@ -1,3 +1,5 @@
 .idea/
 **/.gradle
 **/dist-bin
+/ganttproject-builder/dist-bin/
+**/build

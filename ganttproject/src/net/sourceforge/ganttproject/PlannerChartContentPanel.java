@@ -111,9 +111,9 @@ public class PlannerChartContentPanel implements GPView {
         // Adds text
         JTextArea textArea = new JTextArea();
 
-        textArea.setSize(100,100);
+        /*textArea.setSize(100,100);
         textArea.setBackground(Color.WHITE);
-        textArea.setText("!! TEST !! Total  Tasks: " + plannerStatistics.getTotalTasks());
+        textArea.setText("!! TEST !! Total  Tasks: " + plannerStatistics.getTotalTasks());*/
 
         // Final product of the statistics area
         statisticsArea.add(textArea, BorderLayout.CENTER);

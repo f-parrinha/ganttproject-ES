@@ -56,8 +56,6 @@ public class ActivityOnNodePertChart extends PertChart {
   /** List of graphical nodes (in relation with abstract nodes) */
   private List<GraphicalNode> myGraphicalNodes;
 
-  // private Map myMapPositionListOfNodes;
-
   /** Number of columns */
   private int nbCols;
 
@@ -67,14 +65,6 @@ public class ActivityOnNodePertChart extends PertChart {
   private int myMaxX = 1;
   private int myMaxY = 1;
 
-  /** The currently mouse pressed graphical node. */
-  private GraphicalNode myPressedGraphicalNode;
-
-  /**
-   * Offset between the mouse pointer when clicked on a graphical node and the
-   * top left corner of this same node.
-   */
-  private int myXClickedOffset, myYClickedOffset;
 
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
@@ -97,7 +87,7 @@ public class ActivityOnNodePertChart extends PertChart {
   private final static int Y_OFFSET = 5;
 
   /** Color of the border of normal tasks. */
-  private final static Color NORMAL_COLOR = Color.BLUE.brighter();
+  private final static Color NORMAL_COLOR = Color.PINK.brighter();
 
   /** Color of the border of supertasks. */
   private final static Color SUPER_COLOR = Color.RED;
@@ -106,85 +96,13 @@ public class ActivityOnNodePertChart extends PertChart {
   private final static Color MILESTONE_COLOR = Color.BLACK;
 
   /** Color of the arrows. */
-  private final static Color ARROW_COLOR = Color.GRAY;
+  private final static Color ARROW_COLOR = Color.GREEN;
 
   private final JScrollPane myScrollPane;
 
   public ActivityOnNodePertChart() {
     setBackground(Color.WHITE.brighter());
 
-    this.addMouseMotionListener(new MouseMotionListener() {
-      @Override
-      public void mouseDragged(final MouseEvent e) {
-        if (myPressedGraphicalNode != null) {
-          myPressedGraphicalNode.x = e.getX() - myXClickedOffset;
-          myPressedGraphicalNode.y = e.getY() - myYClickedOffset;
-          if (e.getX() > getPreferredSize().getWidth()) {
-            ActivityOnNodePertChart.this.setPreferredSize(new Dimension(myPressedGraphicalNode.x + getNodeWidth() + getxGap(),
-                (int) getPreferredSize().getHeight()));
-            revalidate();
-          }
-          if (e.getY() > getPreferredSize().getHeight()) {
-            ActivityOnNodePertChart.this.setPreferredSize(new Dimension((int) getPreferredSize().getWidth(),
-                myPressedGraphicalNode.y + getNodeHeight() + getyGap()));
-            revalidate();
-          }
-          repaint();
-        }
-      }
-
-      @Override
-      public void mouseMoved(MouseEvent e) {
-        // nothing to do...
-      }
-    });
-
-    this.addMouseListener(new MouseListener() {
-      @Override
-      public void mouseClicked(MouseEvent arg0) {
-        // nothing to do...
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent arg0) {
-        // nothing to do...
-      }
-
-      @Override
-      public void mouseExited(MouseEvent arg0) {
-        // nothing to do...
-      }
-
-      @Override
-      public void mousePressed(MouseEvent e) {
-        myPressedGraphicalNode = getGraphicalNode(e.getX(), e.getY());
-        if (myPressedGraphicalNode != null) {
-          myXClickedOffset = e.getX() - myPressedGraphicalNode.x;
-          myYClickedOffset = e.getY() - myPressedGraphicalNode.y;
-
-          myPressedGraphicalNode.backgroundColor = myPressedGraphicalNode.backgroundColor.darker();
-        }
-        repaint();
-      }
-
-      @Override
-      public void mouseReleased(MouseEvent e) {
-        if (myPressedGraphicalNode != null) {
-          if (myPressedGraphicalNode.node.isCritical()) {
-            myPressedGraphicalNode.backgroundColor = defaultCriticalColor;
-          } else {
-            myPressedGraphicalNode.backgroundColor = defaultBackgroundColor;
-          }
-          myPressedGraphicalNode.x = getGridX(e.getX() - myXClickedOffset + getNodeWidth() / 2);
-          myPressedGraphicalNode.y = getGridY(e.getY());
-          myPressedGraphicalNode = null;
-          repaint();
-        }
-        recalculatPreferredSize();
-        revalidate();
-        repaint();
-      }
-    });
     myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
   }
 
@@ -240,46 +158,6 @@ public class ActivityOnNodePertChart extends PertChart {
     return (int) (Y_OFFSET * getDpi());
   }
 
-  /** Recalculate preferred size so that graphics fit with nodes positions. */
-  private void recalculatPreferredSize() {
-    int maxX = 0;
-    int maxY = 0;
-
-    for (GraphicalNode gn : myGraphicalNodes) {
-      int x = gn.x + getNodeWidth();
-      int y = gn.y + getNodeHeight();
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
-    }
-    setPreferredSize(new Dimension(maxX, maxY));
-    setMaxX(maxX);
-    setMaxY(maxY);
-  }
-
-  /**
-   * @return <code>true</code> if the point of coordinates <code>x</code>,
-   *         <code>y</code> is in the rectangle described by is top left corner
-   *         (<code>rectX</code>, <code>rectY</code>) and dimension (
-   *         <code>rectWidth</code>, <code>rectHeight</code>),
-   *         <code>false</code> otherwise.
-   */
-  private static boolean isInRectancle(int x, int y, int rectX, int rectY, int rectWidth, int rectHeight) {
-    return (x > rectX && x < rectX + rectWidth && y > rectY && y < rectY + rectHeight);
-  }
-
-  /**
-   * @return The GraphicalNode at the <code>x</code>, <code>y</code> position,
-   *         or <code>null</code> if there is no node.
-   */
-  private GraphicalNode getGraphicalNode(int x, int y) {
-    for (GraphicalNode gn : myGraphicalNodes) {
-      if (isInRectancle(x, y, gn.x, gn.y, getNodeWidth(), getNodeHeight())) {
-        return gn;
-      }
-    }
-    return null;
-  }
-
   @Override
   protected void buildPlanner() {
     if (myPertAbstraction == null) {
@@ -290,20 +168,24 @@ public class ActivityOnNodePertChart extends PertChart {
       // myMapPositionListOfNodes = new HashMap();
       // rowsList = new HashMap();
       nbCols = 0;
-      setBackground(Color.WHITE);
+      setBackground(Color.BLUE);
       this.process();
       // System.out.println("Position correction");
       // correctPositionBecauseOfSuperTasks();
+      /** DELTE THIS WHEN YOU ARE CERTAIN IT WONT AFFECT ANYTHING
       avoidCrossingNode();
       avoidCrossingLine();
       removeEmptyColumn();
       calculateGraphicalNodesCoordinates();
       calculateArrowsCoordinates();
-      setPreferredSize(new Dimension(getMaxX(), getMaxY()));
+      setPreferredSize(new Dimension(getMaxX(), getMaxY())); */
     } else {
       myPertAbstraction = new PertChartAbstraction(myTaskManager);
       myTaskGraphNodes = myPertAbstraction.getTaskGraphNodes();
+
+      /** DELTE THIS WHEN YOU ARE CERTAIN IT WONT AFFECT ANYTHING
       updateGraphNodesInfo();
+       */
     }
   }
 
@@ -328,25 +210,6 @@ public class ActivityOnNodePertChart extends PertChart {
     return true;
   }
 
-  private int getGridX(int x) {
-    int res = getxOffset();
-    int tmp = 0;
-    while (res < x) {
-      tmp = res;
-      res += getNodeWidth() + getxGap();
-    }
-    return tmp;
-  }
-
-  private int getGridY(int y) {
-    int res = getYOffset();
-    int tmp = 0;
-    while (res < y) {
-      tmp = res;
-      res += getNodeHeight() + getyGap();
-    }
-    return tmp;
-  }
 
   private void process() {
     for (TaskGraphNode tgn : myTaskGraphNodes) {

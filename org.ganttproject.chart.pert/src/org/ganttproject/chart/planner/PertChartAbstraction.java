@@ -37,7 +37,7 @@ public class PertChartAbstraction {
   public PertChartAbstraction(TaskManager taskManager) {
     myTaskManager = taskManager;
     myTaskGraph = new ArrayList<TaskGraphNode>();
-    load();
+    //load();
   }
 
   /**
