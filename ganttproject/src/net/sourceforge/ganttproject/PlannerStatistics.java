@@ -85,7 +85,9 @@ public class PlannerStatistics {
      * @return Progress
      */
     public float getOverallProgress() {
-        return 100 * ((float) this.getFinishedTasks() / (float) this.getTotalTasks());
+        if(this.getTotalTasks() != 0)
+            return 100 * ((float) this.getFinishedTasks() / (float) this.getTotalTasks());
+        else return 0;
     }
 
 
