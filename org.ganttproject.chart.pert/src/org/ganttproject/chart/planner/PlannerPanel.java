@@ -21,6 +21,7 @@ package org.ganttproject.chart.planner;
 import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.chart.Chart;
+import net.sourceforge.ganttproject.PlannerStatistics;
 import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 
@@ -40,10 +41,9 @@ import java.util.Date;
  */
 public class PlannerPanel extends Panel {
 
-  /** USEFUL FOR EXPORTATION ? */
+  /** Useful for exportation */
   private int myMaxX = 1;
   private int myMaxY = 1;
-
 
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
@@ -93,14 +93,21 @@ public class PlannerPanel extends Panel {
 
     this.buildPlanner();
 
-    g.setColor(Color.RED);
-    g.fillRect(50, 50, 100, 100);
+    int rectWidth = 400;
+    int rectHeight = 400;
 
-    g.setColor(Color.DARK_GRAY);
-    g.fillRoundRect(90,50, 200,200, 50, 50);
+    int offsetX = 100;
+    int offsetY = 50;
+
+    int fontSize = 20;
 
     g.setColor(Color.WHITE);
-    g.drawString("Hello World!", 90, 90);
+    g.fillRoundRect(offsetX,offsetY, rectWidth,rectHeight, 50, 50);
+
+    g.setColor(Color.DARK_GRAY);
+
+    g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
+    g.drawString("Total Tasks: " + statistics.getTotalTasks(), (rectWidth + offsetX - fontSize)/ 2, offsetY * 2);
   }
 
   @Override

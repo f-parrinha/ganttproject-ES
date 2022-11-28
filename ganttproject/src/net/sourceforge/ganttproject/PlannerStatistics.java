@@ -21,8 +21,6 @@ public class PlannerStatistics {
      * TO BE TESTED!
      */
 
-    //private TaskManager taskManager;
-
     private int totalTasks;
 
     private int finishedTasks;
@@ -30,11 +28,12 @@ public class PlannerStatistics {
     private long totalEstimatedTime;
 
     private long currentSpentTime;
-    //
+
     private Task[] tasks;
 
     public PlannerStatistics(TaskManager taskManager) {
         Date date = new Date();
+
         int startYear = taskManager.getProjectStart().getYear();
         int startMonth = taskManager.getProjectStart().getMonth();
         int endYear = taskManager.getProjectEnd().getYear();
