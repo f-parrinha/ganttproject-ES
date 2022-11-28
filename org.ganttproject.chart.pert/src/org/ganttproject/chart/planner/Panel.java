@@ -20,11 +20,14 @@ package org.ganttproject.chart.planner;
 
 import biz.ganttproject.core.option.*;
 import com.google.common.base.Preconditions;
+import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.PlannerStatistics;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.chart.ChartSelection;
 import net.sourceforge.ganttproject.chart.ChartSelectionListener;
+import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
+import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -35,45 +38,100 @@ import java.util.Date;
 
 import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 
+
+/**
+ * @author Francisco Parrinha
+ * @author Martin Magalinchev
+ * @author Bernardo Atalaia
+ * @author Carlos Soares
+ * @author Pedro Inácio
+ *
+ * TODO: Maybe in the future it will implement IPanel interface and not Chart interface
+ *    to remove unused methods (can be hard to do)
+ *      - to do this, we need to also add the possibility for the plugin to search for planners
+ *
+ * Panel Class - Abstract class that creates the basic functionality of a simple panel
+ */
 public abstract class Panel extends JPanel implements Chart {
-  /** Task manager used to build PERT chart. It provides data. */
-  TaskManager myTaskManager;
+
   protected PlannerStatistics statistics;
-  private IntegerOption myDpi;
-  private FontOption myChartFontOption;
-  private Font myBaseFont;
-  private Font myBoldFont;
+  TaskManager task;
 
-  Panel() {
-  }
-
+  /**
+   * Initializes panel when the plugin is loaded
+   *
+   * @param project -  GanttProject
+   * @param dpiOption - Size of all the bars in the view
+   * @param chartFontOption - The font option chosen in the project options
+   */
   @Override
   public void init(IGanttProject project, IntegerOption dpiOption, FontOption chartFontOption) {
-    myTaskManager = project.getTaskManager();
-    statistics = new PlannerStatistics(myTaskManager);
-    myDpi = Preconditions.checkNotNull(dpiOption);
-    myChartFontOption = chartFontOption;
-    myChartFontOption.addChangeValueListener(new ChangeValueListener() {
-      @Override
-      public void changeValue(ChangeValueEvent event) {
-        updateFonts();
-      }
-    });
-    updateFonts();
+
+    task = project.getTaskManager();
+
+    statistics = new PlannerStatistics(task);
   }
 
-  private void updateFonts() {
-    FontSpec fontSpec = myChartFontOption.getValue();
-    float scaleFactor = fontSpec.getSize().getFactor() * getDpi();
-    myBaseFont = new Font(fontSpec.getFamily(), Font.PLAIN, (int)(10*scaleFactor));
-    myBoldFont = myBaseFont.deriveFont(Font.BOLD);
-  }
-
+  /**
+   * Returns the name of the panel
+   *
+   * @return name
+   */
   @Override
   public abstract String getName();
 
-  /** Builds PERT chart. */
-  protected abstract void buildPlanner();
+  /**
+   * Starts the panel. Assigns variables and start paint() to paint the content
+   */
+  protected abstract void startPanel();
+
+  /** Unused method */
+  @Override
+  public ChartSelection getSelection() {
+    return ChartSelection.EMPTY;
+  }
+
+  /** Unused method */
+  @Override
+  public IStatus canPaste(ChartSelection selection) {
+    return Status.CANCEL_STATUS;
+  }
+
+  /** Unused method */
+  @Override
+  public void addSelectionListener(ChartSelectionListener listener) {
+    // No listeners are implemented
+  }
+
+  /** Unused method */
+  @Override
+  public void removeSelectionListener(ChartSelectionListener listener) {
+    // No listeners are implemented
+  }
+
+  /** This method is not supported by this chart */
+  @Override
+  public IGanttProject getProject() {
+    throw new UnsupportedOperationException();
+  }
+
+  /** This method is not supported by this chart */
+  @Override
+  public void setDimensions(int height, int width) {
+    throw new UnsupportedOperationException();
+  }
+
+  /** This method is not supported by this chart */
+  @Override
+  public void setStartDate(Date startDate) {
+    throw new UnsupportedOperationException();
+  }
+
+  /** This method is not supported by this chart */
+  @Override
+  public void buildImage(GanttExportSettings settings, ChartImageVisitor imageVisitor) {
+    throw new UnsupportedOperationException();
+  }
 
   /** This method in not supported by this Chart. */
   @Override
@@ -87,49 +145,21 @@ public abstract class Panel extends JPanel implements Chart {
     throw new UnsupportedOperationException();
   }
 
+  /** This method in not supported by this Chart. */
   @Override
   public GPOptionGroup[] getOptionGroups() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
+  /** This method in not supported by this Chart. */
   @Override
   public Chart createCopy() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
-  @Override
-  public ChartSelection getSelection() {
-    return ChartSelection.EMPTY;
-  }
-
-  @Override
-  public IStatus canPaste(ChartSelection selection) {
-    return Status.CANCEL_STATUS;
-  }
-
+  /** This method in not supported by this Chart. */
   @Override
   public void paste(ChartSelection selection) {
-  }
-
-  @Override
-  public void addSelectionListener(ChartSelectionListener listener) {
-    // No listeners are implemented
-  }
-
-  @Override
-  public void removeSelectionListener(ChartSelectionListener listener) {
-    // No listeners are implemented
-  }
-
-  float getDpi() {
-    return myDpi.getValue().floatValue() / DEFAULT_DPI;
-  }
-
-  Font getBaseFont() {
-    return myBaseFont;
-  }
-
-  Font getBoldFont() {
-    return myBoldFont;
+    throw new UnsupportedOperationException();
   }
 }

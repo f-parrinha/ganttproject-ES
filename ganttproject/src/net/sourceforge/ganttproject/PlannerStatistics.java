@@ -21,47 +21,59 @@ public class PlannerStatistics {
      * TO BE TESTED!
      */
 
-    private int totalTasks;
+    private static final Date date = new Date();
 
-    private int finishedTasks;
-
-    private long totalEstimatedTime;
-
-    private long currentSpentTime;
+    private TaskManager taskManager;
 
     private Task[] tasks;
 
     public PlannerStatistics(TaskManager taskManager) {
-        Date date = new Date();
+        this.taskManager = taskManager;
 
+        tasks = taskManager.getTasks();
+    }
+
+    /**
+     * Gets the total number of tasks in the project
+     * @return number of tasks
+     */
+    public int getTotalTasks() {
+        return this.taskManager.getTaskCount();
+    }
+
+    /**
+     * Gets the total time spent, in days, in the project
+     * @return spent time
+     */
+    public long getCurrentSpentTime() {
+        int startYear = taskManager.getProjectStart().getYear();
+        int startMonth = taskManager.getProjectStart().getMonth();
+
+        return countDaysSinceYear(startYear, date.getYear()) +
+                countDaysSinceMonth(startMonth, date.getMonth(), date.getYear());
+    }
+
+    /**
+     * Gets the total estimated time, in days for the project's completion
+     *
+     * @return estimated time
+     */
+    public long getTotalEstimatedTime() {
         int startYear = taskManager.getProjectStart().getYear();
         int startMonth = taskManager.getProjectStart().getMonth();
         int endYear = taskManager.getProjectEnd().getYear();
         int endMonth = taskManager.getProjectEnd().getMonth();
 
-        totalTasks = taskManager.getTaskCount();
-        currentSpentTime = countDaysSinceYear(startYear, date.getYear()) +
-                countDaysSinceMonth(startMonth, date.getMonth(), date.getYear());
-        totalEstimatedTime = countDaysSinceYear(startYear, endYear) +
-                countDaysSinceMonth(startMonth, endMonth, date.getYear());
-        finishedTasks = calculateFinishedTasks(taskManager);
-        tasks = taskManager.getTasks();
+        return countDaysSinceYear(startYear, endYear) + countDaysSinceMonth(startMonth, endMonth, date.getYear());
     }
 
-    public int getTotalTasks() {
-        return totalTasks;
-    }
-
-    public long getCurrentSpentTime() {
-        return currentSpentTime;
-    }
-
-    public long getTotalEstimatedTime() {
-        return totalEstimatedTime;
-    }
-
+    /**
+     * Gets the total amount of completed/finished tasks
+     *
+     * @return finished tasks
+     */
     public int getFinishedTasks() {
-        return finishedTasks;
+        return calculateFinishedTasks(taskManager);
     }
 
     /**
@@ -73,7 +85,7 @@ public class PlannerStatistics {
      * @return Progress
      */
     public float getOverallProgress() {
-        return 100 * ((float) finishedTasks / (float) totalTasks);
+        return 100 * ((float) this.getFinishedTasks() / (float) this.getTotalTasks());
     }
 
 
@@ -105,7 +117,7 @@ public class PlannerStatistics {
         long total = 0;
 
         for (int i = startMonth; i < currentMonth; i++) {
-            int[] daysInMonth = i % 4 == 0 ? new int[]{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} :
+            int[] daysInMonth = currentYear % 4 == 0 ? new int[]{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} :
                     new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};  // Checks leap year
 
             total += daysInMonth[i - 1];
@@ -124,7 +136,7 @@ public class PlannerStatistics {
      */
     private int calculateFinishedTasks(TaskManager taskManager) {
         int finTasks = 0;
-        for (int currTask = 0; currTask < totalTasks; currTask++)
+        for (int currTask = 0; currTask < this.getTotalTasks(); currTask++)
             if (tasks[currTask].getCompletionPercentage() == 100)
                 finTasks++;
 
@@ -139,7 +151,7 @@ public class PlannerStatistics {
     private Map<GanttCalendar, Integer> getCompletedCalendar() {
         //Generates a treeMap with the key as the end date and a number of tasks completed on that day as the value
         Map<GanttCalendar, Integer> tasksDoneAtDate = new TreeMap<GanttCalendar, Integer>();
-        for (int currTask = 0; currTask < totalTasks; currTask++) {
+        for (int currTask = 0; currTask < this.getTotalTasks(); currTask++) {
             if (tasks[currTask].getCompletionPercentage() == 100) {
                 GanttCalendar currEndDate = tasks[currTask].getEnd();
                 if (!tasksDoneAtDate.containsKey(currEndDate))

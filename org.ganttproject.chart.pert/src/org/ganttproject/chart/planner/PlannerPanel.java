@@ -19,55 +19,50 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package org.ganttproject.chart.planner;
 
 import net.sourceforge.ganttproject.GanttExportSettings;
-import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.chart.Chart;
-import net.sourceforge.ganttproject.PlannerStatistics;
-import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.util.Date;
+
 
 /**
- * PERT chart implementation where nodes are tasks and links succession
- * relations.
+ * @author Francisco Parrinha
+ * @author Martin Magalinchev
+ * @author Bernardo Atalaia
+ * @author Carlos Soares
+ * @author Pedro Inácio
  *
- * @author bbaranne
- * @author Julien Seiler
- *
+ * PlannerPanel Class - Adds the planner panel to the project and its functionality
  */
 public class PlannerPanel extends Panel {
 
-  /** Useful for exportation */
+  /** TODO: Useful for exportation */
   private int myMaxX = 1;
   private int myMaxY = 1;
 
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
-  /** Cannot remove this. WHY? */
   private final JScrollPane myScrollPane;
 
   public PlannerPanel() {
-    setBackground(new Color(233, 233, 233));
-
     myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
   }
 
   /** Use this to initialize Planner variables, like statistics */
   @Override
-  protected void buildPlanner() {
+  protected void startPanel() {
     setBackground(new Color (233, 233, 233));
   }
 
-  @Override
-  public void buildImage(GanttExportSettings settings, ChartImageVisitor imageVisitor) {
-    // TODO Auto-generated method stub
-
-  }
-
+  /** TODO
+   * Exportation. Returns a rendered image of the current panel.
+   *
+   * @param settings - Export settings from the project
+   * @return final image
+   */
   @Override
   public RenderedImage getRenderedImage(GanttExportSettings settings) {
     BufferedImage image = new BufferedImage(getMaxX(), getMaxY(), BufferedImage.TYPE_INT_RGB);
@@ -82,16 +77,22 @@ public class PlannerPanel extends Panel {
     return language.getText("plannerLongName");
   }
 
+  /** TODO */
   @Override
   public void reset() {
+    System.out.println("Closing tab!");
   }
 
-  /** Use this to paint its content */
+  /**
+   * Paints the panel's content
+   *
+   * @param g - Graphics object. Used to paint
+   */
   @Override
   public void paint(Graphics g) {
     super.paint(g);
 
-    this.buildPlanner();
+    this.startPanel();
 
     int rectWidth = 400;
     int rectHeight = 400;
@@ -110,6 +111,12 @@ public class PlannerPanel extends Panel {
     g.drawString("Total Tasks: " + statistics.getTotalTasks(), (rectWidth + offsetX - fontSize)/ 2, offsetY * 2);
   }
 
+  /**
+   * Adapter pattern. Returns either the Chart's class or the JFrame's container
+   *
+   * @param adapter - adapter. Which class to get, container's or chart's
+   * @return Class or Container
+   */
   @Override
   public Object getAdapter(Class adapter) {
     if (adapter.equals(Chart.class)) {
@@ -123,31 +130,16 @@ public class PlannerPanel extends Panel {
   }
 
   /**
-   * Max and min coordinates in the graphics that paints the graphical nodes and
-   * arrows.
+   * TODO: Still have to figure this one out. Useful in exporation
    */
   private int getMaxX() {
     return myMaxX;
   }
 
-
+  /**
+   * TODO: Still have to figure this one out. Useful in exporation
+   */
   private int getMaxY() {
     return myMaxY;
-  }
-
-  @Override
-  public IGanttProject getProject() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void setDimensions(int height, int width) {
-    // TODO Auto-generated method stub
-  }
-
-  @Override
-  public void setStartDate(Date startDate) {
-    // TODO Auto-generated method stub
   }
 }
