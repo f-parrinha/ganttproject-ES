@@ -40,6 +40,10 @@ public class ViewMenu extends JMenu {
     super(GPAction.createVoidAction(key));
 
     List<Chart> charts = PluginManager.getCharts();
+
+    // Debug
+    System.out.println("Imported charts size: " + charts.size());
+
     if (charts.isEmpty()) {
       setEnabled(false);
     }
