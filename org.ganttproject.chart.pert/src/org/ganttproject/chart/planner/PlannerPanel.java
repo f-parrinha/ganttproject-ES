@@ -51,14 +51,15 @@ public class PlannerPanel extends Panel {
   private final JScrollPane myScrollPane;
 
   public PlannerPanel() {
-    setBackground(Color.WHITE.brighter());
+    setBackground(new Color(233, 233, 233));
 
     myScrollPane = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
   }
 
+  /** Use this to initialize Planner variables, like statistics */
   @Override
   protected void buildPlanner() {
-    setBackground(Color.BLUE);
+    setBackground(Color.CYAN); // Remove this, or set to new Color (233, 233, 233)
   }
 
   @Override
@@ -85,10 +86,21 @@ public class PlannerPanel extends Panel {
   public void reset() {
   }
 
+  /** Use this to paint its content */
   @Override
   public void paint(Graphics g) {
-    this.buildPlanner();
     super.paint(g);
+
+    this.buildPlanner();
+
+    g.setColor(Color.RED);
+    g.fillRect(50, 50, 100, 100);
+
+    g.setColor(Color.DARK_GRAY);
+    g.fillRoundRect(90,50, 200,200, 50, 50);
+
+    g.setColor(Color.WHITE);
+    g.drawString("Hello World!", 90, 90);
   }
 
   @Override
