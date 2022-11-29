@@ -43,6 +43,16 @@ public class PlannerPanel extends Panel {
   private int myMaxX = 1;
   private int myMaxY = 1;
 
+  private int rectWidth;
+
+  private int rectHeight;
+
+  private int offsetX;
+
+  private int offsetY;
+
+  private Dimension maxSize;
+
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
   /** Cannot remove this. WHY? */
@@ -50,7 +60,7 @@ public class PlannerPanel extends Panel {
 
   public PlannerPanel() {
     setBackground(new Color(233, 233, 233));
-
+    maxSize = Toolkit. getDefaultToolkit(). getScreenSize();
     myPanel = this;
   }
 
@@ -94,15 +104,23 @@ public class PlannerPanel extends Panel {
   @Override
   public void paint(Graphics g) {
     super.paint(g);
-
     this.startPanel();
-    int rectWidth = myPanel.getWidth()*2/5 - 50*myPanel.getWidth()/1920;
-    int rectHeight = myPanel.getHeight() - 30*myPanel.getHeight()/1080;
+    setOffset(50, 50);
+    paintStatistics(g);
+    setOffset(1000, 1000);
 
-    int offsetX = 50*rectWidth/1920;
-    int offsetY = 50*rectHeight/1080;
+    }
+  private void setOffset(int x, int y) {
 
-    int fontSize = 25*myPanel.getWidth()/1920;
+    offsetX = x*rectWidth/maxSize.width;
+    offsetY = y*rectHeight/maxSize.height;
+  }
+  private void paintStatistics(Graphics g) {
+
+    int rectWidth = myPanel.getWidth()*2/5 - 50*myPanel.getWidth()/maxSize.width;
+    int rectHeight = myPanel.getHeight() - 30*myPanel.getHeight()/maxSize.height;
+
+    int fontSize = 25*myPanel.getWidth()/maxSize.width;
 
     g.setColor(Color.WHITE);
     g.fillRoundRect(offsetX,offsetY, rectWidth - offsetX, rectHeight - offsetY, 50, 50);
@@ -117,7 +135,9 @@ public class PlannerPanel extends Panel {
     //g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/6);
     //g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/6);
     //g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
+
   }
+
 
   /**
    * Adapter pattern. Returns either the Chart's class or the JFrame's container
