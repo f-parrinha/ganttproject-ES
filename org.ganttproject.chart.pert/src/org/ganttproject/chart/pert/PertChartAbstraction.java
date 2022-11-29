@@ -31,7 +31,7 @@ import net.sourceforge.ganttproject.task.dependency.TaskDependencySlice;
 
 public class PertChartAbstraction {
 
-  private final TaskManager myTaskManager;
+  public final TaskManager myTaskManager;
 
   private final List<TaskGraphNode> myTaskGraph;
 
