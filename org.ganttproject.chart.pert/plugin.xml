@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.ganttproject.chart.pert"
-   name="Pert Plug-in"
+   name="Plugin Manager"
    version="1.0.0"
    provider-name="">
 
@@ -18,8 +18,15 @@
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
    <extension
-         point="net.sourceforge.ganttproject.chart">
-         <chart class="org.ganttproject.chart.pert.ActivityOnNodePertChart"/>
-         <chart class="org.ganttproject.chart.planner.PlannerPanel"/>
+           name="Pert Plug-in"
+           version="1.0.0"
+           point="net.sourceforge.ganttproject.chart">
+      <chart class="org.ganttproject.chart.pert.ActivityOnNodePertChart"/>
+   </extension>
+   <extension
+           name="Planner Plug-in"
+           version="1.0.0"
+           point="net.sourceforge.ganttproject.chart">
+      <chart class="org.ganttproject.chart.planner.PlannerPanel"/>
    </extension>
 </plugin>
