@@ -22,10 +22,13 @@ import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.net.URL;
 
 
 /**
@@ -43,6 +46,8 @@ public class PlannerPanel extends Panel {
   private int myMaxX = 1;
   private int myMaxY = 1;
 
+  private Image logo;
+
   private int rectWidth;
 
   private int rectHeight;
@@ -58,10 +63,12 @@ public class PlannerPanel extends Panel {
   /** Cannot remove this. WHY? */
   private final JPanel myPanel;
 
-  public PlannerPanel() {
+  public PlannerPanel() throws IOException {
     setBackground(new Color(233, 233, 233));
     maxSize = Toolkit. getDefaultToolkit(). getScreenSize();
     myPanel = this;
+    URL url = PlannerPanel.class.getResource("/icons/big.png");
+    logo = ImageIO.read(url);
   }
 
   /** Use this to initialize Planner variables, like statistics */
@@ -105,16 +112,39 @@ public class PlannerPanel extends Panel {
   public void paint(Graphics g) {
     super.paint(g);
     this.startPanel();
+    paintLogo(g, logo);
     setOffset(50, 50);
     paintStatistics(g);
     setOffset(1000, 1000);
+  }
 
-    }
+  /**
+   * Sets a new offset to the object to be drawn
+   *
+   * @param x - Offset X
+   * @param y - Offset Y
+   */
   private void setOffset(int x, int y) {
 
     offsetX = x*myPanel.getWidth()/maxSize.width;
     offsetY = y*myPanel.getHeight()/maxSize.height;
   }
+
+  /**
+   *  Paints the logo no top side
+   *
+   * @param g - Graphics swing object
+   */
+  private void paintLogo(Graphics g, Image logo){
+    
+    g.drawImage(logo, 0, 0, null);
+  }
+
+  /**
+   * Paints the statistics area on the left side
+   *
+   * @param g - Graphics swing object
+   */
   private void paintStatistics(Graphics g) {
 
     int rectWidth = myPanel.getWidth()*2/5 - 50*myPanel.getWidth()/maxSize.width;
