@@ -6,6 +6,13 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.*;
 
+/**
+ * @author Francisco Parrinha
+ * @author Martin Magdalinchev
+ * @author Bernardo Atalaia
+ * @author Carlos Soares
+ * @author Pedro Inácio
+ */
 public class GraphPanel extends JPanel {
 
     private int width = 1600;

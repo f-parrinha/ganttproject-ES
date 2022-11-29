@@ -41,7 +41,7 @@ import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 
 /**
  * @author Francisco Parrinha
- * @author Martin Magalinchev
+ * @author Martin Magdalinchev
  * @author Bernardo Atalaia
  * @author Carlos Soares
  * @author Pedro Inácio

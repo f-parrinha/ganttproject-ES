@@ -16,6 +16,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Francisco Parrinha
+ * @author Martin Magdalinchev
+ * @author Bernardo Atalaia
+ * @author Carlos Soares
+ * @author Pedro Inácio
  * <p>
  * TODO:
  *      1. Add event listeners to capture the right statistics

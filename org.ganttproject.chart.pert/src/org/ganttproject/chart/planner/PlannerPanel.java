@@ -33,7 +33,7 @@ import java.net.URL;
 
 /**
  * @author Francisco Parrinha
- * @author Martin Magalinchev
+ * @author Martin Magdalinchev
  * @author Bernardo Atalaia
  * @author Carlos Soares
  * @author Pedro Inácio
