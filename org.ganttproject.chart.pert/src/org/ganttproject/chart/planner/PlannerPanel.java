@@ -119,17 +119,17 @@ public class PlannerPanel extends Panel {
   }
   private void paintStatistics(Graphics g) {
     setRect(2.0/6.0, 5.0/6.0);
-    setOffset(resize(50), resize(50) + rectHeight/6);
+    setOffset(resizeX(50), resizeY(50) + rectHeight/6);
 
     int fontSize = 25*myPanel.getWidth()/maxSize.width;
 
     g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resize(50)*2, rectHeight - resize(50)*2, 50, 50);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50)*2, rectHeight - resizeY(50)*2, 50, 50);
 
     g.setColor(Color.DARK_GRAY);
 
     g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
-    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resize(50),offsetY + rectHeight/7);
+    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50),offsetY + rectHeight/7);
 
     /** Statistics is crashing here */
     //g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/6);
@@ -138,25 +138,23 @@ public class PlannerPanel extends Panel {
     //g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
 
   }
-  private int resize(int i) {
+  private int resizeX(int i) {
     return i*myPanel.getWidth()/maxSize.width;
   }
+  private int resizeY(int i) {
+    return i*myPanel.getHeight()/maxSize.height;
+  }
   private void paintGraphic(Graphics g) {
-    setOffset(rectWidth + resize(50)*2, resize(50)+ rectHeight/6);
+    setOffset(rectWidth + resizeX(50)*2, resizeY(50)+ rectHeight/6);
     setRect(3.5/6.0, 5.0/6.0);
 
     g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resize(50), rectHeight - resize(50)*2, 50, 50);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
     int spacing = rectHeight/7;
-    g.setColor(Color.LIGHT_GRAY);
-    drawGraphLine(g, resize(150), spacing, 1, 100, Color.RED);
-    g.setColor(Color.LIGHT_GRAY);
+    drawGraphLine(g, resizeX(150), spacing, 1, 100, Color.RED);
     drawGraphLine(g, 0, spacing, 0.1, 100, Color.RED);
-    g.setColor(Color.LIGHT_GRAY);
     drawGraphLine(g, 0, spacing, 0.4, 100, Color.RED);
-    g.setColor(Color.LIGHT_GRAY);
     drawGraphLine(g, 0, spacing, 0.7, 340, Color.RED);
-    g.setColor(Color.BLACK);
     drawGraphLine(g, 0, spacing, 0.2, 100, Color.GREEN);
 
   }
@@ -164,9 +162,10 @@ public class PlannerPanel extends Panel {
   private void drawGraphLine(Graphics g, int oX, int oY, double p, int max, Color c) {
     setOffset(offsetX + oX, offsetY + oY);
     setRect(0.4, 0.021);
+    g.setColor(Color.LIGHT_GRAY);
     g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
-    g.drawString("0", offsetX, offsetY + rectHeight + resize(20));
-    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resize(20));
+    g.drawString("0", offsetX - resizeX(15), offsetY + rectHeight + resizeY(30));
+    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resizeY(30));
     setRect(0.4 * p, 0.02);
     g.setColor(c);
     g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
