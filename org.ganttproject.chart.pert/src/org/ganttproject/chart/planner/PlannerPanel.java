@@ -105,30 +105,31 @@ public class PlannerPanel extends Panel {
   public void paint(Graphics g) {
     super.paint(g);
     this.startPanel();
-    setOffset(50, 50);
     paintStatistics(g);
-    setOffset(1000, 1000);
-
+    paintGraphic(g);
     }
   private void setOffset(int x, int y) {
 
-    offsetX = x*myPanel.getWidth()/maxSize.width;
-    offsetY = y*myPanel.getHeight()/maxSize.height;
+    offsetX = x;
+    offsetY = y;
+  }
+  private void setRect(double x, double y) {
+    rectWidth = (int) (myPanel.getWidth()*x);
+    rectHeight = (int) (myPanel.getHeight()*y);
   }
   private void paintStatistics(Graphics g) {
-
-    int rectWidth = myPanel.getWidth()*2/5 - 50*myPanel.getWidth()/maxSize.width;
-    int rectHeight = myPanel.getHeight() - 30*myPanel.getHeight()/maxSize.height;
+    setRect(2.0/6.0, 5.0/6.0);
+    setOffset(resize(50), resize(50) + rectHeight/6);
 
     int fontSize = 25*myPanel.getWidth()/maxSize.width;
 
     g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - offsetX, rectHeight - offsetY, 50, 50);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resize(50)*2, rectHeight - resize(50)*2, 50, 50);
 
     g.setColor(Color.DARK_GRAY);
 
     g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
-    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + offsetX, offsetY + rectHeight/6);
+    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resize(50),offsetY + rectHeight/7);
 
     /** Statistics is crashing here */
     //g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/6);
@@ -137,7 +138,29 @@ public class PlannerPanel extends Panel {
     //g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
 
   }
+  private int resize(int i) {
+    return i*myPanel.getWidth()/maxSize.width;
+  }
+  private void paintGraphic(Graphics g) {
+    setOffset(rectWidth + resize(50)*2, resize(50)+ rectHeight/6);
+    setRect(3.5/6.0, 5.0/6.0);
 
+    g.setColor(Color.WHITE);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resize(50), rectHeight - resize(50)*2, 50, 50);
+    int spacing = rectHeight/7;
+    drawGraphLine(g, resize(150), spacing, 1);
+    drawGraphLine(g, 0, spacing, 1);
+    drawGraphLine(g, 0, spacing, 1);
+    drawGraphLine(g, 0, spacing, 1);
+    drawGraphLine(g, 0, spacing, 1);
+  }
+
+  private void drawGraphLine(Graphics g, int oX, int oY, double p) {
+    setOffset(offsetX + oX, offsetY + oY);
+    setRect(0.4 * p, 0.02);
+    g.setColor(Color.RED);
+    g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
+  }
 
   /**
    * Adapter pattern. Returns either the Chart's class or the JFrame's container
