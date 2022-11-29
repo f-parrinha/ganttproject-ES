@@ -153,6 +153,7 @@ public class PlannerPanel extends Panel {
     drawGraphLine(g, 0, spacing, 1);
     drawGraphLine(g, 0, spacing, 1);
     drawGraphLine(g, 0, spacing, 1);
+
   }
 
   private void drawGraphLine(Graphics g, int oX, int oY, double p) {
