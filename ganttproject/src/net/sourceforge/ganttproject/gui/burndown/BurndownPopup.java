@@ -38,7 +38,7 @@ public class BurndownPopup extends AbstractPagesDialog {
   private static final Color HTML_BACKGROUND = new JPanel().getBackground();
 
   public BurndownPopup(UIFacade uiFacade) {
-    super("about", uiFacade, createPages());
+    super("Burndown Chart", uiFacade, createPages());
   }
 
   private static List<ListItem> createPages() {

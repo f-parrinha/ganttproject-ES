@@ -3,10 +3,16 @@ package net.sourceforge.ganttproject;
 import biz.ganttproject.core.time.GanttCalendar;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 
+import java.sql.SQLOutput;
+import java.time.temporal.ChronoUnit;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Francisco Parrinha
@@ -25,12 +31,17 @@ public class PlannerStatistics {
 
     private TaskManager taskManager;
 
-    private Task[] tasks;
+ //   private ArrayList<Task> tasks;
 
     public PlannerStatistics(TaskManager taskManager) {
         this.taskManager = taskManager;
 
-        tasks = taskManager.getTasks();
+//        this.tasks = new ArrayList<Task>();
+//        for(int i = 0; i < taskManager.getTaskCount(); i++) {
+//            tasks.add(taskManager.getTask(i));
+////            System.out.println(tasks.get(i).getName());
+//        }
+
     }
 
     /**
@@ -46,25 +57,32 @@ public class PlannerStatistics {
      * @return spent time
      */
     public long getCurrentSpentTime() {
-        int startYear = taskManager.getProjectStart().getYear();
-        int startMonth = taskManager.getProjectStart().getMonth();
+        Date startDate = this.taskManager.getProjectStart();
 
-        return countDaysSinceYear(startYear, date.getYear()) +
-                countDaysSinceMonth(startMonth, date.getMonth(), date.getYear());
+        return getDifferenceDays(startDate, date);
     }
 
+    /**
+     *
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private long getDifferenceDays(Date d1, Date d2) {
+        long diff = d2.getTime() - d1.getTime();
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    }
     /**
      * Gets the total estimated time, in days for the project's completion
      *
      * @return estimated time
      */
     public long getTotalEstimatedTime() {
-        int startYear = taskManager.getProjectStart().getYear();
-        int startMonth = taskManager.getProjectStart().getMonth();
-        int endYear = taskManager.getProjectEnd().getYear();
-        int endMonth = taskManager.getProjectEnd().getMonth();
+        Date startDate = taskManager.getProjectStart();
+        Date endDate = taskManager.getProjectEnd();
 
-        return countDaysSinceYear(startYear, endYear) + countDaysSinceMonth(startMonth, endMonth, date.getYear());
+
+        return getDifferenceDays(startDate, endDate);
     }
 
     /**
@@ -73,7 +91,7 @@ public class PlannerStatistics {
      * @return finished tasks
      */
     public int getFinishedTasks() {
-        return calculateFinishedTasks(taskManager);
+        return calculateFinishedTasks();
     }
 
     /**
@@ -86,7 +104,7 @@ public class PlannerStatistics {
      */
     public float getOverallProgress() {
         if(this.getTotalTasks() != 0)
-            return 100 * ((float) this.getFinishedTasks() / (float) this.getTotalTasks());
+            return Math.round(100 * ((float) this.getFinishedTasks() / (float) this.getTotalTasks()));
         else return 0;
     }
 
@@ -136,12 +154,20 @@ public class PlannerStatistics {
      * @param taskManager
      * @return Number of finished tasks
      */
-    private int calculateFinishedTasks(TaskManager taskManager) {
+    private int calculateFinishedTasks() {
         int finTasks = 0;
-        for (int currTask = 0; currTask < this.getTotalTasks(); currTask++)
-            if (tasks[currTask].getCompletionPercentage() == 100)
-                finTasks++;
+        int count = 0;
+        int index = 0;
 
+        while(count < this.taskManager.getTaskCount()) {
+            if(this.taskManager.getTask(index) != null){
+                count++;
+                if (this.taskManager.getTask(index).getCompletionPercentage() == 100) {
+                    finTasks++;
+                }
+            }
+            index++;
+        }
         return finTasks;
     }
 
@@ -150,35 +176,35 @@ public class PlannerStatistics {
      *
      * @return a treeMap with the KEY as the tasks the end date and a number of tasks completed on that day as the VALUE
      */
-    private Map<GanttCalendar, Integer> getCompletedCalendar() {
-        //Generates a treeMap with the key as the end date and a number of tasks completed on that day as the value
-        Map<GanttCalendar, Integer> tasksDoneAtDate = new TreeMap<GanttCalendar, Integer>();
-        for (int currTask = 0; currTask < this.getTotalTasks(); currTask++) {
-            if (tasks[currTask].getCompletionPercentage() == 100) {
-                GanttCalendar currEndDate = tasks[currTask].getEnd();
-                if (!tasksDoneAtDate.containsKey(currEndDate))
-                    tasksDoneAtDate.put(currEndDate, 1);
-                else {
-                    tasksDoneAtDate.put(currEndDate, tasksDoneAtDate.get(currEndDate) + 1);
-                }
-            }
-        }
-        return tasksDoneAtDate;
-    }
+//    private Map<GanttCalendar, Integer> getCompletedCalendar() {
+//        //Generates a treeMap with the key as the end date and a number of tasks completed on that day as the value
+//        Map<GanttCalendar, Integer> tasksDoneAtDate = new TreeMap<GanttCalendar, Integer>();
+//        for (int currTask = 0; currTask < this.getTotalTasks(); currTask++) {
+//            if (tasks[currTask].getCompletionPercentage() == 100) {
+//                GanttCalendar currEndDate = tasks[currTask].getEnd();
+//                if (!tasksDoneAtDate.containsKey(currEndDate))
+//                    tasksDoneAtDate.put(currEndDate, 1);
+//                else {
+//                    tasksDoneAtDate.put(currEndDate, tasksDoneAtDate.get(currEndDate) + 1);
+//                }
+//            }
+//        }
+//        return tasksDoneAtDate;
+//    }
 
-    public Map<GanttCalendar, Integer> burndownData() {
-        //Em teoria ordena no putAll, verificar se o ganttCalendar implementa bem o Comparable
-        Map<GanttCalendar, Integer> totalTasksAtDay = new TreeMap<GanttCalendar, Integer>();
-        totalTasksAtDay.putAll(getCompletedCalendar());
-        //
-        Integer pastEntryValue = 0;
-        // Goes through list adding the past value with the current making this list containing the total
-        // tasks done until that day since the beginning (assuming the list is ordered by day (the key))
-        for (Map.Entry<GanttCalendar, Integer> entry : totalTasksAtDay.entrySet()) {
-            Integer currEntryValue = entry.getValue();
-            entry.setValue(pastEntryValue + currEntryValue);
-            pastEntryValue = currEntryValue;
-        }
-        return totalTasksAtDay;
-    }
+//    public Map<GanttCalendar, Integer> burndownData() {
+//        //Em teoria ordena no putAll, verificar se o ganttCalendar implementa bem o Comparable
+//        Map<GanttCalendar, Integer> totalTasksAtDay = new TreeMap<GanttCalendar, Integer>();
+//        totalTasksAtDay.putAll(getCompletedCalendar());
+//        //
+//        Integer pastEntryValue = 0;
+//        // Goes through list adding the past value with the current making this list containing the total
+//        // tasks done until that day since the beginning (assuming the list is ordered by day (the key))
+//        for (Map.Entry<GanttCalendar, Integer> entry : totalTasksAtDay.entrySet()) {
+//            Integer currEntryValue = entry.getValue();
+//            entry.setValue(pastEntryValue + currEntryValue);
+//            pastEntryValue = currEntryValue;
+//        }
+//        return totalTasksAtDay;
+//    }
 }

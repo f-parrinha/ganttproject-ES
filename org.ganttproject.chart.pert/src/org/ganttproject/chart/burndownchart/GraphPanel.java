@@ -1,12 +1,10 @@
-package net.sourceforge.ganttproject;
+package org.ganttproject.chart.burndownchart;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.*;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import java.util.*;
 
 public class GraphPanel extends JPanel {
 
@@ -37,7 +35,7 @@ public class GraphPanel extends JPanel {
     }
 
     private int getGraphWidth(){
-        return this.getWidth() - 250;
+        return 1600 - 250;
     }
 
 
@@ -74,25 +72,25 @@ public class GraphPanel extends JPanel {
 
     private void drawGraphInfo(Graphics2D g2){
         // draw white background in side right panel
-        int infoRectYOrigin = ((this.getHeight() / 2) - 100 - padding);
+        int infoRectYOrigin = ((heigth / 2) - 100 - padding);
         g2.setColor(Color.WHITE);
-        g2.fillRect(getGraphWidth(), infoRectYOrigin, 225, getHeight() * 1/4);
+        g2.fillRect(getGraphWidth(), infoRectYOrigin, 225, heigth * 1/4);
         g2.setStroke(new BasicStroke(5f));
         g2.setColor(actualLineColor);
         g2.drawLine(getGraphWidth() + padding, infoRectYOrigin + padding, getGraphWidth() + 225 - padding, infoRectYOrigin + padding);
         g2.setColor(IdealLineColor);
-        g2.drawLine(getGraphWidth() + padding, infoRectYOrigin +  (getHeight() * 1/4) - padding - labelPadding, getGraphWidth() + 225 - padding, infoRectYOrigin +  (getHeight() * 1/4) - padding - labelPadding);
+        g2.drawLine(getGraphWidth() + padding, infoRectYOrigin +  (heigth * 1/4) - padding - labelPadding, getGraphWidth() + 225 - padding, infoRectYOrigin +  (heigth * 1/4) - padding - labelPadding);
         g2.setColor(Color.BLACK);
         g2.drawString("Actual Tasks Remaining", getGraphWidth() + padding, infoRectYOrigin + padding + labelPadding);
-        g2.drawString(" Ideal Tasks Remaining", getGraphWidth() + padding, infoRectYOrigin +  (getHeight() * 1/4) - padding);
-        g2.drawString("Iteration Timeline (days)", ((getGraphWidth() + padding)/2) - "Iteration Timeline (days)".toCharArray().length, getHeight() - padding/2);
+        g2.drawString(" Ideal Tasks Remaining", getGraphWidth() + padding, infoRectYOrigin +  (heigth * 1/4) - padding);
+        g2.drawString("Iteration Timeline (days)", ((getGraphWidth() + padding)/2) - "Iteration Timeline (days)".toCharArray().length, heigth - padding/2);
         AffineTransform defaultAt = g2.getTransform();
 
         // rotates the coordinate by 90 degree counterclockwise
         AffineTransform at = new AffineTransform();
         at.rotate(- Math.PI / 2);
         g2.setTransform(at);
-        g2.drawString("Sum of Task Estimates (days)", -((getHeight() + padding)/2) - "Sum of Task Estimates (days)".toCharArray().length,  labelPadding);
+        g2.drawString("Sum of Task Estimates (days)", -((heigth + padding)/2) - "Sum of Task Estimates (days)".toCharArray().length,  labelPadding);
     }
 
     @Override
@@ -105,7 +103,7 @@ public class GraphPanel extends JPanel {
         double minScore = getMinScore();
 
         double xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (scores.size() - 1);
-        double yScale = ((double) getHeight() - (2 * padding) - labelPadding) / (maxScore - minScore);
+        double yScale = ((double) heigth - (2 * padding) - labelPadding) / (maxScore - minScore);
 
         List<Point> graphPoints = new ArrayList<>();
         for (int i = 0; i < scores.size(); i++) {
@@ -116,14 +114,14 @@ public class GraphPanel extends JPanel {
 
         // draw white background
         g2.setColor(Color.WHITE);
-        g2.fillRect(padding + labelPadding, padding, getGraphWidth() - (2 * padding) - labelPadding, getHeight() - 2 * padding - labelPadding);
+        g2.fillRect(padding + labelPadding, padding, getGraphWidth() - (2 * padding) - labelPadding, heigth - 2 * padding - labelPadding);
         g2.setColor(Color.BLACK);
 
         // create hatch marks and grid lines for y axis.
         for (int i = 0; i < numberYDivisions + 1; i++) {
             int x0 = padding + labelPadding;
             int x1 = pointWidth + padding + labelPadding;
-            int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
+            int y0 = 800 - ((i * (800 - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
             int y1 = y0;
             if (scores.size() > 0) {
                 g2.setColor(gridColor);
@@ -142,11 +140,11 @@ public class GraphPanel extends JPanel {
             if (scores.size() > 1) {
                 int x0 = i * (getGraphWidth() - padding * 2 - labelPadding) / (scores.size() - 1) + padding + labelPadding;
                 int x1 = x0;
-                int y0 = getHeight() - padding - labelPadding;
+                int y0 = 800 - padding - labelPadding;
                 int y1 = y0 - pointWidth;
                 if ((i % ((int) ((scores.size() / 20.0)) + 1)) == 0) {
                     g2.setColor(gridColor);
-                    g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
+                    g2.drawLine(x0, 800 - padding - labelPadding - 1 - pointWidth, x1, padding);
                     g2.setColor(Color.BLACK);
                     String xLabel = i + "";
                     FontMetrics metrics = g2.getFontMetrics();
@@ -158,8 +156,8 @@ public class GraphPanel extends JPanel {
         }
 
         // create x and y axes
-        g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
-        g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, getGraphWidth() - padding, getHeight() - padding - labelPadding);
+        g2.drawLine(padding + labelPadding, heigth - padding - labelPadding, padding + labelPadding, padding);
+        g2.drawLine(padding + labelPadding, heigth - padding - labelPadding, getGraphWidth() - padding, heigth - padding - labelPadding);
 
         Stroke oldStroke = g2.getStroke();
         g2.setColor(actualLineColor);
@@ -200,7 +198,7 @@ public class GraphPanel extends JPanel {
         }
         return maxScore;
     }
-
+/*
     public void setScores(List<Double> scores) {
         this.scores = scores;
         invalidate();
@@ -236,5 +234,5 @@ public class GraphPanel extends JPanel {
                 createAndShowGui();
             }
         });
-    }
+    }*/
 }
