@@ -36,8 +36,6 @@ public class BurndownChartPanel extends Panel {
     private final GraphPanel myGraph;
 
     public BurndownChartPanel() {
-        
-        //setBackground(new Color(233, 233, 233));
         myPanel = this;
         myGraph = new GraphPanel(getData());
     }
