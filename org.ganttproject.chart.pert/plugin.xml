@@ -21,5 +21,6 @@
          point="net.sourceforge.ganttproject.chart">
          <chart class="org.ganttproject.chart.pert.ActivityOnNodePertChart"/>
          <chart class="org.ganttproject.chart.planner.PlannerPanel"/>
+         <chart class="org.ganttproject.chart.burndownchart.BurndownChartPanel"/>
    </extension>
 </plugin>
