@@ -148,18 +148,27 @@ public class PlannerPanel extends Panel {
     g.setColor(Color.WHITE);
     g.fillRoundRect(offsetX,offsetY, rectWidth - resize(50), rectHeight - resize(50)*2, 50, 50);
     int spacing = rectHeight/7;
-    drawGraphLine(g, resize(150), spacing, 1);
-    drawGraphLine(g, 0, spacing, 1);
-    drawGraphLine(g, 0, spacing, 1);
-    drawGraphLine(g, 0, spacing, 1);
-    drawGraphLine(g, 0, spacing, 1);
+    g.setColor(Color.LIGHT_GRAY);
+    drawGraphLine(g, resize(150), spacing, 1, 100, Color.RED);
+    g.setColor(Color.LIGHT_GRAY);
+    drawGraphLine(g, 0, spacing, 0.1, 100, Color.RED);
+    g.setColor(Color.LIGHT_GRAY);
+    drawGraphLine(g, 0, spacing, 0.4, 100, Color.RED);
+    g.setColor(Color.LIGHT_GRAY);
+    drawGraphLine(g, 0, spacing, 0.7, 340, Color.RED);
+    g.setColor(Color.BLACK);
+    drawGraphLine(g, 0, spacing, 0.2, 100, Color.GREEN);
 
   }
 
-  private void drawGraphLine(Graphics g, int oX, int oY, double p) {
+  private void drawGraphLine(Graphics g, int oX, int oY, double p, int max, Color c) {
     setOffset(offsetX + oX, offsetY + oY);
+    setRect(0.4, 0.021);
+    g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
+    g.drawString("0", offsetX, offsetY + rectHeight + resize(20));
+    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resize(20));
     setRect(0.4 * p, 0.02);
-    g.setColor(Color.RED);
+    g.setColor(c);
     g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
   }
 
