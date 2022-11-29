@@ -46,8 +46,6 @@ public class PlannerPanel extends Panel {
   private int myMaxX = 1;
   private int myMaxY = 1;
 
-  private Image logo;
-
   private int rectWidth;
 
   private int rectHeight;
@@ -58,9 +56,10 @@ public class PlannerPanel extends Panel {
 
   private Dimension maxSize;
 
+  private Image logo;
+
   private final static GanttLanguage language = GanttLanguage.getInstance();
 
-  /** Cannot remove this. WHY? */
   private final JPanel myPanel;
 
   public PlannerPanel() throws IOException {
@@ -80,7 +79,7 @@ public class PlannerPanel extends Panel {
   /** TODO
    * Exportation. Returns a rendered image of the current panel.
    *
-   * @param settings - Export settings from the project
+   * @param settings Export settings from the project
    * @return final image
    */
   @Override
@@ -100,113 +99,13 @@ public class PlannerPanel extends Panel {
   /** TODO */
   @Override
   public void reset() {
-    System.out.println("Closing tab!");
-  }
-
-  /**
-   * Paints the panel's content
-   *
-   * @param g - Graphics object. Used to paint
-   */
-  @Override
-  public void paint(Graphics g) {
-    super.paint(g);
-    this.startPanel();
-    paintLogo(g, logo);
-    setOffset(50, 50);
-    paintStatistics(g);
-    paintGraphic(g);
-    }
-
-  /**
-   * Sets a new offset to the object to be drawn
-   *
-   * @param x - Offset X
-   * @param y - Offset Y
-   */
-  private void setOffset(int x, int y) {
-
-    offsetX = x;
-    offsetY = y;
-  }
-  private void setRect(double x, double y) {
-    rectWidth = (int) (myPanel.getWidth()*x);
-    rectHeight = (int) (myPanel.getHeight()*y);
-  }
-
-  /**
-   *  Paints the logo no top side
-   *
-   * @param g - Graphics swing object
-   */
-  private void paintLogo(Graphics g, Image logo){
-
-    g.drawImage(logo, 0, 0, null);
-  }
-
-  /**
-   * Paints the statistics area on the left side
-   *
-   * @param g - Graphics swing object
-   */
-  private void paintStatistics(Graphics g) {
-    setRect(2.0/6.0, 5.0/6.0);
-    setOffset(resizeX(50), resizeY(50) + rectHeight/6);
-
-    int fontSize = 25*myPanel.getWidth()/maxSize.width;
-
-    g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50)*2, rectHeight - resizeY(50)*2, 50, 50);
-
-    g.setColor(Color.DARK_GRAY);
-
-    g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
-    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50),offsetY + rectHeight/7);
-
-    /** Statistics is crashing here */
-    g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/6);
-    g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/6);
-    g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/6);
-    g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
-
-  }
-  private int resizeX(int i) {
-    return i*myPanel.getWidth()/maxSize.width;
-  }
-  private int resizeY(int i) {
-    return i*myPanel.getHeight()/maxSize.height;
-  }
-  private void paintGraphic(Graphics g) {
-    setOffset(rectWidth + resizeX(50)*2, resizeY(50)+ rectHeight/6);
-    setRect(3.5/6.0, 5.0/6.0);
-
-    g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
-    int spacing = rectHeight/7;
-    drawGraphLine(g, resizeX(150), spacing, 1, 100, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.1, 100, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.4, 100, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.7, 340, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.2, 100, Color.GREEN);
-
-  }
-
-  private void drawGraphLine(Graphics g, int oX, int oY, double p, int max, Color c) {
-    setOffset(offsetX + oX, offsetY + oY);
-    setRect(0.4, 0.021);
-    g.setColor(Color.LIGHT_GRAY);
-    g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
-    g.drawString("0", offsetX - resizeX(15), offsetY + rectHeight + resizeY(30));
-    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resizeY(30));
-    setRect(0.4 * p, 0.02);
-    g.setColor(c);
-    g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
+    System.out.println("Updating tab!");
   }
 
   /**
    * Adapter pattern. Returns either the Chart's class or the JFrame's container
    *
-   * @param adapter - adapter. Which class to get, container's or chart's
+   * @param adapter adapter. Which class to get, container's or chart's
    * @return Class or Container
    */
   @Override
@@ -222,8 +121,131 @@ public class PlannerPanel extends Panel {
   }
 
   /**
-   * Max and min coordinates in the graphics that paints the graphical nodes and
-   * arrows.
+   * Paints the panel's content
+   *
+   * @param g Graphics object. Used to paint
+   */
+  @Override
+  public void paint(Graphics g) {
+    super.paint(g);
+    this.startPanel();
+    paintLogo(g, logo);
+    setOffset(50, 50);
+    paintStatistics(g);
+    paintGraphic(g);
+  }
+
+  /**
+   * Sets a new offset to the object to be drawn
+   *
+   * @param x Offset X
+   * @param y Offset Y
+   */
+  private void setOffset(int x, int y) {
+
+    offsetX = x;
+    offsetY = y;
+  }
+
+  /**
+   * Resizes a rectangle
+   *
+   * @param x value on the x axis
+   * @param y value on the y axis
+   */
+  private void setRect(double x, double y) {
+    rectWidth = (int) (myPanel.getWidth()*x);
+    rectHeight = (int) (myPanel.getHeight()*y);
+  }
+
+  /**
+   * Paints the logo no top side
+   *
+   * @param g Graphics swing object
+   */
+  private void paintLogo(Graphics g, Image logo){
+    // Resizes the image
+    int sizeY = (int)((1.0/10.0) * myPanel.getHeight());
+    Image img = logo.getScaledInstance(myPanel.getWidth(), sizeY, Image.SCALE_DEFAULT);
+
+    // Draws the image
+    g.drawImage(img, 0, 0, null);
+  }
+
+  /**
+   * Paints the entire statistics area
+   *
+   * @param g Graphics swing object
+   */
+  private void paintStatistics(Graphics g) {
+    setRect(2.0/6.0, 5.0/6.0);
+    setOffset(resizeX(50), resizeY(50) + rectHeight/6);
+
+    int fontSize = 25*myPanel.getWidth()/maxSize.width;
+
+    g.setColor(Color.WHITE);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50)*2, rectHeight - resizeY(50)*2, 50, 50);
+
+    g.setColor(Color.DARK_GRAY);
+    g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
+    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50),offsetY + rectHeight/7);
+    g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/6);
+    g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/6);
+    g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/6);
+    g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
+
+  }
+
+  private int resizeX(int i) {
+    return i*myPanel.getWidth()/maxSize.width;
+  }
+
+  private int resizeY(int i) {
+    return i*myPanel.getHeight()/maxSize.height;
+  }
+
+  /**
+   * Paints the entire bar graph
+   * @param g
+   */
+  private void paintGraphic(Graphics g) {
+    setOffset(rectWidth + resizeX(50)*2, resizeY(50)+ rectHeight/6);
+    setRect(3.5/6.0, 5.0/6.0);
+
+    g.setColor(Color.WHITE);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
+    int spacing = rectHeight/7;
+    drawGraphLine(g, resizeX(150), spacing, 1, 100, Color.RED);
+    drawGraphLine(g, 0, spacing, 0.1, 100, Color.RED);
+    drawGraphLine(g, 0, spacing, 0.4, 100, Color.RED);
+    drawGraphLine(g, 0, spacing, 0.7, 340, Color.RED);
+    drawGraphLine(g, 0, spacing, 0.2, 100, Color.GREEN);
+  }
+
+  /**
+   * Draws one line in the bar graph
+   *
+   * @param g - Graphics swing object
+   * @param oX - offset in the x axis
+   * @param oY - offset in the y axis
+   * @param p - current percentage
+   * @param max - maximum value in the bar graph
+   * @param c - color of the line
+   */
+  private void drawGraphLine(Graphics g, int oX, int oY, double p, int max, Color c) {
+    setOffset(offsetX + oX, offsetY + oY);
+    setRect(0.4, 0.021);
+    g.setColor(Color.LIGHT_GRAY);
+    g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
+    g.drawString("0", offsetX - resizeX(15), offsetY + rectHeight + resizeY(30));
+    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resizeY(30));
+    setRect(0.4 * p, 0.02);
+    g.setColor(c);
+    g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
+  }
+
+  /**
+   * TODO: Still have to figure this one out. Useful in exporation
    */
   private int getMaxX() {
     return myMaxX;

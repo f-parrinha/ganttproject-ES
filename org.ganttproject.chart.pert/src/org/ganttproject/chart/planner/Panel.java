@@ -60,9 +60,9 @@ public abstract class Panel extends JPanel implements Chart {
   /**
    * Initializes panel when the plugin is loaded
    *
-   * @param project -  GanttProject
-   * @param dpiOption - Size of all the bars in the view
-   * @param chartFontOption - The font option chosen in the project options
+   * @param project GanttProject
+   * @param dpiOption Size of all the bars in the view
+   * @param chartFontOption The font option chosen in the project options
    */
   @Override
   public void init(IGanttProject project, IntegerOption dpiOption, FontOption chartFontOption) {
