@@ -112,8 +112,8 @@ public class PlannerPanel extends Panel {
     }
   private void setOffset(int x, int y) {
 
-    offsetX = x*rectWidth/maxSize.width;
-    offsetY = y*rectHeight/maxSize.height;
+    offsetX = x*myPanel.getWidth()/maxSize.width;
+    offsetY = y*myPanel.getHeight()/maxSize.height;
   }
   private void paintStatistics(Graphics g) {
 
