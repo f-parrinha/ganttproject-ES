@@ -15,7 +15,7 @@ import java.util.Random;
 
 /**
  * @author Francisco Parrinha
- * @author Martin Magalinchev
+ * @author Martin Magdalinchev
  * @author Bernardo Atalaia
  * @author Carlos Soares
  * @author Pedro Inácio
@@ -37,7 +37,9 @@ public class BurndownChartPanel extends Panel {
 
     public BurndownChartPanel() {
         myPanel = this;
-        myGraph = new GraphPanel(getData());
+
+        myGraph = new GraphPanel();
+        //myGraph.init(statistics);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class BurndownChartPanel extends Panel {
     }
 
     public void paint(Graphics g) {
+        myGraph.init(statistics);
         setBackground(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;
         //g.setColor(Color.WHITE);
@@ -94,16 +97,8 @@ public class BurndownChartPanel extends Panel {
         return myMaxY;
     }
 
-    private List<Double> getData(){
-        java.util.List<Double> scores = new ArrayList<>();
-        Random random = new Random();
-        int maxDataPoints = 40;
-        int maxScore = 10;
-        for (int i = 0; i < maxDataPoints; i++) {
-            scores.add(random.nextDouble() * maxScore);
-//            scores.add((double) i);
-        }
-        return scores;
+    private ArrayList<Integer> getData(){
+        return (ArrayList<Integer>) statistics.getBurndownInfo();
     }
 }
 
