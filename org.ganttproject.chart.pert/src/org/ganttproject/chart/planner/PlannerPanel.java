@@ -215,11 +215,19 @@ public class PlannerPanel extends Panel {
     g.setColor(Color.WHITE);
     g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
     int spacing = rectHeight/7;
-    drawGraphLine(g, resizeX(150), spacing, 1, 100, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.1, 100, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.4, 100, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.7, 340, Color.RED);
-    drawGraphLine(g, 0, spacing, 0.2, 100, Color.GREEN);
+    resizeX(150);
+    //drawGraphLine(g, resizeX(150), spacing, 1, 100, Color.RED);
+
+    // Finished tasks
+    double finishedTaskPercentage = statistics.getTotalTasks() > 0 ? statistics.getFinishedTasks()/statistics.getTotalTasks() : 0;
+    drawGraphLine(g, resizeX(150), spacing, finishedTaskPercentage,statistics.getTotalTasks(), Color.RED);
+
+    // Current spent time
+    double spentTimePercentage = statistics.getCurrentSpentTime() > 0 ? statistics.getCurrentSpentTime()/statistics.getTotalEstimatedTime() : 0;
+    drawGraphLine(g, 0, spacing, spentTimePercentage, (int) statistics.getTotalEstimatedTime(), Color.RED);
+
+    // Overall progress
+    drawGraphLine(g, 0, spacing, statistics.getOverallProgress()/100, 100, Color.GREEN);
   }
 
   /**
