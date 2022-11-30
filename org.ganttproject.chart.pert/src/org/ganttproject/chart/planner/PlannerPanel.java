@@ -42,9 +42,13 @@ import java.net.URL;
  */
 public class PlannerPanel extends Panel {
 
-  /** TODO: Useful for exportation */
-  private int myMaxX = 1;
-  private int myMaxY = 1;
+  private final static GanttLanguage language = GanttLanguage.getInstance();
+
+  private final JPanel myPanel;
+
+  private final String fontStyle;
+
+  private final Dimension maxSize;
 
   private int rectWidth;
 
@@ -54,41 +58,17 @@ public class PlannerPanel extends Panel {
 
   private int offsetY;
 
-  private Dimension maxSize;
+  private int fontSize;
 
   private Image logo;
 
-  private final static GanttLanguage language = GanttLanguage.getInstance();
-
-  private final JPanel myPanel;
-
   public PlannerPanel() throws IOException {
-    setBackground(new Color(233, 233, 233));
     maxSize = Toolkit. getDefaultToolkit(). getScreenSize();
     myPanel = this;
-    URL url = PlannerPanel.class.getResource("/icons/big.png");
-    logo = ImageIO.read(url);
-  }
+    fontStyle = "Helvetica";
 
-  /** Use this to initialize Planner variables, like statistics */
-  @Override
-  protected void startPanel() {
-    setBackground(new Color (233, 233, 233));
-  }
-
-  /** TODO
-   * Exportation. Returns a rendered image of the current panel.
-   *
-   * @param settings Export settings from the project
-   * @return final image
-   */
-  @Override
-  public RenderedImage getRenderedImage(GanttExportSettings settings) {
-    BufferedImage image = new BufferedImage(getMaxX(), getMaxY(), BufferedImage.TYPE_INT_RGB);
-    Graphics g = image.getGraphics();
-    g.fillRect(0, 0, getMaxX(), getMaxY());
-    paint(g);
-    return image;
+    setBackground(new Color(233, 233, 233));
+    loadImageFromDir("/icons/big.png");
   }
 
   @Override
@@ -96,10 +76,19 @@ public class PlannerPanel extends Panel {
     return language.getText("plannerLongName");
   }
 
-  /** TODO */
+  /**
+   * Exportation. Returns a rendered image of the current panel.
+   *
+   * @param settings Export settings from the project
+   * @return final image
+   */
   @Override
-  public void reset() {
-    System.out.println("Updating tab!");
+  public RenderedImage getRenderedImage(GanttExportSettings settings) {
+    BufferedImage image = new BufferedImage(myPanel.getWidth(), myPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+    Graphics g = image.getGraphics();
+    g.fillRect(0, 0, myPanel.getWidth(), myPanel.getHeight());
+    paint(g);
+    return image;
   }
 
   /**
@@ -128,11 +117,68 @@ public class PlannerPanel extends Panel {
   @Override
   public void paint(Graphics g) {
     super.paint(g);
-    this.startPanel();
+
     paintLogo(g, logo);
     setOffset(50, 50);
+    updateFontSize(25);
+
     paintStatistics(g);
     paintGraphic(g);
+  }
+
+  /**
+   * Paints the entire statistics area
+   *
+   * @param g Graphics swing object
+   */
+  private void paintStatistics(Graphics g) {
+    setRect(2.0/6.0, 5.0/6.0);
+    setOffset(resizeX(50), resizeY(50) + rectHeight/6);
+
+    // Main square
+    g.setColor(Color.WHITE);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50)*2, rectHeight - resizeY(50)*2, 50, 50);
+
+    // Statistics
+    g.setColor(Color.DARK_GRAY);
+    g.setFont(new Font(fontStyle, Font.PLAIN, fontSize));
+    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50),offsetY + rectHeight/7);
+    g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/7);
+    g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/7);
+    g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/7);
+    g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/7);
+  }
+
+  /**
+   * Paints the entire bar graph
+   *
+   * @param g Graphics swing object
+   */
+  private void paintGraphic(Graphics g) {
+    int spacing = rectHeight/5;
+    setOffset(rectWidth + resizeX(50)*2, resizeY(50)+ rectHeight/6);
+    setRect(3.5/6.0, 5.0/6.0);
+
+    // Main square
+    g.setColor(Color.WHITE);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
+
+    // Finished tasks
+    double finishedTaskPercentage = statistics.getTotalTasks() > 0 ? (double) statistics.getFinishedTasks()/statistics.getTotalTasks() : 0;
+    drawGraphLine(g, resizeX(150), spacing, finishedTaskPercentage,statistics.getTotalTasks(), Color.RED);
+    g.setColor(Color.DARK_GRAY);
+    g.drawString("Finished tasks", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
+
+    // Current spent time
+    double spentTimePercentage = statistics.getCurrentSpentTime() > 0 ? (double) statistics.getCurrentSpentTime()/statistics.getTotalEstimatedTime() : 0;
+    drawGraphLine(g, 0, spacing, spentTimePercentage, (int) statistics.getTotalEstimatedTime(), Color.RED);
+    g.setColor(Color.DARK_GRAY);
+    g.drawString("Spent Time", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
+
+    // Overall progress
+    drawGraphLine(g, 0, spacing, statistics.getOverallProgress()/100, 100, Color.GREEN);
+    g.setColor(Color.DARK_GRAY);
+    g.drawString("Overall Progress", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
   }
 
   /**
@@ -172,65 +218,23 @@ public class PlannerPanel extends Panel {
   }
 
   /**
-   * Paints the entire statistics area
+   * Scales the given x value to match the current panel's and screen's width
    *
-   * @param g Graphics swing object
+   * @param i x value
+   * @return scaled x value
    */
-  private void paintStatistics(Graphics g) {
-    setRect(2.0/6.0, 5.0/6.0);
-    setOffset(resizeX(50), resizeY(50) + rectHeight/6);
-
-    int fontSize = 25*myPanel.getWidth()/maxSize.width;
-
-    g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50)*2, rectHeight - resizeY(50)*2, 50, 50);
-
-    g.setColor(Color.DARK_GRAY);
-    g.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
-    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50),offsetY + rectHeight/7);
-    g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/6);
-    g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/6);
-    g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/6);
-    g.drawString("Overall progress: " + statistics.getOverallProgress() + "%", rectWidth/8 + offsetX, offsetY + rectHeight*5/6);
-
-  }
-
   private int resizeX(int i) {
     return i*myPanel.getWidth()/maxSize.width;
   }
 
+  /**
+   * Scales the given y value to match the current panel's and screen's width
+   *
+   * @param i y value
+   * @return scaled y value
+   */
   private int resizeY(int i) {
     return i*myPanel.getHeight()/maxSize.height;
-  }
-
-  /**
-   * Paints the entire bar graph
-   * @param g
-   */
-  private void paintGraphic(Graphics g) {
-    setOffset(rectWidth + resizeX(50)*2, resizeY(50)+ rectHeight/6);
-    setRect(3.5/6.0, 5.0/6.0);
-
-    g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
-    int spacing = rectHeight/5;
-
-    // Finished tasks
-    double finishedTaskPercentage = statistics.getTotalTasks() > 0 ? (double) statistics.getFinishedTasks()/statistics.getTotalTasks() : 0;
-    drawGraphLine(g, resizeX(150), spacing, finishedTaskPercentage,statistics.getTotalTasks(), Color.RED);
-    g.setColor(Color.DARK_GRAY);
-    g.drawString("Finished tasks", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
-
-    // Current spent time
-    double spentTimePercentage = statistics.getCurrentSpentTime() > 0 ? (double) statistics.getCurrentSpentTime()/statistics.getTotalEstimatedTime() : 0;
-    drawGraphLine(g, 0, spacing, spentTimePercentage, (int) statistics.getTotalEstimatedTime(), Color.RED);
-    g.setColor(Color.DARK_GRAY);
-    g.drawString("Spent Time", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
-
-    // Overall progress
-    drawGraphLine(g, 0, spacing, statistics.getOverallProgress()/100, 100, Color.GREEN);
-    g.setColor(Color.DARK_GRAY);
-    g.drawString("Overall Progress", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
   }
 
   /**
@@ -256,16 +260,22 @@ public class PlannerPanel extends Panel {
   }
 
   /**
-   * TODO: Still have to figure this one out. Useful in exporation
+   * Loads an image from the resources' folder, with a given directory
+   *
+   * @param directory directory in resources folder
+   * @throws IOException
    */
-  private int getMaxX() {
-    return myMaxX;
+  private void loadImageFromDir(String directory) throws IOException {
+    URL url = PlannerPanel.class.getResource(directory);
+    logo = ImageIO.read(url);
   }
 
   /**
-   * TODO: Still have to figure this one out. Useful in exporation
+   * Updates the font size, regarding panel's and screen's width
+   *
+   * @param size font size
    */
-  private int getMaxY() {
-    return myMaxY;
+  private void updateFontSize(int size){
+    fontSize = size*myPanel.getWidth()/maxSize.width;
   }
 }

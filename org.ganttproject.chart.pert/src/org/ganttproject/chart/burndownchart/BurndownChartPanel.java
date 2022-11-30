@@ -68,11 +68,6 @@ public class BurndownChartPanel extends Panel {
     }
 
     @Override
-    protected void startPanel() {
-        //setBackground(new Color (233, 233, 233));
-    }
-
-    @Override
     public Object getAdapter(Class adapter) {
         if (adapter.equals(Chart.class)) {
             return this;
