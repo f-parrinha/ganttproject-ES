@@ -52,5 +52,13 @@ public class GanttTabbedPane extends JTabbedPane {
     Object selectedComp = this.getSelectedComponent();
     return myUserObjectsMap.get(selectedComp);
   }
-
+  /**
+   * Returns a user object with a given component (key)
+   *
+   * @param component key
+   * @return object
+   */
+  public Object getUserObjectAt(Component component){
+    return myUserObjectsMap.get(component);
+  }
 }

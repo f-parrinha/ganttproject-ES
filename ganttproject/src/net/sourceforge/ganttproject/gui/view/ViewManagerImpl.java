@@ -146,6 +146,32 @@ public class ViewManagerImpl implements GPViewManager {
   public void toggleVisible(GPView view) {
     ViewHolder viewHolder = myViews.get(view);
     assert viewHolder != null;
+
+    /**
+     * Stores the number of tabs because it will change in the next line
+     *    if myTabs.getTabCount() is used directly in the
+     *    'if' statement, the app will crash sometimes
+     */
+    int tabsCount = myTabs.getTabCount();
     viewHolder.setVisible(!viewHolder.isVisible());
+
+    if (viewHolder.getMyIndex() != tabsCount) {
+      decreaseIndexes(view);
+    }
   }
+
+  /**
+   * Decreases the indexes of all the tabs/views that are after the removed one
+   *
+   * @param view current selected view
+   */
+  private void decreaseIndexes(GPView view){
+    for (int i = myViews.get(view).getMyIndex() ; i < myTabs.getTabCount() ; i++){
+      Object viewComponent = myTabs.getUserObjectAt(myTabs.getComponentAt(i));
+      ViewHolder viewHolder = myViews.get((GPView) viewComponent);
+
+      viewHolder.decreaseIndex();
+    }
+  }
+
 }

@@ -88,4 +88,23 @@ class ViewHolder implements ChartSelectionListener, GanttLanguage.Listener {
       myTabs.setTitleAt(myIndex, myView.getChart().getName());
     }
   }
+
+  /**
+   * Decreases the current index of the view it is not either
+   *    the ganttchart view nor the resource chart view
+   *
+   * @return index
+   */
+  public int decreaseIndex(){
+    return myIndex > 2 ? myIndex -- : myIndex;
+  }
+
+  /**
+   * Gets the current value of the view's index
+   *
+   * @return index
+   */
+  public int getMyIndex() {
+    return myIndex;
+  }
 }

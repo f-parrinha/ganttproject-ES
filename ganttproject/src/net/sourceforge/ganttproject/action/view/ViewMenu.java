@@ -41,9 +41,6 @@ public class ViewMenu extends JMenu {
 
     List<Chart> charts = PluginManager.getCharts();
 
-    // Debug
-    System.out.println("Imported charts size: " + charts.size());
-
     if (charts.isEmpty()) {
       setEnabled(false);
     }
