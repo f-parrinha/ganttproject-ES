@@ -15,7 +15,7 @@ import java.util.Random;
 
 /**
  * @author Francisco Parrinha
- * @author Martin Magalinchev
+ * @author Martin Magdalinchev
  * @author Bernardo Atalaia
  * @author Carlos Soares
  * @author Pedro Inácio
@@ -37,7 +37,9 @@ public class BurndownChartPanel extends Panel {
 
     public BurndownChartPanel() {
         myPanel = this;
+
         myGraph = new GraphPanel(getData());
+        //myGraph.init(statistics);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class BurndownChartPanel extends Panel {
     }
 
     public void paint(Graphics g) {
+        myGraph.init(statistics);
         setBackground(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;
         //g.setColor(Color.WHITE);

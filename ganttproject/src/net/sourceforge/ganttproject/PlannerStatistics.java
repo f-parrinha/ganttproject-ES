@@ -8,10 +8,7 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import java.sql.SQLOutput;
 import java.time.temporal.ChronoUnit;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,17 +32,11 @@ public class PlannerStatistics {
 
     private TaskManager taskManager;
 
- //   private ArrayList<Task> tasks;
+    private List<Integer> burndownChartData;
 
     public PlannerStatistics(TaskManager taskManager) {
         this.taskManager = taskManager;
-
-//        this.tasks = new ArrayList<Task>();
-//        for(int i = 0; i < taskManager.getTaskCount(); i++) {
-//            tasks.add(taskManager.getTask(i));
-////            System.out.println(tasks.get(i).getName());
-//        }
-
+        this.burndownChartData = new ArrayList<>();
     }
 
     /**
@@ -82,13 +73,23 @@ public class PlannerStatistics {
      * @return estimated time
      */
     public long getTotalEstimatedTime() {
-        Date startDate = taskManager.getProjectStart();
-        Date endDate = taskManager.getProjectEnd();
-
-
-        return getDifferenceDays(startDate, endDate);
+        return this.taskManager.getProjectLength().getLength();
     }
 
+    public int getSumOfTaskDurations() {
+        int totalTime = 0;
+        int count = 0;
+        int index = 0;
+
+        while(count < this.getTotalTasks()) {
+            if(this.taskManager.getTask(index) != null){
+                count++;
+                totalTime += taskManager.getTask(index).getDuration().getLength();
+            }
+            index++;
+        }
+        return totalTime;
+    }
     /**
      * Gets the total amount of completed/finished tasks
      *
@@ -107,9 +108,7 @@ public class PlannerStatistics {
      * @return Progress
      */
     public float getOverallProgress() {
-        if(this.getTotalTasks() != 0)
-            return Math.round(100 * ((float) this.getFinishedTasks() / (float) this.getTotalTasks()));
-        else return 0;
+        return taskManager.getProjectCompletion();
     }
 
 
@@ -159,6 +158,7 @@ public class PlannerStatistics {
      * @return Number of finished tasks
      */
     private int calculateFinishedTasks() {
+        initBurndown();
         int finTasks = 0;
         int count = 0;
         int index = 0;
@@ -168,6 +168,10 @@ public class PlannerStatistics {
                 count++;
                 if (this.taskManager.getTask(index).getCompletionPercentage() == 100) {
                     finTasks++;
+                    int sum = burndownChartData.get(calculateDiffDate(index));
+                    sum += taskManager.getTask(index).getDuration().getLength();
+                    burndownChartData.add(calculateDiffDate(index), sum);
+                    System.out.println(sum);
                 }
             }
             index++;
@@ -175,6 +179,23 @@ public class PlannerStatistics {
         return finTasks;
     }
 
+    private void initBurndown() {
+        for(int i = 0; i < getTotalEstimatedTime(); i++) {
+            burndownChartData.add(i,0);
+        }
+    }
+
+    private int calculateDiffDate(int index) {
+        GanttCalendar dateToConvert = taskManager.getTask(index).getEnd();
+
+        int year = dateToConvert.getYear() - 1900;
+        int month =dateToConvert.getMonth();
+        int day = dateToConvert.getDay();
+
+        Date endDate = new Date(year, month, day);
+
+        return (int) getDifferenceDays(taskManager.getProjectStart(), endDate);
+    }
     /**
      * List of tasks done at certain date
      *
@@ -211,4 +232,5 @@ public class PlannerStatistics {
 //        }
 //        return totalTasksAtDay;
 //    }
+
 }
