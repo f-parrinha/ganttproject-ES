@@ -32,9 +32,6 @@ public interface GPViewManager {
 
   public GPAction getCopyAction();
 
-  //pixa maxima
-  public GPAction getBurndownAction();
-
   public GPAction getCutAction();
 
   public GPAction getPasteAction();

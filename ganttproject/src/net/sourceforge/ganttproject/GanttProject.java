@@ -72,9 +72,9 @@ import net.sourceforge.ganttproject.parser.GPParser;
 import net.sourceforge.ganttproject.parser.ParserFactory;
 import net.sourceforge.ganttproject.plugins.PluginManager;
 import net.sourceforge.ganttproject.print.PrintManager;
-import net.sourceforge.ganttproject.resource.HumanResourceManager;
-import net.sourceforge.ganttproject.resource.ResourceEvent;
-import net.sourceforge.ganttproject.resource.ResourceView;
+import net.sourceforge.ganttproject.task.resource.HumanResourceManager;
+import net.sourceforge.ganttproject.task.resource.ResourceEvent;
+import net.sourceforge.ganttproject.task.resource.ResourceView;
 import net.sourceforge.ganttproject.roles.RoleManager;
 import net.sourceforge.ganttproject.task.CustomColumnsStorage;
 import net.sourceforge.ganttproject.task.TaskContainmentHierarchyFacade;
@@ -685,10 +685,7 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
         .addButton(new TestGanttRolloverButton(getPasteAction().asToolbarAction()))
         .addWhitespace()
         .addButton(new TestGanttRolloverButton(myEditMenu.getUndoAction().asToolbarAction()))
-        .addButton(new TestGanttRolloverButton(myEditMenu.getRedoAction().asToolbarAction()))
-        //pixa maxima
-        .addWhitespace()
-        .addButton(new TestGanttRolloverButton(getBurndownAction().asToolbarAction()));
+        .addButton(new TestGanttRolloverButton(myEditMenu.getRedoAction().asToolbarAction()));
 
     JTextField searchBox = getSearchUi().getSearchField();
     //searchBox.setMaximumSize(new Dimension(searchBox.getPreferredSize().width, buttons.get(0).getPreferredSize().height));
@@ -932,11 +929,6 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
 
   public GPAction getCopyAction() {
     return getViewManager().getCopyAction();
-  }
-
-  //pixa maxima
-  public GPAction getBurndownAction(){
-    return getViewManager().getBurndownAction();
   }
 
   public GPAction getCutAction() {

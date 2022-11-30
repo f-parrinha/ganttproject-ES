@@ -50,8 +50,7 @@ public class ViewManagerImpl implements GPViewManager {
   private final CopyAction myCopyAction;
   private final CutAction myCutAction;
   private final PasteAction myPasteAction;
-  //pixa maxima
-  private final ShowBurndownAction myBurndownAction;
+
 
   public ViewManagerImpl(IGanttProject project, UIFacade uiFacade, GanttTabbedPane tabs, GPUndoManager undoManager) {
     myTabs = tabs;
@@ -60,8 +59,6 @@ public class ViewManagerImpl implements GPViewManager {
     myCopyAction = new CopyAction(this);
     myCutAction = new CutAction(this, undoManager);
     myPasteAction = new PasteAction(project, uiFacade, this, undoManager);
-    //pixa maxima
-    myBurndownAction = new ShowBurndownAction(uiFacade);
 
     myTabs.addChangeListener(new ChangeListener() {
 
@@ -87,10 +84,7 @@ public class ViewManagerImpl implements GPViewManager {
   public GPAction getCopyAction() {
     return myCopyAction;
   }
-  //pixa maxima
-  public GPAction getBurndownAction() {
-    return myBurndownAction;
-  }
+
   @Override
   public GPAction getCutAction() {
     return myCutAction;
