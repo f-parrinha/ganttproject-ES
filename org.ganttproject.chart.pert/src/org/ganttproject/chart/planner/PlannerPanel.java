@@ -142,7 +142,6 @@ public class PlannerPanel extends Panel {
    * @param y Offset Y
    */
   private void setOffset(int x, int y) {
-
     offsetX = x;
     offsetY = y;
   }
@@ -214,31 +213,35 @@ public class PlannerPanel extends Panel {
 
     g.setColor(Color.WHITE);
     g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
-    int spacing = rectHeight/7;
-    resizeX(150);
-    //drawGraphLine(g, resizeX(150), spacing, 1, 100, Color.RED);
+    int spacing = rectHeight/5;
 
     // Finished tasks
-    double finishedTaskPercentage = statistics.getTotalTasks() > 0 ? statistics.getFinishedTasks()/statistics.getTotalTasks() : 0;
+    double finishedTaskPercentage = statistics.getTotalTasks() > 0 ? (double) statistics.getFinishedTasks()/statistics.getTotalTasks() : 0;
     drawGraphLine(g, resizeX(150), spacing, finishedTaskPercentage,statistics.getTotalTasks(), Color.RED);
+    g.setColor(Color.DARK_GRAY);
+    g.drawString("Finished tasks", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
 
     // Current spent time
-    double spentTimePercentage = statistics.getCurrentSpentTime() > 0 ? statistics.getCurrentSpentTime()/statistics.getTotalEstimatedTime() : 0;
+    double spentTimePercentage = statistics.getCurrentSpentTime() > 0 ? (double) statistics.getCurrentSpentTime()/statistics.getTotalEstimatedTime() : 0;
     drawGraphLine(g, 0, spacing, spentTimePercentage, (int) statistics.getTotalEstimatedTime(), Color.RED);
+    g.setColor(Color.DARK_GRAY);
+    g.drawString("Spent Time", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
 
     // Overall progress
     drawGraphLine(g, 0, spacing, statistics.getOverallProgress()/100, 100, Color.GREEN);
+    g.setColor(Color.DARK_GRAY);
+    g.drawString("Overall Progress", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
   }
 
   /**
    * Draws one line in the bar graph
    *
-   * @param g - Graphics swing object
-   * @param oX - offset in the x axis
-   * @param oY - offset in the y axis
-   * @param p - current percentage
-   * @param max - maximum value in the bar graph
-   * @param c - color of the line
+   * @param g Graphics swing object
+   * @param oX offset in the x axis
+   * @param oY offset in the y axis
+   * @param p current percentage
+   * @param max maximum value in the bar graph
+   * @param c color of the line
    */
   private void drawGraphLine(Graphics g, int oX, int oY, double p, int max, Color c) {
     setOffset(offsetX + oX, offsetY + oY);
