@@ -196,6 +196,11 @@ public class PlannerStatistics {
 
         return (int) getDifferenceDays(taskManager.getProjectStart(), endDate);
     }
+
+    public List<Integer> getBurndownInfo() {
+        initBurndown();
+        return burndownChartData;
+    }
     /**
      * List of tasks done at certain date
      *

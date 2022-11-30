@@ -34,19 +34,17 @@ public class GraphPanel extends JPanel {
 
     private int estimatedTime;
     private int tasksTotalDuration;
-    private List<Double> orderedScores;
+    private ArrayList<Integer> finishedTaskInfo;
     private PlannerStatistics statistics;
 
-    public GraphPanel(List<Double> scores) {
-        this.scores = scores;
-        this.orderedScores = new LinkedList<>();
-        orderedScores.addAll(scores);
-        Collections.sort(orderedScores);
-        Collections.reverse(orderedScores);
+
+    public GraphPanel() {
+
     }
 
     public void init(PlannerStatistics statistics) {
         this.statistics = statistics;
+        this.finishedTaskInfo = (ArrayList<Integer>) statistics.getBurndownInfo();
     }
     private int initX() {
         return (int)statistics.getTotalEstimatedTime();
@@ -65,42 +63,6 @@ public class GraphPanel extends JPanel {
         g2.setStroke(GRAPH_STROKE);
         g2.drawLine((int)(0 * xScale + padding + labelPadding), (int)((maxScore - tasksTotalDuration) * yScale + padding) , (int)((estimatedTime - 1) * xScale + padding + labelPadding), (int) ((maxScore - 0) * yScale +  padding));
     }
-//    private void drawIdealFlowLine(Graphics2D g2 , double xScale, double yScale, double maxScore){
-//
-//        List<Point> graphPoints = new ArrayList<>();
-//        for (int i = 0; i < orderedScores.size(); i++) {
-//            int x1 = (int) (i * xScale + padding + labelPadding);
-//            int y1 = (int) ((maxScore - orderedScores.get(i)) * yScale + padding);
-//            graphPoints.add(new Point(x1, y1));
-//        }
-//
-////        Stroke oldStroke = g2.getStroke();
-////        g2.setColor(IdealLineColor);
-////        g2.setStroke(GRAPH_STROKE);
-////        for (int i = 0; i < graphPoints.size() - 1; i++) {
-////            int x1 = graphPoints.get(i).x;
-////            int y1 = graphPoints.get(i).y;
-////            int x2 = graphPoints.get(i + 1).x;
-////            int y2 = graphPoints.get(i + 1).y;
-////            g2.drawLine(x1, y1, x2, y2);
-////        }
-//
-//        Stroke oldStroke = g2.getStroke();
-//        g2.setColor(IdealLineColor);
-//        g2.setStroke(GRAPH_STROKE);
-//        g2.drawLine(graphPoints.get(0).x,graphPoints.get(0).y, graphPoints.get(graphPoints.size()-1).x,graphPoints.get(graphPoints.size()-1).y);
-//
-//
-////        g2.setStroke(oldStroke);
-////        g2.setColor(pointColor);
-////        for (int i = 0; i < graphPoints.size(); i++) {
-////            int x = graphPoints.get(i).x - pointWidth / 2;
-////            int y = graphPoints.get(i).y - pointWidth / 2;
-////            int ovalW = pointWidth;
-////            int ovalH = pointWidth;
-////            g2.fillOval(x, y, ovalW, ovalH);
-////        }
-//    }
 
     private void drawGraphInfo(Graphics2D g2){
         // draw white background in side right panel
@@ -140,12 +102,7 @@ public class GraphPanel extends JPanel {
         double xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (estimatedTime - 1);
         double yScale = ((double) heigth - (2 * padding) - labelPadding) / (maxScore - minScore);
 
-//        List<Point> graphPoints = new ArrayList<>();
-//        for (int i = 0; i < estimatedTime; i++) {
-//            int x1 = (int) (i * xScale + padding + labelPadding);
-//            int y1 = (int) ((maxScore - scores.get(i)) * yScale + padding);
-//            graphPoints.add(new Point(x1, y1));
-//        }
+
 
         // draw white background
         g2.setColor(Color.WHITE);
@@ -193,29 +150,38 @@ public class GraphPanel extends JPanel {
         // create x and y axes
         g2.drawLine(padding + labelPadding, heigth - padding - labelPadding, padding + labelPadding, padding);
         g2.drawLine(padding + labelPadding, heigth - padding - labelPadding, getGraphWidth() - padding, heigth - padding - labelPadding);
+        if( this.estimatedTime > 0){
+            List<Point> graphPoints = new ArrayList<>();
+            for (int i = 0; i < estimatedTime; i++) {
+                int x1 = (int) (i * xScale + padding + labelPadding);
+                int y1 = (int) ((maxScore - scores.get(i)) * yScale + padding);
+                graphPoints.add(new Point(x1, y1));
+            }
 
-//        Stroke oldStroke = g2.getStroke();
-//        g2.setColor(actualLineColor);
-//        g2.setStroke(GRAPH_STROKE);
-//        for (int i = 0; i < graphPoints.size() - 1; i++) {
-//            int x1 = graphPoints.get(i).x;
-//            int y1 = graphPoints.get(i).y;
-//            int x2 = graphPoints.get(i + 1).x;
-//            int y2 = graphPoints.get(i + 1).y;
-//            g2.drawLine(x1, y1, x2, y2);
-//        }
+            Stroke oldStroke = g2.getStroke();
+            g2.setColor(actualLineColor);
+            g2.setStroke(GRAPH_STROKE);
+            for (int i = 0; i < graphPoints.size() - 1; i++) {
+                int x1 = graphPoints.get(i).x;
+                int y1 = graphPoints.get(i).y;
+                int x2 = graphPoints.get(i + 1).x;
+                int y2 = graphPoints.get(i + 1).y;
+                g2.drawLine(x1, y1, x2, y2);
+            }
 
-//        g2.setStroke(oldStroke);
-//        g2.setColor(pointColor);
-//        for (int i = 0; i < graphPoints.size(); i++) {
-//            int x = graphPoints.get(i).x - pointWidth / 2;
-//            int y = graphPoints.get(i).y - pointWidth / 2;
-//            int ovalW = pointWidth;
-//            int ovalH = pointWidth;
-//            g2.fillOval(x, y, ovalW, ovalH);
-//        }
+            g2.setStroke(oldStroke);
+            g2.setColor(pointColor);
+            for (int i = 0; i < graphPoints.size(); i++) {
+                int x = graphPoints.get(i).x - pointWidth / 2;
+                int y = graphPoints.get(i).y - pointWidth / 2;
+                int ovalW = pointWidth;
+                int ovalH = pointWidth;
+                g2.fillOval(x, y, ovalW, ovalH);
+            }
+        }
+
           drawIdealFlowLine(g2, xScale, yScale, maxScore);
-//        drawGraphInfo(g2);
+          drawGraphInfo(g2);
     }
 
     private double getMinScore() {
