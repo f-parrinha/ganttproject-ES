@@ -1,6 +1,6 @@
 package org.ganttproject.chart.burndownchart;
 
-import net.sourceforge.ganttproject.PlannerStatistics;
+import org.ganttproject.chart.GanttStatistics;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,14 +44,14 @@ public class GraphPanel extends JPanel {
     private double xScale;
     private double yScale;
     private List<Integer> finishedTasksInfo;
-    private PlannerStatistics statistics;
+    private GanttStatistics statistics;
 
 
     public GraphPanel() {
         finishedTasksInfo = new ArrayList<>();
     }
 
-    public void init(PlannerStatistics statistics) {
+    public void init(GanttStatistics statistics) {
         this.statistics = statistics;
         this.finishedTasksInfo = statistics.getBurndownInfo();
         this.tasksTotalDuration = initY();

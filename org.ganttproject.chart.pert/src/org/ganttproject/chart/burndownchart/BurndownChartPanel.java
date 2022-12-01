@@ -3,7 +3,7 @@ package org.ganttproject.chart.burndownchart;
 import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.language.GanttLanguage;
-import org.ganttproject.chart.planner.Panel;
+import org.ganttproject.chart.Panel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,7 +46,7 @@ public class BurndownChartPanel extends Panel {
     }
 
     public void paint(Graphics g) {
-        myGraph.init(statistics);
+        myGraph.init(myGanttStatistics);
         setBackground(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;
         super.paint(g);

@@ -1,12 +1,7 @@
-package net.sourceforge.ganttproject;
+package org.ganttproject.chart;
 
 import biz.ganttproject.core.time.GanttCalendar;
-import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-
-import java.sql.SQLOutput;
-import java.time.temporal.ChronoUnit;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -17,18 +12,16 @@ import java.util.concurrent.TimeUnit;
  * @author Bernardo Atalaia
  * @author Carlos Soares
  * @author Pedro Inácio
- * <p>
- * TODO:
- *      1. Add event listeners to capture the right statistics
- *          - Maybe make observer class (?)
+ *
+ *
  */
-public class PlannerStatistics {
+public class GanttStatistics {
 
     private static final Date date = new Date();
     private TaskManager taskManager;
     private List<Integer> burndownChartData;
 
-    public PlannerStatistics(TaskManager taskManager) {
+    public GanttStatistics(TaskManager taskManager) {
         this.taskManager = taskManager;
         this.burndownChartData = new ArrayList<>();
     }
@@ -83,6 +76,7 @@ public class PlannerStatistics {
         }
         return totalTime;
     }
+
     /**
      * Gets the total amount of completed/finished tasks
      *
@@ -94,7 +88,7 @@ public class PlannerStatistics {
 
     /**
      * Overall progress is measured in percentage
-     * <p>
+     *
      * NOTE: After this class is tested, check if taskManager.getProjectionCompletion
      * does the same.
      *
