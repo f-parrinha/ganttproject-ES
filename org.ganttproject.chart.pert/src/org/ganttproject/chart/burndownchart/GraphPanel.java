@@ -16,12 +16,21 @@ import java.util.*;
  * @author Pedro Inácio
  */
 public class GraphPanel extends JPanel {
+    protected enum COLOR {
+        ACTUAL_LINE(new Color(44, 102, 230, 180)),
+        IDEAL_LINE_COLOR(new Color(230, 10, 44, 180)),
+        POINT_COLOR(new Color(100, 100, 100, 180)),
+        GRID_COLOR(new Color(200, 200, 200, 200));
 
-    private static final Color ACTUAL_LINE_COLOR = new Color(44, 102, 230, 180);
-    private static final Color IDEAL_LINE_COLOR = new Color(230, 10, 44, 180);
-    private static final Color POINT_COLOR = new Color(100, 100, 100, 180);
-    private static final Color GRID_COLOR = new Color(200, 200, 200, 200);
+        private final Color color;
+
+        COLOR(Color color){
+            this.color = color;
+        }
+    }
+
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
+
     private int width = 1600;
     private int heigth = 800;
     private int padding = 45;
@@ -93,7 +102,7 @@ public class GraphPanel extends JPanel {
 
     private void drawActualFlowLine(Graphics2D g2, List<Point> graphPoints){
         Stroke oldStroke = g2.getStroke();
-        g2.setColor(ACTUAL_LINE_COLOR);
+        g2.setColor(COLOR.ACTUAL_LINE.color);
         g2.setStroke(GRAPH_STROKE);
         System.out.println("SIZE "+graphPoints.size());
         for (int i = 0; i < graphPoints.size() - 1; i++) {
@@ -105,7 +114,7 @@ public class GraphPanel extends JPanel {
         }
 
         g2.setStroke(oldStroke);
-        g2.setColor(POINT_COLOR);
+        g2.setColor(COLOR.POINT_COLOR.color);
         for (int i = 0; i < graphPoints.size(); i++) {
             int x = graphPoints.get(i).x - pointWidth / 2;
             int y = graphPoints.get(i).y - pointWidth / 2;
@@ -149,7 +158,7 @@ public class GraphPanel extends JPanel {
     }
 
     private void draw_X_Grid(Graphics2D g2, Point p0, Point p1){
-        g2.setColor(GRID_COLOR);
+        g2.setColor(COLOR.GRID_COLOR.color);
         g2.drawLine(p0.x, 800 - padding - labelPadding - 1 - pointWidth, p1.x, padding);
     }
 
@@ -176,7 +185,7 @@ public class GraphPanel extends JPanel {
     }
 
     private void draw_Y_Grid(Graphics2D g2, Point p0, Point p1){
-        g2.setColor(GRID_COLOR);
+        g2.setColor(COLOR.GRID_COLOR.color);
         g2.drawLine(padding + labelPadding + 1 + pointWidth, p0.y, getGraphWidth() - padding, p1.y);
     }
 
@@ -189,7 +198,7 @@ public class GraphPanel extends JPanel {
     }
 
     private void drawIdealFlowLine(Graphics2D g2) {
-        g2.setColor(IDEAL_LINE_COLOR);
+        g2.setColor(COLOR.IDEAL_LINE_COLOR.color);
         g2.setStroke(GRAPH_STROKE);
         g2.drawLine((padding + labelPadding), (int)((maxScore - tasksTotalDuration) * yScale + padding) , (int)(estimatedTime * xScale + padding + labelPadding), (int) (maxScore * yScale + padding));
     }
@@ -200,9 +209,9 @@ public class GraphPanel extends JPanel {
         g2.setColor(Color.WHITE);
         g2.fillRect(getGraphWidth(), infoRectYOrigin, 225, heigth * 1/4);
         g2.setStroke(new BasicStroke(5f));
-        g2.setColor(ACTUAL_LINE_COLOR);
+        g2.setColor(COLOR.ACTUAL_LINE.color);
         g2.drawLine(getGraphWidth() + padding, infoRectYOrigin + padding, getGraphWidth() + 225 - padding, infoRectYOrigin + padding);
-        g2.setColor(IDEAL_LINE_COLOR);
+        g2.setColor(COLOR.IDEAL_LINE_COLOR.color);
         g2.drawLine(getGraphWidth() + padding, infoRectYOrigin +  (heigth * 1/4) - padding - labelPadding, getGraphWidth() + 225 - padding, infoRectYOrigin +  (heigth * 1/4) - padding - labelPadding);
         g2.setColor(Color.BLACK);
         g2.drawString("Actual Tasks Remaining", getGraphWidth() + padding, infoRectYOrigin + padding + labelPadding);

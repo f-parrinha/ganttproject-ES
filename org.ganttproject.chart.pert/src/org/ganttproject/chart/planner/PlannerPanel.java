@@ -46,10 +46,6 @@ public class PlannerPanel extends Panel {
 
   private final JPanel myPanel;
 
-  private final String fontStyle;
-
-  private final Dimension maxSize;
-
   private int rectWidth;
 
   private int rectHeight;
@@ -58,14 +54,10 @@ public class PlannerPanel extends Panel {
 
   private int offsetY;
 
-  private int fontSize;
-
   private Image logo;
 
   public PlannerPanel() throws IOException {
-    maxSize = Toolkit. getDefaultToolkit(). getScreenSize();
     myPanel = this;
-    fontStyle = "Helvetica";
 
     setBackground(new Color(233, 233, 233));
     loadImageFromDir("/icons/big.png");
@@ -120,7 +112,7 @@ public class PlannerPanel extends Panel {
 
     paintLogo(g, logo);
     setOffset(50, 50);
-    updateFontSize(25);
+    updateFontSize(25, myPanel);
 
     paintStatistics(g);
     paintGraphic(g);
@@ -133,16 +125,16 @@ public class PlannerPanel extends Panel {
    */
   private void paintStatistics(Graphics g) {
     setRect(2.0/6.0, 5.0/6.0);
-    setOffset(resizeX(50), resizeY(50) + rectHeight/6);
+    setOffset(resizeX(50, myPanel), resizeY(50, myPanel) + rectHeight/6);
 
     // Main square
     g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50)*2, rectHeight - resizeY(50)*2, 50, 50);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50, myPanel)*2, rectHeight - resizeY(50, myPanel)*2, 50, 50);
 
     // Statistics
     g.setColor(Color.DARK_GRAY);
     g.setFont(new Font(fontStyle, Font.PLAIN, fontSize));
-    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50),offsetY + rectHeight/7);
+    g.drawString("Total number of tasks: " + statistics.getTotalTasks(), rectWidth/8 + resizeX(50, myPanel),offsetY + rectHeight/7);
     g.drawString("Current time spent: " + statistics.getCurrentSpentTime(), rectWidth/8 + offsetX, offsetY + rectHeight*2/7);
     g.drawString("Total estimated time: " + statistics.getTotalEstimatedTime(), rectWidth/8 + offsetX, offsetY + rectHeight*3/7);
     g.drawString("Total finished tasks: " + statistics.getFinishedTasks(), rectWidth/8 + offsetX, offsetY + rectHeight*4/7);
@@ -156,16 +148,16 @@ public class PlannerPanel extends Panel {
    */
   private void paintGraphic(Graphics g) {
     int spacing = rectHeight/5;
-    setOffset(rectWidth + resizeX(50)*2, resizeY(50)+ rectHeight/6);
+    setOffset(rectWidth + resizeX(50, myPanel)*2, resizeY(50, myPanel)+ rectHeight/6);
     setRect(3.5/6.0, 5.0/6.0);
 
     // Main square
     g.setColor(Color.WHITE);
-    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50), rectHeight - resizeY(50)*2, 50, 50);
+    g.fillRoundRect(offsetX,offsetY, rectWidth - resizeX(50, myPanel), rectHeight - resizeY(50, myPanel)*2, 50, 50);
 
     // Finished tasks
     double finishedTaskPercentage = statistics.getTotalTasks() > 0 ? (double) statistics.getFinishedTasks()/statistics.getTotalTasks() : 0;
-    drawGraphLine(g, resizeX(150), spacing, finishedTaskPercentage,statistics.getTotalTasks(), Color.RED);
+    drawGraphLine(g, resizeX(150, myPanel), spacing, finishedTaskPercentage,statistics.getTotalTasks(), Color.RED);
     g.setColor(Color.DARK_GRAY);
     g.drawString("Finished tasks", offsetX + rectWidth/7,offsetY - 10 + rectHeight/7);
 
@@ -218,26 +210,6 @@ public class PlannerPanel extends Panel {
   }
 
   /**
-   * Scales the given x value to match the current panel's and screen's width
-   *
-   * @param i x value
-   * @return scaled x value
-   */
-  private int resizeX(int i) {
-    return i*myPanel.getWidth()/maxSize.width;
-  }
-
-  /**
-   * Scales the given y value to match the current panel's and screen's width
-   *
-   * @param i y value
-   * @return scaled y value
-   */
-  private int resizeY(int i) {
-    return i*myPanel.getHeight()/maxSize.height;
-  }
-
-  /**
    * Draws one line in the bar graph
    *
    * @param g Graphics swing object
@@ -252,8 +224,8 @@ public class PlannerPanel extends Panel {
     setRect(0.4, 0.021);
     g.setColor(Color.LIGHT_GRAY);
     g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
-    g.drawString("0", offsetX - resizeX(15), offsetY + rectHeight + resizeY(30));
-    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resizeY(30));
+    g.drawString("0", offsetX - resizeX(15, myPanel), offsetY + rectHeight + resizeY(30, myPanel));
+    g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resizeY(30, myPanel));
     setRect(0.4 * p, 0.02);
     g.setColor(c);
     g.fillRoundRect(offsetX, offsetY, rectWidth, rectHeight, 5, 5);
@@ -268,14 +240,5 @@ public class PlannerPanel extends Panel {
   private void loadImageFromDir(String directory) throws IOException {
     URL url = PlannerPanel.class.getResource(directory);
     logo = ImageIO.read(url);
-  }
-
-  /**
-   * Updates the font size, regarding panel's and screen's width
-   *
-   * @param size font size
-   */
-  private void updateFontSize(int size){
-    fontSize = size*myPanel.getWidth()/maxSize.width;
   }
 }
