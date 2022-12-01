@@ -22,12 +22,13 @@ public class GraphPanel extends JPanel {
     private static final Color POINT_COLOR = new Color(100, 100, 100, 180);
     private static final Color GRID_COLOR = new Color(200, 200, 200, 200);
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
-    private int width = 1600;
-    private int heigth = 800;
-    private int padding = 45;
-    private int labelPadding = 25;
-    private int pointWidth = 4;
-    private int numberYDivisions = 15;
+    private int width;
+    private int heigth;
+    private int graphInfOffSet;
+    private int padding;
+    private int labelPadding;
+    private int pointWidth;
+    private int numberYDivisions;
     private int estimatedTime;
     private int tasksTotalDuration;
     private int maxScore;
@@ -35,11 +36,20 @@ public class GraphPanel extends JPanel {
     private double xScale;
     private double yScale;
     private List<Integer> finishedTasksInfo;
+    private List<Point> graphPoints;
     private PlannerStatistics statistics;
 
 
     public GraphPanel() {
-        finishedTasksInfo = new ArrayList<>();
+        this.finishedTasksInfo = new ArrayList<>();
+        this.minScore = 0;
+        this.width = 1600;
+        this.heigth = 800;
+        this.graphInfOffSet = 250;
+        this.padding = 45;
+        this.labelPadding = 25;
+        this.pointWidth = 4;
+        this.numberYDivisions = 15;
     }
 
     public void init(PlannerStatistics statistics) {
@@ -48,9 +58,9 @@ public class GraphPanel extends JPanel {
         this.tasksTotalDuration = initY();
         this.estimatedTime = initX();
         this.maxScore = getMaxScore();
-        this.minScore = 0;
         this.xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (this.estimatedTime);
         this.yScale = ((double) heigth - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
+        this.graphPoints = buildAllPoints();
     }
     private int initX() {
         return (int) statistics.getTotalEstimatedTime();
@@ -61,7 +71,7 @@ public class GraphPanel extends JPanel {
     }
 
     private int getGraphWidth(){
-        return width - 250;
+        return width - graphInfOffSet;
     }
 
     @Override
@@ -84,7 +94,6 @@ public class GraphPanel extends JPanel {
             draw_X_Marks(g2);
             draw_Y_Marks(g2);
             drawIdealFlowLine(g2);
-            List<Point> graphPoints = buildAllPoints();
             if (graphPoints.size() > 1)
                 drawActualFlowLine(g2, graphPoints);
         }
@@ -113,24 +122,6 @@ public class GraphPanel extends JPanel {
             int ovalH = pointWidth;
             g2.fillOval(x, y, ovalW, ovalH);
         }
-    }
-    // tirar do draw
-    private List<Point> buildAllPoints(){
-
-        List<Point> graphPoints = new ArrayList<>();
-
-        int originX = (padding + labelPadding);
-        int originY = (int) ((maxScore - tasksTotalDuration) * yScale + padding);
-        graphPoints.add(new Point(originX, originY));
-
-        for (int i = 0; i < finishedTasksInfo.size(); i++) {
-            if (finishedTasksInfo.get(i) > 0){
-                int x1 = (int) (i * xScale + padding + labelPadding);
-                int y1 = (int) ((maxScore - tasksTotalDuration + finishedTasksInfo.get(i)) * yScale + padding);
-                if (graphPoints.add(new Point(x1, y1))) System.out.println("INSERT ITER "+ i + "POINT: X -> " + (int) (i * xScale + padding + labelPadding) + "POINT: Y -> " + (int) ((maxScore - tasksTotalDuration + finishedTasksInfo.get(i)) * yScale + padding));
-            }
-        }
-        return graphPoints;
     }
 
     // create hatch marks, grid lines and identifiers for X axis.
@@ -222,5 +213,32 @@ public class GraphPanel extends JPanel {
        } else {
            return (15 - (tasksTotalDuration % 15)) + tasksTotalDuration;
        }
+    }
+
+    private List<Point> buildAllPoints(){
+
+        this.graphPoints = new ArrayList<>();
+
+        int originX = (padding + labelPadding);
+        int originY = (int) ((maxScore - tasksTotalDuration) * yScale + padding);
+
+        Point pointReference = new Point(originX, originY);
+
+        graphPoints.add(pointReference);
+
+        int yReference = 0;
+
+        for (int i = 0; i < finishedTasksInfo.size(); i++) {
+
+            if (finishedTasksInfo.get(i) > 0){
+                int x1 = (int) (i * xScale + padding + labelPadding);
+                int y1 = (int) ((maxScore - tasksTotalDuration + yReference + finishedTasksInfo.get(i)) * yScale + padding);
+                Point p = new Point(x1, y1);
+                graphPoints.add(p);
+                yReference += finishedTasksInfo.get(i);
+                System.out.println("yReference" + yReference);
+            }
+        }
+        return graphPoints;
     }
 }

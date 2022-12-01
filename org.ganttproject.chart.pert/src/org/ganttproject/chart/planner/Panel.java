@@ -105,7 +105,7 @@ public abstract class Panel extends JPanel implements Chart {
   /** Unused method */
   @Override
   public void reset(){
-
+    System.out.println("RESET");
   }
 
   /** This method is not supported by this chart */
