@@ -37,9 +37,7 @@ public class BurndownChartPanel extends Panel {
 
     public BurndownChartPanel() {
         myPanel = this;
-
         myGraph = new GraphPanel();
-        //myGraph.init(statistics);
     }
 
     @Override
@@ -55,7 +53,6 @@ public class BurndownChartPanel extends Panel {
         myGraph.init(statistics);
         setBackground(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;
-        //g.setColor(Color.WHITE);
         super.paint(g);
         myGraph.paintComponent(g2);
     }
@@ -102,8 +99,5 @@ public class BurndownChartPanel extends Panel {
         return myMaxY;
     }
 
-    private ArrayList<Integer> getData(){
-        return (ArrayList<Integer>) statistics.getBurndownInfo();
-    }
 }
 
