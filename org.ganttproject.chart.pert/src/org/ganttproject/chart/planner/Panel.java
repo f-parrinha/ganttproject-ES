@@ -55,7 +55,14 @@ import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 public abstract class Panel extends JPanel implements Chart {
 
   protected PlannerStatistics statistics;
+
   protected TaskManager task;
+
+  protected Dimension screenSize;
+
+  protected static final String fontStyle = "Helvetica";
+
+  protected int fontSize;
 
   /**
    * Initializes panel when the plugin is loaded
@@ -68,6 +75,7 @@ public abstract class Panel extends JPanel implements Chart {
   public void init(IGanttProject project, IntegerOption dpiOption, FontOption chartFontOption) {
     task = project.getTaskManager();
     statistics = new PlannerStatistics(task);
+    screenSize = Toolkit. getDefaultToolkit(). getScreenSize();
   }
 
   /**
@@ -77,6 +85,35 @@ public abstract class Panel extends JPanel implements Chart {
    */
   @Override
   public abstract String getName();
+
+  /**
+   * Scales the given x value to match the current panel's and screen's width
+   *
+   * @param i x value
+   * @return scaled x value
+   */
+  protected int resizeX(int i, JPanel myPanel) {
+    return i*myPanel.getWidth()/screenSize.width;
+  }
+
+  /**
+   * Scales the given y value to match the current panel's and screen's width
+   *
+   * @param i y value
+   * @return scaled y value
+   */
+  protected int resizeY(int i,  JPanel myPanel) {
+    return i*myPanel.getHeight()/screenSize.height;
+  }
+
+  /**
+   * Updates the font size, regarding panel's and screen's width
+   *
+   * @param size font size
+   */
+  protected void updateFontSize(int size, JPanel myPanel){
+    fontSize = size*myPanel.getWidth()/screenSize.width;
+  }
 
   /** Unused method */
   @Override
