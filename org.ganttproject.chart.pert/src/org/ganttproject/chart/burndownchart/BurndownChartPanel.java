@@ -25,14 +25,10 @@ import java.util.Random;
 
 public class BurndownChartPanel extends Panel {
 
-    /** TODO: Useful for exportation */
-    private int myMaxX = 1;
-    private int myMaxY = 1;
-
     private final static GanttLanguage language = GanttLanguage.getInstance();
 
-    /** Cannot remove this. WHY? */
     private final JPanel myPanel;
+
     private final GraphPanel myGraph;
 
     public BurndownChartPanel() {
@@ -42,9 +38,9 @@ public class BurndownChartPanel extends Panel {
 
     @Override
     public RenderedImage getRenderedImage(GanttExportSettings settings) {
-        BufferedImage image = new BufferedImage(1600, 800, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(myPanel.getWidth(), myPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
-        g.fillRect(0, 0, 1600, 800);
+        g.fillRect(0, 0, myPanel.getWidth(), myPanel.getHeight());
         paint(g);
         return image;
     }
@@ -78,21 +74,5 @@ public class BurndownChartPanel extends Panel {
         }
         return null;
     }
-
-    /**
-     * Max and min coordinates in the graphics that paints the graphical nodes and
-     * arrows.
-     */
-    private int getMaxX() {
-        return myMaxX;
-    }
-
-    /**
-     * TODO: Still have to figure this one out. Useful in exporation
-     */
-    private int getMaxY() {
-        return myMaxY;
-    }
-
 }
 
