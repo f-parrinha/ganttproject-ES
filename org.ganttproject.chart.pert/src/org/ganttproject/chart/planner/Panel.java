@@ -55,7 +55,7 @@ import static net.sourceforge.ganttproject.gui.UIFacade.DEFAULT_DPI;
 public abstract class Panel extends JPanel implements Chart {
 
   protected PlannerStatistics statistics;
-  TaskManager task;
+  protected TaskManager task;
 
   /**
    * Initializes panel when the plugin is loaded
@@ -66,9 +66,7 @@ public abstract class Panel extends JPanel implements Chart {
    */
   @Override
   public void init(IGanttProject project, IntegerOption dpiOption, FontOption chartFontOption) {
-
     task = project.getTaskManager();
-
     statistics = new PlannerStatistics(task);
   }
 
@@ -79,11 +77,6 @@ public abstract class Panel extends JPanel implements Chart {
    */
   @Override
   public abstract String getName();
-
-  /**
-   * Starts the panel. Assigns variables and start paint() to paint the content
-   */
-  protected abstract void startPanel();
 
   /** Unused method */
   @Override
@@ -107,6 +100,12 @@ public abstract class Panel extends JPanel implements Chart {
   @Override
   public void removeSelectionListener(ChartSelectionListener listener) {
     // No listeners are implemented
+  }
+
+  /** Unused method */
+  @Override
+  public void reset(){
+
   }
 
   /** This method is not supported by this chart */
