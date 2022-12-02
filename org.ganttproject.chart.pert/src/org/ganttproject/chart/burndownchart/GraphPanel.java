@@ -272,7 +272,7 @@ public class GraphPanel extends PanelStyler {
            return (15 - (tasksTotalDuration % 15)) + tasksTotalDuration;
        }
     }
-
+    private Date today;
 
     private List<Point> buildEffortPoints() {
         this.effortPoints = new ArrayList<>();
@@ -287,13 +287,18 @@ public class GraphPanel extends PanelStyler {
         int yReference = 0;
 
         for (int i = 1; i < remainingEffortInfo.size(); i++) {
-
-                int x1 = (int) (i * xScale + padding + labelPadding);
-                int y1 = (int) ((maxScore - tasksTotalDuration + yReference + remainingEffortInfo.get(i-1)) * yScale + padding);
-                Point p = new Point(x1, y1);
-                effortPoints.add(p);
-                yReference += remainingEffortInfo.get(i-1);
-                System.out.println("yReference" + yReference);
+                if (remainingEffortInfo.get(i-1) >= 0) {
+                    int x1 = (int) (i * xScale + padding + labelPadding);
+                    int y1 = (int) ((maxScore - tasksTotalDuration + yReference + remainingEffortInfo.get(i - 1)) * yScale + padding);
+                    Point p = new Point(x1, y1);
+                    effortPoints.add(p);
+                    yReference += remainingEffortInfo.get(i - 1);
+                    //System.out.println("yReference" + yReference);
+                } else {
+                    Point p0 = effortPoints.get(effortPoints.size() - 1);
+                    Point p1 = new Point((int) (i * xScale + padding + labelPadding) + p0.x, p0.y);
+                    effortPoints.add(p1);
+                }
 
         }
 
@@ -322,7 +327,7 @@ public class GraphPanel extends PanelStyler {
                 Point p = new Point(x1, y1);
                 graphPoints.add(p);
                 yReference += finishedTasksInfo.get(i);
-                System.out.println("yReference" + yReference);
+                //System.out.println("yReference" + yReference);
             }
         }
         return graphPoints;

@@ -1,5 +1,7 @@
 package net.sourceforge.ganttproject;
 
+import biz.ganttproject.core.calendar.GPCalendarCalc;
+import biz.ganttproject.core.calendar.WeekendCalendarImpl;
 import biz.ganttproject.core.time.GanttCalendar;
 import net.sourceforge.ganttproject.task.TaskManager;
 
@@ -21,8 +23,9 @@ public class GanttStatistics {
     private TaskManager taskManager;
     private List<Integer> burndownChartData;
     private List<Integer> remainingEffortData;
-
+    private WeekendCalendarImpl calendar;
     public GanttStatistics(TaskManager taskManager) {
+        this.calendar = new WeekendCalendarImpl();
         this.taskManager = taskManager;
     }
 
@@ -170,16 +173,40 @@ public class GanttStatistics {
                 double percentage = this.taskManager.getTask(index).getCompletionPercentage() / 100.0;
                 int duration = (int)(this.taskManager.getTask(index).getLength() * percentage);
                 int dayInProject = calculateRemEffData(index);
-                System.out.println("day in roject: " + dayInProject);
+
                 for(int i = dayInProject; i < duration + dayInProject; i++ ) {
-                    int sum = remainingEffortData.get(i);
-                    sum += 1;
-                    remainingEffortData.remove(i);
-                    remainingEffortData.add(i, sum);
+                    System.out.println(isWeekend(index, i));
+                    System.out.println("duration "+duration);
+                    System.out.println("dayInProject "+dayInProject);
+                    System.out.println("duration + dayInProject "+ duration + dayInProject);
+                    if (!isWeekend(index, i)){
+                        int sum = remainingEffortData.get(i);
+                        sum += 1;
+                        remainingEffortData.remove(i);
+                        remainingEffortData.add(i, sum);
+                    } else {
+                        if (!(remainingEffortData.get(i) < 0)){
+                            remainingEffortData.remove(i);
+                            remainingEffortData.add(i, -1);
+                        }
+
+                    }
+
                 }
             }
             index++;
         }
+    }
+
+    private boolean isWeekend(int taskIndex, int offset) {
+        GanttCalendar dateToConvert = taskManager.getTask(taskIndex).getStart();
+
+        int year = dateToConvert.getYear() - 1900;
+        int month =dateToConvert.getMonth();
+        int day = dateToConvert.getDay() + offset;
+
+        Date today = new Date(year, month, day);
+        return calendar.isWeekend(today);
     }
 
     private int calculateDiffDate(int index) {
