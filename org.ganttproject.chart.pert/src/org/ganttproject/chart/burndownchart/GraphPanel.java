@@ -136,7 +136,7 @@ public class GraphPanel extends PanelStyler {
             int y1 = graphPoints.get(i).y;
             int x2 = graphPoints.get(i + 1).x;
             int y2 = graphPoints.get(i + 1).y;
-            g2.drawLine(x1, y1, x2, y2);
+            g2.drawLine(resizeX(x1, myPanel), resizeY(y1, myPanel), resizeX(x2, myPanel), resizeY(y2, myPanel));
         }
 
         g2.setStroke(oldStroke);
@@ -146,7 +146,7 @@ public class GraphPanel extends PanelStyler {
             int y = graphPoints.get(i).y - pointWidth / 2;
             int ovalW = pointWidth;
             int ovalH = pointWidth;
-            g2.fillOval(x, y, ovalW, ovalH);
+            g2.fillOval(resizeX(x, myPanel), resizeY(y, myPanel), resizeX(ovalW, myPanel), resizeY(ovalH, myPanel));
         }
     }
 
