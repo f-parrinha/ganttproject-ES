@@ -18,7 +18,6 @@ public class RemainingEffortGraph extends PanelStyler {
     private final int padding;
     private final int labelPadding;
     private final int pointWidth;
-
     private GanttStatistics statistics;
     private List<Integer> graphInfo;
     private List<Point> graphPoints;
@@ -28,7 +27,6 @@ public class RemainingEffortGraph extends PanelStyler {
         this.graphInfo = graphInfo;
         this.statistics = statistics;
         this.graphInfo = statistics.getRemEffortInfo();
-
         this.padding = padding;
         this.labelPadding = labelPadding;
         this.pointWidth = pointWidth;

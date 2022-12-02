@@ -66,8 +66,6 @@ public class GraphPanel extends PanelStyler {
 
     public void init(GanttStatistics statistics) {
         this.statistics = statistics;
-        this.finishedTasksInfo = statistics.getBurndownInfo();
-        this.remainingEffortInfo = statistics.getRemEffortInfo();
         this.tasksTotalDuration = initY();
         this.estimatedTime = initX();
         this.maxScore = getMaxScore();
