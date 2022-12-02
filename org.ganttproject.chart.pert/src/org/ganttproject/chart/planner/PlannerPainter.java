@@ -155,6 +155,8 @@ public class PlannerPainter extends PanelStyler {
         }
     }
 
+    private static final int LOGO_SIZE_Y = 10;
+
     private final JPanel myPanel;
 
     private final DrawStatistics myDrawStatistics;
@@ -203,7 +205,7 @@ public class PlannerPainter extends PanelStyler {
      * @param g Graphics swing object
      */
     public void paintLogo(Graphics g) {
-        int sizeY = (int) ((1.0 / 10.0) * myPanel.getHeight());     // Resizes the image
+        int sizeY = (int) ((1.0 / LOGO_SIZE_Y) * myPanel.getHeight());     // Resizes the image
         if(sizeY == 0){
             return;
         }
