@@ -20,6 +20,7 @@ package org.ganttproject.chart;
 
 import biz.ganttproject.core.option.*;
 import net.sourceforge.ganttproject.GanttExportSettings;
+import net.sourceforge.ganttproject.GanttStatistics;
 import net.sourceforge.ganttproject.IGanttProject;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.chart.ChartSelection;

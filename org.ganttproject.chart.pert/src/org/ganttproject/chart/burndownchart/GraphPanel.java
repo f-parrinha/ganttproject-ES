@@ -1,6 +1,7 @@
 package org.ganttproject.chart.burndownchart;
 
-import org.ganttproject.chart.GanttStatistics;
+import net.sourceforge.ganttproject.GanttStatistics;
+import org.ganttproject.chart.PanelStyler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,20 +29,19 @@ public class GraphPanel extends PanelStyler {
             this.color = color;
         }
     }
-
-    private final JPanel myPanel;
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
-    private int width;
-    private int heigth;
-    private int graphInfOffSet;
-    private int padding;
-    private int labelPadding;
-    private int pointWidth;
-    private int numberYDivisions;
+
+    private final int graphInfOffSet;
+    private final int padding;
+    private final int labelPadding;
+    private final int pointWidth;
+    private final int numberYDivisions;
+    private final int minScore;
+    private final JPanel myPanel;
+
     private int estimatedTime;
     private int tasksTotalDuration;
     private int maxScore;
-    private int minScore;
     private double xScale;
     private double yScale;
     private List<Integer> finishedTasksInfo;
@@ -52,8 +52,6 @@ public class GraphPanel extends PanelStyler {
     public GraphPanel(JPanel myPanel) {
         this.finishedTasksInfo = new ArrayList<>();
         this.minScore = 0;
-        this.width = 1600;
-        this.heigth = 800;
         this.graphInfOffSet = 250;
         this.padding = 45;
         this.labelPadding = 25;
@@ -69,7 +67,7 @@ public class GraphPanel extends PanelStyler {
         this.estimatedTime = initX();
         this.maxScore = getMaxScore();
         this.xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (this.estimatedTime);
-        this.yScale = ((double) heigth - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
+        this.yScale = ((double) getScreenSizeY() - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
         this.graphPoints = buildAllPoints();
     }
     private int initX() {
@@ -81,11 +79,11 @@ public class GraphPanel extends PanelStyler {
     }
 
     private int getGraphWidth(){
-        return width - graphInfOffSet;
+        return getScreenSizeX() - graphInfOffSet;
     }
 
     /**
-     * Paints the entire graphic resizing all of its coordinates to match the panel's and screen's width
+     * Paints the entire graphic resizing all of its coordinates to match the panel's and screen's getScreenSizeX()
      *
      * @param g Graphics swing object
      */
@@ -95,15 +93,15 @@ public class GraphPanel extends PanelStyler {
 
         // draw white background
         g2.setColor(Color.WHITE);
-        g2.fillRect(padding + labelPadding, padding, getGraphWidth() - (2 * padding) - labelPadding, heigth - 2 * padding - labelPadding);
+        g2.fillRect(padding + labelPadding, padding, getGraphWidth() - (2 * padding) - labelPadding, getScreenSizeY() - 2 * padding - labelPadding);
 
         // create x and y axes
         g2.setColor(Color.BLACK);
-        g2.drawLine(resizeX(padding + labelPadding, myPanel),   resizeY(heigth - padding - labelPadding, myPanel),
+        g2.drawLine(resizeX(padding + labelPadding, myPanel),   resizeY(getScreenSizeY() - padding - labelPadding, myPanel),
                     resizeX(padding + labelPadding, myPanel),   resizeY(padding, myPanel));
 
-        g2.drawLine(resizeX(padding + labelPadding, myPanel),   resizeY(heigth - padding - labelPadding, myPanel),
-                    resizeX(getGraphWidth() - padding, myPanel),resizeY(heigth - padding - labelPadding, myPanel));
+        g2.drawLine(resizeX(padding + labelPadding, myPanel),   resizeY(getScreenSizeY() - padding - labelPadding, myPanel),
+                    resizeX(getGraphWidth() - padding, myPanel),resizeY(getScreenSizeY() - padding - labelPadding, myPanel));
 
         if (estimatedTime > 0 && tasksTotalDuration > 0){
             // draw ideal burndown line flow, create hatch marks and grid lines for X and Y axis.
@@ -146,8 +144,8 @@ public class GraphPanel extends PanelStyler {
     private void draw_X_Marks(Graphics2D g2){
 
         for (int i = 0; i < estimatedTime+1; i++) {/*+1*/
-            Point p0 = new Point(i * (getGraphWidth() - padding * 2 - labelPadding) / estimatedTime + padding + labelPadding,800 - padding - labelPadding);
-            Point p1 = new Point(i * (getGraphWidth() - padding * 2 - labelPadding) / estimatedTime + padding + labelPadding,800 - padding - labelPadding - pointWidth);
+            Point p0 = new Point(i * (getGraphWidth() - padding * 2 - labelPadding) / estimatedTime + padding + labelPadding,getScreenSizeY() - padding - labelPadding);
+            Point p1 = new Point(i * (getGraphWidth() - padding * 2 - labelPadding) / estimatedTime + padding + labelPadding,getScreenSizeY() - padding - labelPadding - pointWidth);
 
             if (i > 0 && (i % ((int) ((estimatedTime / 20.0)) + 1)) == 0){
                 draw_X_Grid(g2, p0, p1);
@@ -159,7 +157,7 @@ public class GraphPanel extends PanelStyler {
 
     private void draw_X_Grid(Graphics2D g2, Point p0, Point p1){
         g2.setColor(COLOR.GRID_COLOR.color);
-        g2.drawLine(resizeX(p0.x,myPanel), resizeY(800 - padding - labelPadding - 1 - pointWidth, myPanel), resizeX(p1.x, myPanel), resizeY(padding, myPanel));
+        g2.drawLine(resizeX(p0.x,myPanel), resizeY(getScreenSizeY() - padding - labelPadding - 1 - pointWidth, myPanel), resizeX(p1.x, myPanel), resizeY(padding, myPanel));
     }
 
     private void draw_X_Identifiers(Graphics2D g2, int index, Point p0){
@@ -167,13 +165,13 @@ public class GraphPanel extends PanelStyler {
         String xLabel = index + "";
         FontMetrics metrics = g2.getFontMetrics();
         int labelWidth = metrics.stringWidth(xLabel);
-        g2.drawString(xLabel, p0.x - labelWidth / 2, p0.y + metrics.getHeight() + 3);
+        g2.drawString(xLabel, resizeX(p0.x - labelWidth / 2, myPanel), resizeY(p0.y + metrics.getHeight() + 3, myPanel));
     }
 
     // create hatch marks, grid lines and identifiers for Y axis.
     private void draw_Y_Marks(Graphics2D g2){
         for (int i = 0; i < numberYDivisions + 1; i++) {
-            Point p0 = new Point(padding + labelPadding,800 - ((i * (800 - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding));
+            Point p0 = new Point(padding + labelPadding,getScreenSizeY() - ((i * (getScreenSizeY() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding));
             Point p1 = new Point(pointWidth + padding + labelPadding, p0.y);
 
             draw_Y_Grid(g2, p0, p1);
@@ -194,35 +192,42 @@ public class GraphPanel extends PanelStyler {
         String yLabel = (int) ((minScore + (maxScore - minScore) * (index * 1.0 / numberYDivisions)) ) + "";
         FontMetrics metrics = g2.getFontMetrics();
         int labelWidth = metrics.stringWidth(yLabel);
-        g2.drawString(yLabel, p0.x - labelWidth - 5, p0.y + (metrics.getHeight() / 2) - 3);
+        g2.drawString(yLabel, resizeX(p0.x - labelWidth - 5, myPanel), resizeY(p0.y + (metrics.getHeight() / 2) - 3, myPanel));
     }
 
     private void drawIdealFlowLine(Graphics2D g2) {
         g2.setColor(COLOR.IDEAL_LINE_COLOR.color);
         g2.setStroke(GRAPH_STROKE);
-        g2.drawLine((padding + labelPadding), (int)((maxScore - tasksTotalDuration) * yScale + padding) , (int)(estimatedTime * xScale + padding + labelPadding), (int) (maxScore * yScale + padding));
+        g2.drawLine(resizeX(padding + labelPadding, myPanel), resizeY((int)((maxScore - tasksTotalDuration) * yScale + padding), myPanel),
+                resizeX((int)(estimatedTime * xScale + padding + labelPadding), myPanel), resizeY((int) (maxScore * yScale + padding), myPanel));
     }
 
     private void drawGraphInfo(Graphics2D g2){
         // draw white background in side right panel
-        int infoRectYOrigin = ((heigth / 2) - 100 - padding);
+        int infoRectYOrigin = ((getScreenSizeY() / 2) - 100 - padding);
         g2.setColor(Color.WHITE);
-        g2.fillRect(getGraphWidth(), infoRectYOrigin, 225, heigth * 1/4);
+        g2.fillRect(resizeX(getGraphWidth(), myPanel), resizeY(infoRectYOrigin, myPanel), resizeX(225, myPanel), resizeY(getScreenSizeY() * 1/4, myPanel));
         g2.setStroke(new BasicStroke(5f));
         g2.setColor(COLOR.ACTUAL_LINE.color);
-        g2.drawLine(getGraphWidth() + padding, infoRectYOrigin + padding, getGraphWidth() + 225 - padding, infoRectYOrigin + padding);
+        g2.drawLine(resizeX(getGraphWidth() + padding, myPanel),       resizeY(infoRectYOrigin + padding, myPanel),
+                    resizeX(getGraphWidth() + 225 - padding, myPanel), resizeY(infoRectYOrigin + padding, myPanel));
         g2.setColor(COLOR.IDEAL_LINE_COLOR.color);
-        g2.drawLine(getGraphWidth() + padding, infoRectYOrigin +  (heigth * 1/4) - padding - labelPadding, getGraphWidth() + 225 - padding, infoRectYOrigin +  (heigth * 1/4) - padding - labelPadding);
+        g2.drawLine(resizeX(getGraphWidth() + padding, myPanel),       resizeY(infoRectYOrigin +  (getScreenSizeY() * 1/4) - padding - labelPadding, myPanel),
+                    resizeX(getGraphWidth() + 225 - padding, myPanel), resizeY(infoRectYOrigin +  (getScreenSizeY() * 1/4) - padding - labelPadding, myPanel));
         g2.setColor(Color.BLACK);
-        g2.drawString("Actual Tasks Remaining", getGraphWidth() + padding, infoRectYOrigin + padding + labelPadding);
-        g2.drawString(" Ideal Tasks Remaining", getGraphWidth() + padding, infoRectYOrigin +  (heigth * 1/4) - padding);
-        g2.drawString("Iteration Timeline (days)", ((getGraphWidth() + padding)/2) - "Iteration Timeline (days)".toCharArray().length, heigth - padding/2);
+        g2.drawString("Actual Tasks Remaining", resizeX(getGraphWidth() + padding, myPanel),
+                resizeY(infoRectYOrigin + padding + labelPadding, myPanel));
+        g2.drawString(" Ideal Tasks Remaining", resizeX(getGraphWidth() + padding, myPanel),
+                resizeY(infoRectYOrigin +  (getScreenSizeY() * 1/4) - padding, myPanel));
+        g2.drawString("Iteration Timeline (days)", resizeX(((getGraphWidth() + padding)/2) - "Iteration Timeline (days)".toCharArray().length, myPanel),
+                resizeY((getScreenSizeY() - padding/2), myPanel));
 
         // rotates the coordinate by 90 degree counterclockwise
         AffineTransform at = new AffineTransform();
         at.rotate(- Math.PI / 2);
         g2.setTransform(at);
-        g2.drawString("Sum of Task Estimates (days)", -((heigth + padding)/2) - "Sum of Task Estimates (days)".toCharArray().length,  labelPadding);
+        g2.drawString("Sum of Task Estimates (days)", - resizeY(((getScreenSizeY() + padding)/2) - "Sum of Task Estimates (days)".toCharArray().length, myPanel),
+                resizeX(labelPadding, myPanel));
     }
 
     private int getMaxScore() {

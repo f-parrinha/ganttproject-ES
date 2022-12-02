@@ -1,4 +1,4 @@
-package org.ganttproject.chart;
+package net.sourceforge.ganttproject;
 
 import biz.ganttproject.core.time.GanttCalendar;
 import net.sourceforge.ganttproject.task.TaskManager;

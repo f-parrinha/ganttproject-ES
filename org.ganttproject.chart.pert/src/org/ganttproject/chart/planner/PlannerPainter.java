@@ -1,6 +1,7 @@
 package org.ganttproject.chart.planner;
 
-import org.ganttproject.chart.GanttStatistics;
+import net.sourceforge.ganttproject.GanttStatistics;
+import org.ganttproject.chart.PanelStyler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -219,7 +220,7 @@ public class PlannerPainter extends PanelStyler {
      * @param x value on the x axis
      * @param y value on the y axis
      */
-    protected void setRect(double x, double y) {
+    private void setRect(double x, double y) {
         rectWidth = (int) (myPanel.getWidth() * x);
         rectHeight = (int) (myPanel.getHeight() * y);
     }
@@ -230,7 +231,7 @@ public class PlannerPainter extends PanelStyler {
      * @param x Offset X
      * @param y Offset Y
      */
-    protected void setOffset(int x, int y) {
+    private void setOffset(int x, int y) {
         offsetX = x;
         offsetY = y;
     }

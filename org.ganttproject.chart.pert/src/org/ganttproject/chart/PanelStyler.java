@@ -30,6 +30,24 @@ public abstract class PanelStyler {
     }
 
     /**
+     * Gets the current screen width
+     *
+     * @return screen width
+     */
+    protected int getScreenSizeX(){
+        return screenSize.width;
+    }
+
+    /**
+     * Gets the current screen height
+     *
+     * @return screen height
+     */
+    protected int getScreenSizeY(){
+        return screenSize.height;
+    }
+
+    /**
      * Scales the given x coordinate to match the current panel's and screen's width coordinates
      *
      * @param i x value
