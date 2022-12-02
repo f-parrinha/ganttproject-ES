@@ -13,16 +13,18 @@ import java.util.concurrent.TimeUnit;
  * @author Carlos Soares
  * @author Pedro Inácio
  *
- *
+ * GanttStatistics class - Calculates aditional information/statistics about the project
  */
 public class GanttStatistics {
 
     private static final Date date = new Date();
-    private TaskManager taskManager;
+
+    private final TaskManager myTaskManager;
+
     private List<Integer> burndownChartData;
 
-    public GanttStatistics(TaskManager taskManager) {
-        this.taskManager = taskManager;
+    public GanttStatistics(TaskManager myTaskManager) {
+        this.myTaskManager = myTaskManager;
     }
 
     /**
@@ -30,7 +32,7 @@ public class GanttStatistics {
      * @return number of tasks
      */
     public int getTotalTasks() {
-        return this.taskManager.getTaskCount();
+        return this.myTaskManager.getTaskCount();
     }
 
     /**
@@ -38,38 +40,45 @@ public class GanttStatistics {
      * @return spent time
      */
     public long getCurrentSpentTime() {
-        Date startDate = this.taskManager.getProjectStart();
+        Date startDate = this.myTaskManager.getProjectStart();
         return getDifferenceDays(startDate, date);
     }
 
     /**
+     * Calculates the difference between two dates in days
      *
-     * @param d1
-     * @param d2
-     * @return
+     * @param d1 starting day
+     * @param d2 end day
+     * @return days between d1 and d2
      */
     public long getDifferenceDays(Date d1, Date d2) {
         long diff = d2.getTime() - d1.getTime();
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
+
     /**
      * Gets the total estimated time, in days for the project's completion
      *
-     * @return estimated time
+     * @return estimated time (in days)
      */
     public long getTotalEstimatedTime() {
-        return this.taskManager.getProjectLength().getLength();
+        return this.myTaskManager.getProjectLength().getLength();
     }
 
+    /**
+     * Gets the sum of all the tasks' durations
+     *
+     * @return duration (in days)
+     */
     public int getSumOfTaskDurations() {
         int totalTime = 0;
         int count = 0;
         int index = 0;
 
         while(count < this.getTotalTasks()) {
-            if(this.taskManager.getTask(index) != null){
+            if(this.myTaskManager.getTask(index) != null){
                 count++;
-                totalTime += taskManager.getTask(index).getDuration().getLength();
+                totalTime += myTaskManager.getTask(index).getDuration().getLength();
             }
             index++;
         }
@@ -88,23 +97,24 @@ public class GanttStatistics {
     /**
      * Overall progress is measured in percentage
      *
-     * NOTE: After this class is tested, check if taskManager.getProjectionCompletion
-     * does the same.
-     *
-     * @return Progress
+     * @return progress
      */
     public float getOverallProgress() {
-        return taskManager.getProjectCompletion();
+        return myTaskManager.getProjectCompletion();
     }
 
+    /**
+     * TODO - Put this in another class
+     * Gets the all the info for a burndown chart
+     *
+     * @return burndown chart data
+     */
     public List<Integer> getBurndownInfo() {
         initBurndownData();
         return burndownChartData;
     }
 
     /**
-     * TODO
-     * <p>
      * Calculates the number of tasks whose progress is 100% (finished)
      *
      * @return Number of finished tasks
@@ -114,10 +124,10 @@ public class GanttStatistics {
         int count = 0;
         int index = 0;
 
-        while(count < this.taskManager.getTaskCount()) {
-            if(this.taskManager.getTask(index) != null){
+        while(count < this.myTaskManager.getTaskCount()) {
+            if(this.myTaskManager.getTask(index) != null){
                 count++;
-                if (this.taskManager.getTask(index).getCompletionPercentage() == 100)
+                if (this.myTaskManager.getTask(index).getCompletionPercentage() == 100)
                     finTasks++;
             }
             index++;
@@ -125,6 +135,7 @@ public class GanttStatistics {
         return finTasks;
     }
 
+    /** TODO - Put this in another class */
     private void initBurndownData() {
 
         this.burndownChartData = new ArrayList<>();
@@ -134,13 +145,13 @@ public class GanttStatistics {
         int count = 0;
         int index = 0;
 
-        while(count < this.taskManager.getTaskCount()) {
-            if(this.taskManager.getTask(index) != null){
+        while(count < this.myTaskManager.getTaskCount()) {
+            if(this.myTaskManager.getTask(index) != null){
                 count++;
-                if (this.taskManager.getTask(index).getCompletionPercentage() == 100) {
+                if (this.myTaskManager.getTask(index).getCompletionPercentage() == 100) {
                     int dayInProject = calculateDiffDate(index);
                     int sum = burndownChartData.get(dayInProject);
-                    sum += taskManager.getTask(index).getDuration().getLength(); // task duration without weekends
+                    sum += myTaskManager.getTask(index).getDuration().getLength(); // task duration without weekends
                     burndownChartData.remove(dayInProject); // MAGIA
                     burndownChartData.add(dayInProject, sum);
                 }
@@ -150,7 +161,7 @@ public class GanttStatistics {
     }
 
     private int calculateDiffDate(int index) {
-        GanttCalendar dateToConvert = taskManager.getTask(index).getEnd();
+        GanttCalendar dateToConvert = myTaskManager.getTask(index).getEnd();
 
         int year = dateToConvert.getYear() - 1900;
         int month =dateToConvert.getMonth();
@@ -158,8 +169,6 @@ public class GanttStatistics {
 
         Date endDate = new Date(year, month, day);
 
-        return (int) getDifferenceDays(taskManager.getProjectStart(), endDate);
+        return (int) getDifferenceDays(myTaskManager.getProjectStart(), endDate);
     }
-
-
 }
