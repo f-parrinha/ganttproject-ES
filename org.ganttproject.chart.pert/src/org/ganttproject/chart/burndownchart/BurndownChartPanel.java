@@ -3,15 +3,12 @@ package org.ganttproject.chart.burndownchart;
 import net.sourceforge.ganttproject.GanttExportSettings;
 import net.sourceforge.ganttproject.chart.Chart;
 import net.sourceforge.ganttproject.language.GanttLanguage;
-import org.ganttproject.chart.planner.Panel;
+import org.ganttproject.chart.Panel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * @author Francisco Parrinha
@@ -20,7 +17,7 @@ import java.util.Random;
  * @author Carlos Soares
  * @author Pedro Inácio
  *
- * BurndownChartPanel Class - Adds the burndown chart panel to the project and its functionalities
+ * BurndownChartPanel class - Adds the burndown chart panel to the project and its functionalities
  */
 
 public class BurndownChartPanel extends Panel {
@@ -33,7 +30,7 @@ public class BurndownChartPanel extends Panel {
 
     public BurndownChartPanel() {
         myPanel = this;
-        myGraph = new GraphPanel();
+        myGraph = new GraphPanel(myPanel);
     }
 
     @Override
@@ -45,12 +42,13 @@ public class BurndownChartPanel extends Panel {
         return image;
     }
 
+    @Override
     public void paint(Graphics g) {
-        myGraph.init(statistics);
+        myGraph.init(myGanttStatistics);
         setBackground(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;
         super.paint(g);
-        myGraph.paintComponent(g2);
+        myGraph.paintGraphic(g2);
     }
 
     @Override
