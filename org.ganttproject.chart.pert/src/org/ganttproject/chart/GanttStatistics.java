@@ -23,7 +23,6 @@ public class GanttStatistics {
 
     public GanttStatistics(TaskManager taskManager) {
         this.taskManager = taskManager;
-        this.burndownChartData = new ArrayList<>();
     }
 
     /**
@@ -49,7 +48,7 @@ public class GanttStatistics {
      * @param d2
      * @return
      */
-    private long getDifferenceDays(Date d1, Date d2) {
+    public long getDifferenceDays(Date d1, Date d2) {
         long diff = d2.getTime() - d1.getTime();
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
@@ -100,7 +99,6 @@ public class GanttStatistics {
 
     public List<Integer> getBurndownInfo() {
         initBurndownData();
-        //calculateFinishedTasks();
         return burndownChartData;
     }
 
@@ -119,14 +117,8 @@ public class GanttStatistics {
         while(count < this.taskManager.getTaskCount()) {
             if(this.taskManager.getTask(index) != null){
                 count++;
-                if (this.taskManager.getTask(index).getCompletionPercentage() == 100) {
+                if (this.taskManager.getTask(index).getCompletionPercentage() == 100)
                     finTasks++;
-                    //int dayInProject = calculateDiffDate(index);
-                    //int sum = burndownChartData.get(dayInProject);
-                    //sum += taskManager.getTask(index).getDuration().getLength(); // without weekends
-                    //burndownChartData.add(dayInProject, sum);
-                    //System.out.println("SUM "+ sum + " DAY "+dayInProject);
-                }
             }
             index++;
         }
@@ -134,7 +126,10 @@ public class GanttStatistics {
     }
 
     private void initBurndownData() {
-        for(int i = 0; i < getTotalEstimatedTime(); i++)
+
+        this.burndownChartData = new ArrayList<>();
+
+        for(int i = 0; i < getTotalEstimatedTime() + 1; i++)
             burndownChartData.add(i,0);
         int count = 0;
         int index = 0;
@@ -145,9 +140,9 @@ public class GanttStatistics {
                 if (this.taskManager.getTask(index).getCompletionPercentage() == 100) {
                     int dayInProject = calculateDiffDate(index);
                     int sum = burndownChartData.get(dayInProject);
-                    sum += taskManager.getTask(index).getDuration().getLength(); // without weekends
+                    sum += taskManager.getTask(index).getDuration().getLength(); // task duration without weekends
+                    burndownChartData.remove(dayInProject); // MAGIA
                     burndownChartData.add(dayInProject, sum);
-                    System.out.println("SUM "+ sum + " DAY "+dayInProject);
                 }
             }
             index++;

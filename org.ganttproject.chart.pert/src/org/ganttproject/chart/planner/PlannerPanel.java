@@ -37,7 +37,7 @@ import java.io.IOException;
  * @author Carlos Soares
  * @author Pedro Inácio
  * <p>
- * PlannerPanel Class - Adds the planner panel to the project and its functionality
+ * PlannerPanel class - Adds the planner panel to the project and its functionality
  */
 public class PlannerPanel extends Panel {
 
@@ -102,7 +102,7 @@ public class PlannerPanel extends Panel {
         super.paint(g);
 
         myPainter.paintLogo(g);
-        myPainter.paintStatistics(g, myGanttStatistics);
-        myPainter.paintGraphic(g, myGanttStatistics);
+        myPainter.getMyDrawStatistics().paint(g, myGanttStatistics);
+        myPainter.getMyDrawGraph().paint(g, myGanttStatistics);
     }
 }
