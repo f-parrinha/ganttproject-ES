@@ -22,6 +22,7 @@ public class GanttStatistics {
     private final TaskManager myTaskManager;
 
     private List<Integer> burndownChartData;
+    private List<Integer> remainingEffortData;
 
     public GanttStatistics(TaskManager myTaskManager) {
         this.myTaskManager = myTaskManager;
@@ -114,6 +115,10 @@ public class GanttStatistics {
         return burndownChartData;
     }
 
+    public List<Integer> getRemEffortInfo() {
+        initRemEffortData();
+        return remainingEffortData;
+    }
     /**
      * Calculates the number of tasks whose progress is 100% (finished)
      *
@@ -160,6 +165,34 @@ public class GanttStatistics {
         }
     }
 
+    private void initRemEffortData() {
+
+        this.remainingEffortData = new ArrayList<>();
+
+        for(int i = 0; i < getTotalEstimatedTime() + 1; i++)
+           remainingEffortData.add(i,0);
+        int count = 0;
+        int index = 0;
+
+        while(count < this.taskManager.getTaskCount()) {
+            if(this.taskManager.getTask(index) != null){
+                count++;
+
+                double percentage = this.taskManager.getTask(index).getCompletionPercentage() / 100.0;
+                int duration = (int)(this.taskManager.getTask(index).getLength() * percentage);
+                int dayInProject = calculateRemEffData(index);
+                System.out.println("day in roject: " + dayInProject);
+                for(int i = dayInProject; i < duration + dayInProject; i++ ) {
+                    int sum = remainingEffortData.get(i);
+                    sum += 1;
+                    remainingEffortData.remove(i);
+                    remainingEffortData.add(i, sum);
+                }
+            }
+            index++;
+        }
+    }
+
     private int calculateDiffDate(int index) {
         GanttCalendar dateToConvert = myTaskManager.getTask(index).getEnd();
 
@@ -171,4 +204,20 @@ public class GanttStatistics {
 
         return (int) getDifferenceDays(myTaskManager.getProjectStart(), endDate);
     }
+<<<<<<< HEAD
+=======
+
+    private int calculateRemEffData(int index) {
+        GanttCalendar dateToConvert = taskManager.getTask(index).getStart();
+
+        int year = dateToConvert.getYear() - 1900;
+        int month =dateToConvert.getMonth();
+        int day = dateToConvert.getDay();
+
+        Date startDate = new Date(year, month, day);
+
+        return (int) getDifferenceDays(taskManager.getProjectStart(), startDate);
+    }
+
+>>>>>>> refs/remotes/origin/BRANCH_2_8_9
 }
