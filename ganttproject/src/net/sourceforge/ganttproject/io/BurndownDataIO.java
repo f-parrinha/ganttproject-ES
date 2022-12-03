@@ -1,5 +1,6 @@
-package org.ganttproject.chart.burndownchart;
+package net.sourceforge.ganttproject.io;
 
+import net.sourceforge.ganttproject.task.BurndownPastTask;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
@@ -43,7 +44,7 @@ public class BurndownDataIO {
         printWriter.close();
     }
 
-    public void load() throws IOException {
+    public BurndownPastTask[] load() throws IOException {
         String fileName = "~/Desktop/teste.burndown"; //MUDAR ISTO HARDCORE
 
         BufferedReader reader;
@@ -54,7 +55,7 @@ public class BurndownDataIO {
             int day = Integer.parseInt(reader.readLine());
 
             int numOfTasksToBeLoaded = Integer.parseInt(reader.readLine());
-            PastTask[] pastTasks = new PastTask[numOfTasksToBeLoaded];
+            BurndownPastTask[] pastTasks = new BurndownPastTask[numOfTasksToBeLoaded];
 
             for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
                 int currStartYear = Integer.parseInt(reader.readLine());
@@ -70,11 +71,13 @@ public class BurndownDataIO {
                 int currTaskPercentage = Integer.parseInt(reader.readLine()) / 100;
                 int currTaskID = Integer.parseInt(reader.readLine());
                 //
-                pastTasks[currTask] = new PastTask(currTaskStartDate, currTaskEndDate, currTaskPercentage, currTaskID);
+                pastTasks[currTask] = new BurndownPastTask(currTaskStartDate, currTaskEndDate, currTaskPercentage, currTaskID);
             }
             reader.close();
+            return pastTasks;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        throw new IOException();
     }
 }

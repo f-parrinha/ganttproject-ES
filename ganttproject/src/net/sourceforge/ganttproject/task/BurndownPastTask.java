@@ -1,12 +1,12 @@
-package org.ganttproject.chart.burndownchart;
+package net.sourceforge.ganttproject.task;
 
 import java.util.Date;
 
-public class PastTask {
+public class BurndownPastTask {
     private Date startDate, endDate;
     private int percentage, ID;
 
-    public PastTask(Date startDate, Date endDate, int percentage, int ID){
+    public BurndownPastTask(Date startDate, Date endDate, int percentage, int ID){
         this.startDate = startDate;
         this.endDate = endDate;
         this.percentage = percentage;
