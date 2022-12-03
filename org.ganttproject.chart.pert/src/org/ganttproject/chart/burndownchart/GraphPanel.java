@@ -6,6 +6,7 @@ import org.ganttproject.chart.PanelStyler;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -72,12 +73,14 @@ public class GraphPanel extends PanelStyler {
         this.yScale = ((double) getScreenSizeY() - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
 
         this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth);
-        remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
-        /*try {
+
+        try {
             remainingEffortGraph.setGraphPointsFromFiles("/home/pedro/Desktop/teste", statistics.getSumOfTaskDurations());
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
+
+        remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
 
 
         this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth);

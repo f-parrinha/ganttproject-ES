@@ -2,10 +2,12 @@ package org.ganttproject.chart.burndownchart;
 
 import biz.ganttproject.core.time.GanttCalendar;
 import net.sourceforge.ganttproject.GanttStatistics;
+import net.sourceforge.ganttproject.io.BurndownDataIO;
 import net.sourceforge.ganttproject.task.Task;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +28,6 @@ public class RemainingEffortGraph extends Graph {
     public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth){
         super(statistics, panel, padding, labelPadding, pointWidth);
         initGraphInfo();
-
     }
 
     @Override
@@ -42,7 +43,6 @@ public class RemainingEffortGraph extends Graph {
             int completedDuration = (int)(task.getDuration().getLength() * percentage);
             int dayOffSetInProject = calculateOffSetInProject(task.getStart());
             updateRemainingEffortData(task, dayOffSetInProject, completedDuration);
-
         }
     }
 
@@ -65,7 +65,6 @@ public class RemainingEffortGraph extends Graph {
             Point p = new Point(x1, y1);
             graphPoints.add(p);
             yReference += graphInfo.get(i);
-
         }
         return graphPoints;
     }
@@ -110,7 +109,7 @@ public class RemainingEffortGraph extends Graph {
     public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
-        double[] dataFromFiles = data.getPastRemainingEffort(graphPoints.size(), totalEffort);
+        double[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size(), totalEffort);
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
             if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
     }
