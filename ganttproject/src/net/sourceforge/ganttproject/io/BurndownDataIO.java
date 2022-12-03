@@ -1,6 +1,5 @@
 package net.sourceforge.ganttproject.io;
 
-import net.sourceforge.ganttproject.task.BurndownPastTask;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
@@ -8,70 +7,42 @@ import java.io.*;
 import java.util.Date;
 
 public class BurndownDataIO {
+    private String folderPath;
 
-    int year, month, day;
-
-    public BurndownDataIO() {
+    public void changeSprintFolder(String folderPath) {
+        this.folderPath = folderPath;
     }
 
-    public void save(TaskManager tasks, Date date, String fileName) throws IOException {
+    public String getSprintFolder() {
+        return folderPath;
+    }
 
-        FileWriter fileWriter = new FileWriter(fileName);
+    public void saveDay(TaskManager tasks, int day) throws IOException {
+        FileWriter fileWriter = new FileWriter(folderPath + String.valueOf(day));
         PrintWriter printWriter = new PrintWriter(fileWriter);
-        //
-        int year = date.getYear();
-        int month = date.getYear();
-        int day = date.getYear();
-        //
-        printWriter.println(year);
-        printWriter.println(month);
-        printWriter.println(day);
 
         Task[] allTasks = tasks.getTasks();
         printWriter.println(allTasks.length);
 
-        for (int currTask = 0; currTask < allTasks.length; currTask++) {
-            printWriter.println(allTasks[currTask].getStart().getYear());
-            printWriter.println(allTasks[currTask].getStart().getMonth());
-            printWriter.println(allTasks[currTask].getStart().getDay());
-            //
-            printWriter.println(allTasks[currTask].getEnd().getYear());
-            printWriter.println(allTasks[currTask].getEnd().getMonth());
-            printWriter.println(allTasks[currTask].getEnd().getDay());
-            //
+        for (int currTask = 0; currTask < allTasks.length; currTask++)
             printWriter.println(allTasks[currTask].getCompletionPercentage());
-            printWriter.println(allTasks[currTask].getTaskID());
-        }
+
         printWriter.close();
     }
 
     //returns a list of past tasks
-    public BurndownPastTask[] loadDay(String fileName, int day) throws IOException {
+    private int[] loadDay(int day) throws IOException {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(fileName + String.valueOf(day)));
-            year = Integer.parseInt(reader.readLine());
-            month = Integer.parseInt(reader.readLine());
-            day = Integer.parseInt(reader.readLine());
+            reader = new BufferedReader(new FileReader(folderPath + String.valueOf(day)));
 
             int numOfTasksToBeLoaded = Integer.parseInt(reader.readLine());
-            BurndownPastTask[] pastTasks = new BurndownPastTask[numOfTasksToBeLoaded];
+            int[] pastTasks = new int[numOfTasksToBeLoaded];
 
             for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
-                int currStartYear = Integer.parseInt(reader.readLine());
-                int currStartMonth = Integer.parseInt(reader.readLine());
-                int currStartDay = Integer.parseInt(reader.readLine());
-                Date currTaskStartDate = new Date(currStartYear, currStartMonth, currStartDay);
-                //
-                int currEndYear = Integer.parseInt(reader.readLine());
-                int currEndMonth = Integer.parseInt(reader.readLine());
-                int currEndDay = Integer.parseInt(reader.readLine());
-                Date currTaskEndDate = new Date(currEndYear, currEndMonth, currEndDay);
-                //
                 int currTaskPercentage = Integer.parseInt(reader.readLine()) / 100;
-                int currTaskID = Integer.parseInt(reader.readLine());
                 //
-                pastTasks[currTask] = new BurndownPastTask(currTaskStartDate, currTaskEndDate, currTaskPercentage, currTaskID);
+                pastTasks[currTask] = currTaskPercentage;
             }
             reader.close();
             return pastTasks;
@@ -81,32 +52,26 @@ public class BurndownDataIO {
         throw new IOException();
     }
 
-    public Date getLastLoadingDate() {
-        return new Date(year, month, day);
-    }
     // folderPath = "~/Desktop/teste.burndown";
-    private boolean isThereAFileForThatDay(String folderPath, int day) {
+    private boolean isThereAFileForThatDay(int day) {
         File f = new File(folderPath + String.valueOf(day));
         return f.exists();
     }
 
-    private int loadProgressAtDay(String folderPath, int day) throws IOException {
-        BurndownDataIO dataIO = new BurndownDataIO();
-        BurndownPastTask[] pastTasks = dataIO.loadDay(folderPath, day);
+    private double loadProgressAtDay(int day) throws IOException {
+        int[] pastTasks = loadDay(day);
         //
-        int doneTasks = 0;
-        for (int currTask = 0; currTask < pastTasks.length; currTask++) {
-            if (pastTasks[currTask].getPercentage() == 100)
-                doneTasks++;
-        }
+        double doneTasks = 0;
+        for (int currTask = 0; currTask < pastTasks.length; currTask++)
+                doneTasks += pastTasks[currTask] / 100; //multiplicar isto pelo numero de dias?? (effort)
         return doneTasks;
     }
 
-    public int[] getPastRemainingEffortPoints(Date StartingDate, int numOfDays,int numOfTasks, String folderPath) throws IOException {
-        int[] definedPoints = new int[numOfDays];
+    public double[] getPastRemainingEffort(Date StartingDate, int numOfDays, int numOfTasks) throws IOException {
+        double[] definedPoints = new double[numOfDays];
         for (int currDay = 0; currDay < numOfDays; currDay++) {
-            if (isThereAFileForThatDay(folderPath, currDay))
-                definedPoints[currDay] = loadProgressAtDay(folderPath, currDay);
+            if (isThereAFileForThatDay(currDay))
+                definedPoints[currDay] = numOfTasks - loadProgressAtDay(currDay);
             else definedPoints[currDay] = -1;
         }
         return definedPoints;
