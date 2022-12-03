@@ -41,7 +41,14 @@ public class RemainingEffortGraph extends Graph {
             double percentage = task.getCompletionPercentage() / 100.0;
             int completedDuration = (int) (task.getDuration().getLength() * percentage);
             int dayOffSetInProject = calculateOffSetInProject(task.getStart());
-            updateRemainingEffortData(task, dayOffSetInProject, completedDuration);
+            // + 1 because the point with offset 0 is the starting point
+            markWorkDoneToday(graphInfo, dayOffSetInProject + 1, completedDuration);
+        }
+
+        try {
+            setGraphPointsFromFiles("/home/pedro/Desktop/teste", myGanttStatistics.getSumOfTaskDurations());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -56,14 +63,11 @@ public class RemainingEffortGraph extends Graph {
 
         graphPoints.add(pointReference);
 
-        int yReference = 0;
-
         for (int i = 1; i < graphInfo.size() - 1; i++) {
             int x1 = (int) (i * xScale + padding + labelPadding);
-            int y1 = (int) ((maxScore - tasksTotalDuration + yReference + graphInfo.get(i)) * yScale + padding);
+            int y1 = (int) ((maxScore - tasksTotalDuration + graphInfo.get(i)) * yScale + padding);
             Point p = new Point(x1, y1);
             graphPoints.add(p);
-            yReference += graphInfo.get(i);
         }
         return graphPoints;
     }
@@ -89,30 +93,12 @@ public class RemainingEffortGraph extends Graph {
      * @param taskDayOffSetInProject
      * @param completedDuration
      */
-    private void updateRemainingEffortData(Task task, int taskDayOffSetInProject, int completedDuration) {
-
-        for (int i = taskDayOffSetInProject, taskDayCounter = 0, weekendCounter = 0;
-             taskDayCounter < completedDuration + weekendCounter; i++, taskDayCounter++) {
-
-            int absoluteOffset = Math.abs(getTodayOffset());
-
-            if (i < absoluteOffset && todayIsWeekend(task, taskDayCounter)) {
-                markWeekend(i + 1);
-                weekendCounter++;
-            } else if (i < absoluteOffset) {
-                markWorkDoneToday(graphInfo, i + 1, 1);
-            } else if (i >= absoluteOffset && !todayIsWeekend(task, taskDayCounter)) {
-                markWorkDoneToday(graphInfo, absoluteOffset + 1, 1);
-            } else
-                weekendCounter++;
-        }
-    }
 
 
     public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
-        double[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size(), totalEffort);
+        double[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
             if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
     }
@@ -121,14 +107,16 @@ public class RemainingEffortGraph extends Graph {
      * Updates the graph info with the specified value
      *
      * @param list
-     * @param index
+     * @param startIndex
      * @param value
      */
-    private void markWorkDoneToday(List<Integer> list, int index, int value) {
-        int sum = list.get(index);
-        sum += value;
-        list.remove(index);
-        list.add(index, sum);
+    private void markWorkDoneToday(List<Integer> list, int startIndex, int value) {
+        for (int index = startIndex; index < list.size(); index++) {
+            int sum = list.get(index);
+            sum += value;
+            list.remove(index);
+            list.add(index, sum);
+        }
     }
 
     /**

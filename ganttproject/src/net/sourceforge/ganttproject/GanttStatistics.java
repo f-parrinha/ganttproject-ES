@@ -127,5 +127,4 @@ public class GanttStatistics {
     public TaskManager getMyTaskManager() {
         return myTaskManager;
     }
-
 }
