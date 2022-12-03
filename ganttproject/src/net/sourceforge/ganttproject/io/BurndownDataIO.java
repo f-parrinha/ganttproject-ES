@@ -73,7 +73,7 @@ public class BurndownDataIO {
 
     public double[] getPastRemainingEffort(int numOfDays, int totalEffort) throws IOException {
         double[] definedPoints = new double[numOfDays];
-        System.out.println("totalEffort: " + totalEffort);
+
         for (int currDay = 0; currDay < numOfDays; currDay++) {
             if (isThereAFileForThatDay(currDay)) {
                 double progressAtDay = loadProgressAtDay(currDay);

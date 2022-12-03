@@ -20,27 +20,26 @@ import java.util.List;
  * @author Carlos Soares
  * @author Pedro Inácio
  * <p>
- *
+ * <p>
  * RemainingEffortGraph Class - Adds the remaining effort graph to the Burndown Chart
  */
 public class RemainingEffortGraph extends Graph {
 
-    public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth){
+    public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth) {
         super(statistics, panel, padding, labelPadding, pointWidth);
         initGraphInfo();
     }
 
     @Override
     public void initGraphInfo() {
-
         this.graphInfo = new ArrayList<>();
         resetDataStructure(graphInfo); // days in project fill with zeros
 
         Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
 
-        for (Task task : myTasks){
+        for (Task task : myTasks) {
             double percentage = task.getCompletionPercentage() / 100.0;
-            int completedDuration = (int)(task.getDuration().getLength() * percentage);
+            int completedDuration = (int) (task.getDuration().getLength() * percentage);
             int dayOffSetInProject = calculateOffSetInProject(task.getStart());
             updateRemainingEffortData(task, dayOffSetInProject, completedDuration);
         }
@@ -69,6 +68,7 @@ public class RemainingEffortGraph extends Graph {
         return graphPoints;
     }
 
+
     @Override
     public void drawActualFlowLine(Graphics2D g2) {
         Stroke oldStroke = g2.getStroke();
@@ -84,22 +84,25 @@ public class RemainingEffortGraph extends Graph {
 
     /**
      * Updates the graph info based on the information of each task
+     *
      * @param task
      * @param taskDayOffSetInProject
      * @param completedDuration
      */
     private void updateRemainingEffortData(Task task, int taskDayOffSetInProject, int completedDuration) {
 
-        for(int i = taskDayOffSetInProject, taskDayCounter = 0, weekendCounter = 0;
-            taskDayCounter < completedDuration + weekendCounter; i++, taskDayCounter++) {
+        for (int i = taskDayOffSetInProject, taskDayCounter = 0, weekendCounter = 0;
+             taskDayCounter < completedDuration + weekendCounter; i++, taskDayCounter++) {
 
-            if(i < getTodayOffset() && todayIsWeekend(task, taskDayCounter)) {
+            int absoluteOffset = Math.abs(getTodayOffset());
+
+            if (i < absoluteOffset && todayIsWeekend(task, taskDayCounter)) {
                 markWeekend(i + 1);
                 weekendCounter++;
-            } else if(i < getTodayOffset()) {
-                markWorkDoneToday(graphInfo, i+1, 1);
-            } else if(i >= getTodayOffset() && !todayIsWeekend(task,taskDayCounter)) {
-                markWorkDoneToday(graphInfo, getTodayOffset()+1, 1);
+            } else if (i < absoluteOffset) {
+                markWorkDoneToday(graphInfo, i + 1, 1);
+            } else if (i >= absoluteOffset && !todayIsWeekend(task, taskDayCounter)) {
+                markWorkDoneToday(graphInfo, absoluteOffset + 1, 1);
             } else
                 weekendCounter++;
         }
