@@ -73,6 +73,12 @@ public class GraphPanel extends PanelStyler {
 
         this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth);
         remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
+        /*try {
+            remainingEffortGraph.setGraphPointsFromFiles("/home/pedro/Desktop/teste", statistics.getSumOfTaskDurations());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }*/
+
 
         this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth);
         remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);

@@ -71,7 +71,7 @@ public class RemainingEffortGraph extends Graph {
     }
 
     @Override
-    public void drawActualFlowLine(Graphics2D g2){
+    public void drawActualFlowLine(Graphics2D g2) {
         Stroke oldStroke = g2.getStroke();
 
         g2.setColor(GraphPanel.COLOR.REMAINING_EFFORT_LINE.color);
@@ -89,7 +89,7 @@ public class RemainingEffortGraph extends Graph {
      * @param taskDayOffSetInProject
      * @param completedDuration
      */
-    private void updateRemainingEffortData(Task task, int taskDayOffSetInProject, int completedDuration){
+    private void updateRemainingEffortData(Task task, int taskDayOffSetInProject, int completedDuration) {
 
         for(int i = taskDayOffSetInProject, taskDayCounter = 0, weekendCounter = 0;
             taskDayCounter < completedDuration + weekendCounter; i++, taskDayCounter++) {
@@ -106,13 +106,23 @@ public class RemainingEffortGraph extends Graph {
         }
     }
 
+
+    public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
+        BurndownDataIO data = new BurndownDataIO();
+        data.changeSprintFolder(folderPath);
+        double[] dataFromFiles = data.getPastRemainingEffort(graphPoints.size(), totalEffort);
+        for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
+            if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
+    }
+
     /**
      * Updates the graph info with the specified value
+     *
      * @param list
      * @param index
      * @param value
      */
-    private void markWorkDoneToday(List<Integer> list, int index, int value){
+    private void markWorkDoneToday(List<Integer> list, int index, int value) {
         int sum = list.get(index);
         sum += value;
         list.remove(index);
@@ -121,10 +131,11 @@ public class RemainingEffortGraph extends Graph {
 
     /**
      * Marks the weekends in the graphInfo
+     *
      * @param index
      */
-    private void markWeekend(int index){
-        if (!(graphInfo.get(index) < 0)){
+    private void markWeekend(int index) {
+        if (!(graphInfo.get(index) < 0)) {
             graphInfo.remove(index);
             graphInfo.add(index, 0);
         }
@@ -132,14 +143,15 @@ public class RemainingEffortGraph extends Graph {
 
     /**
      * Calculates the offset of a given date in the project
+     *
      * @param date
      * @return
      */
-    private int  calculateOffSetInProject(GanttCalendar date) {
+    private int calculateOffSetInProject(GanttCalendar date) {
         GanttCalendar dateToConvert = date;
 
         int year = dateToConvert.getYear() - 1900;
-        int month =dateToConvert.getMonth();
+        int month = dateToConvert.getMonth();
         int day = dateToConvert.getDay();
 
         Date startDate = new Date(year, month, day);
@@ -149,6 +161,7 @@ public class RemainingEffortGraph extends Graph {
 
     /**
      * Returns the current day offset in the project calendar
+     *
      * @return
      */
     private int getTodayOffset() {
