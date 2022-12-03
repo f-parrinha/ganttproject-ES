@@ -46,10 +46,10 @@ public class BurndownDataIO {
     }
 
     //returns a list of past tasks
-    public BurndownPastTask[] load(String fileName) throws IOException {
+    public BurndownPastTask[] loadDay(String fileName, int day) throws IOException {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(fileName));
+            reader = new BufferedReader(new FileReader(fileName + String.valueOf(day)));
             year = Integer.parseInt(reader.readLine());
             month = Integer.parseInt(reader.readLine());
             day = Integer.parseInt(reader.readLine());
@@ -81,7 +81,34 @@ public class BurndownDataIO {
         throw new IOException();
     }
 
-    public Date getLastLoadingDate(){
+    public Date getLastLoadingDate() {
         return new Date(year, month, day);
+    }
+    // folderPath = "~/Desktop/teste.burndown";
+    private boolean isThereAFileForThatDay(String folderPath, int day) {
+        File f = new File(folderPath + String.valueOf(day));
+        return f.exists();
+    }
+
+    private int loadProgressAtDay(String folderPath, int day) throws IOException {
+        BurndownDataIO dataIO = new BurndownDataIO();
+        BurndownPastTask[] pastTasks = dataIO.loadDay(folderPath, day);
+        //
+        int doneTasks = 0;
+        for (int currTask = 0; currTask < pastTasks.length; currTask++) {
+            if (pastTasks[currTask].getPercentage() == 100)
+                doneTasks++;
+        }
+        return doneTasks;
+    }
+
+    public int[] getPastRemainingEffortPoints(Date StartingDate, int numOfDays,int numOfTasks, String folderPath) throws IOException {
+        int[] definedPoints = new int[numOfDays];
+        for (int currDay = 0; currDay < numOfDays; currDay++) {
+            if (isThereAFileForThatDay(folderPath, currDay))
+                definedPoints[currDay] = loadProgressAtDay(folderPath, currDay);
+            else definedPoints[currDay] = -1;
+        }
+        return definedPoints;
     }
 }
