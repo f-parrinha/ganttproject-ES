@@ -4,7 +4,6 @@ import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
 import java.io.*;
-import java.util.Date;
 
 public class BurndownDataIO {
     private String folderPath;
@@ -18,14 +17,16 @@ public class BurndownDataIO {
     }
 
     public void saveDay(TaskManager tasks, int day) throws IOException {
-        FileWriter fileWriter = new FileWriter(folderPath + String.valueOf(day));
+        FileWriter fileWriter = new FileWriter(folderPath + "/" + String.valueOf(day));
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
         Task[] allTasks = tasks.getTasks();
         printWriter.println(allTasks.length);
 
-        for (int currTask = 0; currTask < allTasks.length; currTask++)
+        for (int currTask = 0; currTask < allTasks.length; currTask++) {
             printWriter.println(allTasks[currTask].getCompletionPercentage());
+            printWriter.println(allTasks[currTask].getDuration().getLength()); //FALTA POR O LENGH EM DIAS!!
+        }
 
         printWriter.close();
     }
@@ -34,15 +35,19 @@ public class BurndownDataIO {
     private int[] loadDay(int day) throws IOException {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(folderPath + String.valueOf(day)));
+            reader = new BufferedReader(new FileReader(folderPath + "/" + String.valueOf(day)));
 
             int numOfTasksToBeLoaded = Integer.parseInt(reader.readLine());
             int[] pastTasks = new int[numOfTasksToBeLoaded];
 
+            System.out.println(numOfTasksToBeLoaded);
+
             for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
                 int currTaskPercentage = Integer.parseInt(reader.readLine()) / 100;
+                int currTaskDuration = Integer.parseInt(reader.readLine());
                 //
-                pastTasks[currTask] = currTaskPercentage;
+                pastTasks[currTask] = currTaskDuration * currTaskPercentage;
+
             }
             reader.close();
             return pastTasks;
@@ -52,9 +57,8 @@ public class BurndownDataIO {
         throw new IOException();
     }
 
-    // folderPath = "~/Desktop/teste.burndown";
     private boolean isThereAFileForThatDay(int day) {
-        File f = new File(folderPath + String.valueOf(day));
+        File f = new File(folderPath + "/" + String.valueOf(day));
         return f.exists();
     }
 
@@ -63,16 +67,18 @@ public class BurndownDataIO {
         //
         double doneTasks = 0;
         for (int currTask = 0; currTask < pastTasks.length; currTask++)
-                doneTasks += pastTasks[currTask] / 100; //multiplicar isto pelo numero de dias?? (effort)
+            doneTasks += pastTasks[currTask];
         return doneTasks;
     }
 
-    public double[] getPastRemainingEffort(Date StartingDate, int numOfDays, int numOfTasks) throws IOException {
+    public double[] getPastRemainingEffort(int numOfDays, int totalEffort) throws IOException {
         double[] definedPoints = new double[numOfDays];
+        System.out.println("totalEffort: " + totalEffort);
         for (int currDay = 0; currDay < numOfDays; currDay++) {
-            if (isThereAFileForThatDay(currDay))
-                definedPoints[currDay] = numOfTasks - loadProgressAtDay(currDay);
-            else definedPoints[currDay] = -1;
+            if (isThereAFileForThatDay(currDay)) {
+                double progressAtDay = loadProgressAtDay(currDay);
+                definedPoints[currDay] = progressAtDay;
+            }else definedPoints[currDay] = -1;
         }
         return definedPoints;
     }

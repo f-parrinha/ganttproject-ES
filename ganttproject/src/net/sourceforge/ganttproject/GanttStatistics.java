@@ -2,13 +2,9 @@ package net.sourceforge.ganttproject;
 
 import biz.ganttproject.core.calendar.WeekendCalendarImpl;
 import biz.ganttproject.core.time.GanttCalendar;
-import net.sourceforge.ganttproject.io.BurndownDataIO;
-import net.sourceforge.ganttproject.task.BurndownPastTask;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
