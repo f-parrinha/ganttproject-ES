@@ -13,28 +13,15 @@ import java.util.List;
 
 
 
-public class RemainingEffortGraph extends PanelStyler {
-
-    private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
-
-    private final JPanel myPanel;
-    private final int padding;
-    private final int labelPadding;
-    private final int pointWidth;
-    private GanttStatistics statistics;
-    private List<Integer> graphInfo;
-    private List<Point> graphPoints;
+public class RemainingEffortGraph extends Graph {
 
     public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth){
-        this.myPanel = panel;
-        this.statistics = statistics;
-        this.padding = padding;
-        this.labelPadding = labelPadding;
-        this.pointWidth = pointWidth;
+        super(statistics, panel, padding, labelPadding, pointWidth);
         initGraphInfo();
 
     }
 
+    @Override
     public List<Point> buildGraphPoints(double xScale, double yScale, int maxScore, int tasksTotalDuration) {
         this.graphPoints = new ArrayList<>();
 
@@ -61,6 +48,7 @@ public class RemainingEffortGraph extends PanelStyler {
         return graphPoints;
     }
 
+    @Override
     public void drawActualFlowLine(Graphics2D g2){
         Stroke oldStroke = g2.getStroke();
 
@@ -77,7 +65,7 @@ public class RemainingEffortGraph extends PanelStyler {
 
         g2.setStroke(oldStroke);
         g2.setColor(GraphPanel.COLOR.POINT_COLOR.color);
-        for (int i = 0; i < graphPoints.size(); i++) {
+        for (int i = 0; i < getTodayOffset()+1; i++) {
             int x = resizeX(graphPoints.get(i).x - pointWidth / 2, myPanel);
             int y = resizeY(graphPoints.get(i).y - pointWidth / 2, myPanel);
             int ovalW = resizeX(pointWidth, myPanel);
@@ -86,20 +74,13 @@ public class RemainingEffortGraph extends PanelStyler {
         }
     }
 
-    public int getSize() {
-        return graphPoints.size();
-    }
-
-    /**
-     * Inits the Array List with lenght = project duration
-     * where each index in the array represents the day of the project
-     */
-    private void initGraphInfo() {
+    @Override
+    public void initGraphInfo() {
 
         this.graphInfo = new ArrayList<>();
-        statistics.resetDataStructure(graphInfo); // days in project fill with zeros
+        myGanttStatistics.resetDataStructure(graphInfo); // days in project fill with zeros
 
-        Task[] myTasks = statistics.getMyTaskManager().getTasks();
+        Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
 
         for (Task task : myTasks){
             double percentage = task.getCompletionPercentage() / 100.0;
@@ -120,7 +101,7 @@ public class RemainingEffortGraph extends PanelStyler {
 
         for(int i = taskDayOffSetInProject, j = 0, aux = 0; j < completedDuration + aux; i++) {
             if(i < getTodayOffset()){
-                if (statistics.todayIsWeekend(task, j)) {
+                if (myGanttStatistics.todayIsWeekend(task, j)) {
                     markWeekend(i + 1);
                     j++; aux++;
                 } else {
@@ -128,7 +109,7 @@ public class RemainingEffortGraph extends PanelStyler {
                     j++;
                 }
             }else {
-                if(!statistics.todayIsWeekend(task,j)){
+                if(!myGanttStatistics.todayIsWeekend(task,j)){
                     markWorkDoneToday(graphInfo, getTodayOffset()+1, 1);
                     j++;
                 } else{
@@ -149,7 +130,6 @@ public class RemainingEffortGraph extends PanelStyler {
         sum += value;
         list.remove(index);
         list.add(index, sum);
-
     }
 
     /**
@@ -168,7 +148,7 @@ public class RemainingEffortGraph extends PanelStyler {
      * @param date
      * @return
      */
-    private int  calculateOffSetInProject( GanttCalendar date) {
+    private int  calculateOffSetInProject(GanttCalendar date) {
         GanttCalendar dateToConvert = date;
 
         int year = dateToConvert.getYear() - 1900;
@@ -177,7 +157,7 @@ public class RemainingEffortGraph extends PanelStyler {
 
         Date startDate = new Date(year, month, day);
 
-        return (int) statistics.getDifferenceDays(statistics.getMyTaskManager().getProjectStart(), startDate);
+        return (int) myGanttStatistics.getDifferenceDays(myGanttStatistics.getMyTaskManager().getProjectStart(), startDate);
     }
 
     /**
@@ -186,6 +166,6 @@ public class RemainingEffortGraph extends PanelStyler {
      */
     private int getTodayOffset() {
         Date date = new Date();
-        return (int) statistics.getDifferenceDays(statistics.getMyTaskManager().getProjectStart(), date);
+        return (int) myGanttStatistics.getDifferenceDays(myGanttStatistics.getMyTaskManager().getProjectStart(), date);
     }
 }
