@@ -121,14 +121,12 @@ public abstract class Graph extends PanelStyler {
      */
     public boolean todayIsWeekend(Task task, int offSetDayInProject) {
         GanttCalendar dateToConvert = task.getStart();
-        dateToConvert.add(Calendar.DATE, offSetDayInProject);
 
         int year = dateToConvert.getYear() - 1900;
         int month = dateToConvert.getMonth();
-        int day = dateToConvert.getDay();
+        int day = dateToConvert.getDay() + offSetDayInProject;
 
-        Date endDate = new Date(year, month, day);
-
-        return calendar.isWeekend(endDate);
+        Date today = new Date(year, month, day);
+        return calendar.isWeekend(today);
     }
 }
