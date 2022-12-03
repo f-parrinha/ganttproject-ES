@@ -6,7 +6,6 @@ import org.ganttproject.chart.PanelStyler;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -117,10 +116,8 @@ public class GraphPanel extends PanelStyler {
             draw_X_Marks(g2);
             draw_Y_Marks(g2);
             drawIdealFlowLine(g2);
-            if (remainingTasksGraph.getSize() > 1)
-                remainingTasksGraph.drawActualFlowLine(g2);
-            if(remainingEffortGraph.getSize() > 1)
-                remainingEffortGraph.drawActualFlowLine(g2);
+            remainingTasksGraph.drawActualFlowLine(g2);
+            remainingEffortGraph.drawActualFlowLine(g2);
         }
 
         // Paints graph's info - estimated line and current progression line
