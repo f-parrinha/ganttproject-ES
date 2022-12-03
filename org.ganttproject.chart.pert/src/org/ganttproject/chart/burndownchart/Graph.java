@@ -8,7 +8,9 @@ import org.ganttproject.chart.PanelStyler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public abstract class Graph extends PanelStyler {
@@ -119,12 +121,14 @@ public abstract class Graph extends PanelStyler {
      */
     public boolean todayIsWeekend(Task task, int offSetDayInProject) {
         GanttCalendar dateToConvert = task.getStart();
+        dateToConvert.add(Calendar.DATE, offSetDayInProject);
 
         int year = dateToConvert.getYear() - 1900;
         int month = dateToConvert.getMonth();
-        int day = dateToConvert.getDay() + offSetDayInProject;
+        int day = dateToConvert.getDay();
 
-        Date today = new Date(year, month, day);
-        return calendar.isWeekend(today);
+        Date endDate = new Date(year, month, day);
+
+        return calendar.isWeekend(endDate);
     }
 }
