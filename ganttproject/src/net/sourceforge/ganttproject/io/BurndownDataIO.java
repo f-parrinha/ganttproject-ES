@@ -9,11 +9,12 @@ import java.util.Date;
 
 public class BurndownDataIO {
 
+    int year, month, day;
+
     public BurndownDataIO() {
     }
 
-    public void save(TaskManager tasks, Date date) throws IOException {
-        String fileName = "~/Desktop/teste.burndown"; //MUDAR ISTO HARDCORE
+    public void save(TaskManager tasks, Date date, String fileName) throws IOException {
 
         FileWriter fileWriter = new FileWriter(fileName);
         PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -44,15 +45,14 @@ public class BurndownDataIO {
         printWriter.close();
     }
 
-    public BurndownPastTask[] load() throws IOException {
-        String fileName = "~/Desktop/teste.burndown"; //MUDAR ISTO HARDCORE
-
+    //returns a list of past tasks
+    public BurndownPastTask[] load(String fileName) throws IOException {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(fileName));
-            int year = Integer.parseInt(reader.readLine());
-            int month = Integer.parseInt(reader.readLine());
-            int day = Integer.parseInt(reader.readLine());
+            year = Integer.parseInt(reader.readLine());
+            month = Integer.parseInt(reader.readLine());
+            day = Integer.parseInt(reader.readLine());
 
             int numOfTasksToBeLoaded = Integer.parseInt(reader.readLine());
             BurndownPastTask[] pastTasks = new BurndownPastTask[numOfTasksToBeLoaded];
@@ -79,5 +79,9 @@ public class BurndownDataIO {
             e.printStackTrace();
         }
         throw new IOException();
+    }
+
+    public Date getLastLoadingDate(){
+        return new Date(year, month, day);
     }
 }
