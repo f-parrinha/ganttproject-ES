@@ -24,7 +24,7 @@ public class GraphPanel extends PanelStyler {
         POINT_COLOR(new Color(100, 100, 100, 180)),
         GRID_COLOR(new Color(200, 200, 200, 200));
 
-        private final Color color;
+        public final Color color;
 
         COLOR(Color color){
             this.color = color;
@@ -45,17 +45,16 @@ public class GraphPanel extends PanelStyler {
     private int maxScore;
     private double xScale;
     private double yScale;
-    private List<Integer> finishedTasksInfo;
-    private GanttStatistics statistics;
-    private List<Point> graphPoints;
 
-    private List<Integer> remainingEffortInfo;
-    private List<Point> effortPoints;
+    private GanttStatistics statistics;
+
+    private RemainingTasksGraph remainingTasksGraph;
+    private RemainingEffortGraph remainingEffortGraph;
+
+
     private static final Date date = new Date();
 
     public GraphPanel(JPanel myPanel) {
-        this.finishedTasksInfo = new ArrayList<>();
-        this.remainingEffortInfo = new ArrayList<>();
         this.minScore = 0;
         this.graphInfOffSet = 250;
         this.padding = 45;
@@ -67,15 +66,17 @@ public class GraphPanel extends PanelStyler {
 
     public void init(GanttStatistics statistics) {
         this.statistics = statistics;
-        this.finishedTasksInfo = statistics.getBurndownInfo();
-        this.remainingEffortInfo = statistics.getRemEffortInfo();
         this.tasksTotalDuration = initY();
         this.estimatedTime = initX();
         this.maxScore = getMaxScore();
         this.xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (this.estimatedTime);
         this.yScale = ((double) getScreenSizeY() - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
-        this.graphPoints = buildAllPoints();
-        this.effortPoints = buildEffortPoints();
+
+        this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth);
+        remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
+
+        this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth);
+        remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
     }
 
     private int initX() {
@@ -116,63 +117,14 @@ public class GraphPanel extends PanelStyler {
             draw_X_Marks(g2);
             draw_Y_Marks(g2);
             drawIdealFlowLine(g2);
-            if (graphPoints.size() > 1)
-                drawActualFlowLine(g2, graphPoints);
-            if(effortPoints.size() > 1)
-                drawRemainingEffortLine(g2, effortPoints);
+            if (remainingTasksGraph.getSize() > 1)
+                remainingTasksGraph.drawActualFlowLine(g2);
+            if(remainingEffortGraph.getSize() > 1)
+                remainingEffortGraph.drawActualFlowLine(g2);
         }
 
         // Paints graph's info - estimated line and current progression line
         drawGraphInfo(g2);
-    }
-
-    private void drawRemainingEffortLine(Graphics2D g2, List<Point> graphPoints){
-        Stroke oldStroke = g2.getStroke();
-        g2.setColor(COLOR.REMAINING_EFFORT_LINE.color);
-        g2.setStroke(GRAPH_STROKE);
-        System.out.println("SIZE "+graphPoints.size());
-        for (int i = 0; i < graphPoints.size() - 1; i++) {
-            int x1 = graphPoints.get(i).x;
-            int y1 = graphPoints.get(i).y;
-            int x2 = graphPoints.get(i + 1).x;
-            int y2 = graphPoints.get(i + 1).y;
-            g2.drawLine(resizeX(x1, myPanel), resizeY(y1, myPanel), resizeX(x2, myPanel), resizeY(y2, myPanel));
-        }
-
-        g2.setStroke(oldStroke);
-        g2.setColor(COLOR.POINT_COLOR.color);
-        for (int i = 0; i < graphPoints.size(); i++) {
-            int x = graphPoints.get(i).x - pointWidth / 2;
-            int y = graphPoints.get(i).y - pointWidth / 2;
-            int ovalW = pointWidth;
-            int ovalH = pointWidth;
-            g2.fillOval(resizeX(x, myPanel), resizeY(y, myPanel), resizeX(ovalW, myPanel), resizeY(ovalH, myPanel));
-        }
-    }
-
-    private void drawActualFlowLine(Graphics2D g2, List<Point> graphPoints){
-        Stroke oldStroke = g2.getStroke();
-
-        g2.setColor(COLOR.ACTUAL_LINE.color);
-        g2.setStroke(GRAPH_STROKE);
-        System.out.println("SIZE "+graphPoints.size());
-        for (int i = 0; i < graphPoints.size() - 1; i++) {
-            int x1 = resizeX(graphPoints.get(i).x, myPanel);
-            int y1 = resizeY(graphPoints.get(i).y, myPanel);
-            int x2 = resizeX(graphPoints.get(i + 1).x, myPanel);
-            int y2 = resizeY(graphPoints.get(i + 1).y, myPanel);
-            g2.drawLine(x1, y1, x2, y2);
-        }
-
-        g2.setStroke(oldStroke);
-        g2.setColor(COLOR.POINT_COLOR.color);
-        for (int i = 0; i < graphPoints.size(); i++) {
-            int x = resizeX(graphPoints.get(i).x - pointWidth / 2, myPanel);
-            int y = resizeY(graphPoints.get(i).y - pointWidth / 2, myPanel);
-            int ovalW = resizeX(pointWidth, myPanel);
-            int ovalH = resizeY(pointWidth, myPanel);
-            g2.fillOval(x, y, ovalW, ovalH);
-        }
     }
 
     // create hatch marks, grid lines and identifiers for X axis.
@@ -273,58 +225,4 @@ public class GraphPanel extends PanelStyler {
        }
     }
 
-
-    private List<Point> buildEffortPoints() {
-        this.effortPoints = new ArrayList<>();
-
-        int originX = (padding + labelPadding);
-        int originY = (int) ((maxScore - tasksTotalDuration) * yScale + padding);
-
-        Point pointReference = new Point(originX, originY);
-
-        effortPoints.add(pointReference);
-
-        int yReference = 0;
-
-        for (int i = 1; i < remainingEffortInfo.size(); i++) {
-
-                int x1 = (int) (i * xScale + padding + labelPadding);
-                int y1 = (int) ((maxScore - tasksTotalDuration + yReference + remainingEffortInfo.get(i-1)) * yScale + padding);
-                Point p = new Point(x1, y1);
-                effortPoints.add(p);
-                yReference += remainingEffortInfo.get(i-1);
-                System.out.println("yReference" + yReference);
-
-        }
-
-        return effortPoints;
-    }
-
-
-    private List<Point> buildAllPoints(){
-
-        this.graphPoints = new ArrayList<>();
-
-        int originX = (padding + labelPadding);
-        int originY = (int) ((maxScore - tasksTotalDuration) * yScale + padding);
-
-        Point pointReference = new Point(originX, originY);
-
-        graphPoints.add(pointReference);
-
-        int yReference = 0;
-
-        for (int i = 0; i < finishedTasksInfo.size(); i++) {
-
-            if (finishedTasksInfo.get(i) > 0){
-                int x1 = (int) (i * xScale + padding + labelPadding);
-                int y1 = (int) ((maxScore - tasksTotalDuration + yReference + finishedTasksInfo.get(i)) * yScale + padding);
-                Point p = new Point(x1, y1);
-                graphPoints.add(p);
-                yReference += finishedTasksInfo.get(i);
-                System.out.println("yReference" + yReference);
-            }
-        }
-        return graphPoints;
-    }
 }

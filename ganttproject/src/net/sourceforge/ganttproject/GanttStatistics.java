@@ -1,8 +1,12 @@
 package net.sourceforge.ganttproject;
 
+import biz.ganttproject.core.calendar.WeekendCalendarImpl;
 import biz.ganttproject.core.time.GanttCalendar;
+import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -23,9 +27,10 @@ public class GanttStatistics {
 
     private List<Integer> burndownChartData;
     private List<Integer> remainingEffortData;
-
-    public GanttStatistics(TaskManager myTaskManager) {
-        this.myTaskManager = myTaskManager;
+    private WeekendCalendarImpl calendar;
+    public GanttStatistics(TaskManager taskManager) {
+        this.calendar = new WeekendCalendarImpl();
+        this.myTaskManager = taskManager;
     }
 
     /**
@@ -96,6 +101,27 @@ public class GanttStatistics {
     }
 
     /**
+     * Calculates the number of tasks whose progress is 100% (finished)
+     *
+     * @return Number of finished tasks
+     */
+    private int calculateFinishedTasks() {
+        int finishedTasks = 0;
+        int count = 0;
+        int index = 0;
+
+        while(count < this.myTaskManager.getTaskCount()) {
+            if(this.myTaskManager.getTask(index) != null){
+                count++;
+                if (this.myTaskManager.getTask(index).getCompletionPercentage() == 100)
+                    finishedTasks++;
+            }
+            index++;
+        }
+        return finishedTasks;
+    }
+
+    /**
      * Overall progress is measured in percentage
      *
      * @return progress
@@ -119,40 +145,18 @@ public class GanttStatistics {
         initRemEffortData();
         return remainingEffortData;
     }
-    /**
-     * Calculates the number of tasks whose progress is 100% (finished)
-     *
-     * @return Number of finished tasks
-     */
-    private int calculateFinishedTasks() {
-        int finTasks = 0;
-        int count = 0;
-        int index = 0;
-
-        while(count < this.myTaskManager.getTaskCount()) {
-            if(this.myTaskManager.getTask(index) != null){
-                count++;
-                if (this.myTaskManager.getTask(index).getCompletionPercentage() == 100)
-                    finTasks++;
-            }
-            index++;
-        }
-        return finTasks;
-    }
 
     /** TODO - Put this in another class */
     private void initBurndownData() {
 
         this.burndownChartData = new ArrayList<>();
-
-        for(int i = 0; i < getTotalEstimatedTime() + 1; i++)
-            burndownChartData.add(i,0);
-        int count = 0;
+        resetDataStructure(burndownChartData); // days in project fill with zeros
+        int taskCount = 0;
         int index = 0;
 
-        while(count < this.myTaskManager.getTaskCount()) {
+        while(taskCount < this.myTaskManager.getTaskCount()) {
             if(this.myTaskManager.getTask(index) != null){
-                count++;
+                taskCount++;
                 if (this.myTaskManager.getTask(index).getCompletionPercentage() == 100) {
                     int dayInProject = calculateDiffDate(index);
                     int sum = burndownChartData.get(dayInProject);
@@ -168,29 +172,98 @@ public class GanttStatistics {
     private void initRemEffortData() {
 
         this.remainingEffortData = new ArrayList<>();
+        resetDataStructure(remainingEffortData); // days in project fill with zeros
 
-        for(int i = 0; i < getTotalEstimatedTime() + 1; i++)
-           remainingEffortData.add(i,0);
-        int count = 0;
-        int index = 0;
+        Task[] myTasks = this.myTaskManager.getTasks();
 
-        while(count < this.taskManager.getTaskCount()) {
-            if(this.taskManager.getTask(index) != null){
-                count++;
-
-                double percentage = this.taskManager.getTask(index).getCompletionPercentage() / 100.0;
-                int duration = (int)(this.taskManager.getTask(index).getLength() * percentage);
-                int dayInProject = calculateRemEffData(index);
-                System.out.println("day in roject: " + dayInProject);
-                for(int i = dayInProject; i < duration + dayInProject; i++ ) {
-                    int sum = remainingEffortData.get(i);
-                    sum += 1;
-                    remainingEffortData.remove(i);
-                    remainingEffortData.add(i, sum);
-                }
-            }
-            index++;
+        for (Task task : myTasks){
+            double percentage = task.getCompletionPercentage() / 100.0;
+            /* completedDuration -> Acrescentar os fins de semana */
+            int completedDuration = (int)(task.getDuration().getLength() * percentage) + calculateNumOfWeekend(task.getTaskID()); // task completed duration without weekends
+            int dayOffSetInProject = calculateOffSetInProject(task);
+            updateRemainingEffortData(task, dayOffSetInProject, completedDuration);
         }
+    }
+
+
+    private int calculateNumOfWeekend(int index) {
+        GanttCalendar startDateToConvert = myTaskManager.getTask(index).getEnd();
+        GanttCalendar endDateToConvert = myTaskManager.getTask(index).getStart();
+
+        int startYear = startDateToConvert.getYear() - 1900;
+        int startMonth =startDateToConvert.getMonth();
+        int startDay = startDateToConvert.getDay();
+
+        Date startDate = new Date(startYear, startMonth, startDay);
+        //
+        int endYear = endDateToConvert.getYear() - 1900;
+        int endMonth =endDateToConvert.getMonth();
+        int endDay = endDateToConvert.getDay();
+
+        Date endDate = new Date(endYear, endMonth, endDay);
+
+
+        Date currDate = startDate;
+        int currWeekends = 0;
+        while (currDate.before(endDate)){
+            currDate.setTime(currDate.getTime() + 86400000);//adiciona o numero de milisegundos de um dia
+            if(calendar.isWeekend(currDate))currWeekends++;
+        }
+        return currWeekends;
+       // Date currDate = new Date();
+        //System.out.println(myTaskManager.getCalendar().getActivities(currDate, startDate));
+        //return 0;
+
+    }
+
+    private void updateRemainingEffortData(Task task, int taskDayOffSetInProject, int completedDuration){
+
+        int todayOffSetInProject = (int) getCurrentSpentTime();
+
+        int iterationLoop = Math.min(todayOffSetInProject + 1, (taskDayOffSetInProject + completedDuration));
+        int rest = Math.max((taskDayOffSetInProject + completedDuration) - (todayOffSetInProject + 1), 0); // Amount of work done that is scheduled for days after today
+
+        //int toprint = (taskDayOffSetInProject + completedDuration);
+        //System.out.println("dayOffSetInProject "+taskDayOffSetInProject);
+        //System.out.println("completedDuration "+completedDuration);
+        //System.out.println("dayOffSetInProject + completedDuration " + toprint);
+        //System.out.println("todayOffSetInProject" +todayOffSetInProject);
+        //System.out.println("iterationLoop "+iterationLoop);
+        //System.out.println("rest "+rest);
+
+        for(int i = taskDayOffSetInProject; i < iterationLoop; i++) {
+            if (todayIsWeekend(task, i))
+                markWeekend(i);
+            else {
+                int val = i == iterationLoop - 1 ? 1 + rest : 1;
+                markWorkDoneToday(remainingEffortData, i, val);
+            }
+        }
+    }
+
+    private void markWorkDoneToday(List<Integer> list, int index, int value){
+        int sum = list.get(index);
+        sum += value;
+        list.remove(index);
+        list.add(index, sum);
+    }
+
+    private void markWeekend(int index){
+        if (!(remainingEffortData.get(index) < 0)){
+            remainingEffortData.remove(index);
+            remainingEffortData.add(index, 0);
+        }
+    }
+
+    private boolean todayIsWeekend(Task task, int offSetDayInProject) {
+        GanttCalendar dateToConvert = task.getStart();
+
+        int year = dateToConvert.getYear() - 1900;
+        int month =dateToConvert.getMonth();
+        int day = dateToConvert.getDay() + offSetDayInProject;
+
+        Date today = new Date(year, month, day);
+        return calendar.isWeekend(today);
     }
 
     private int calculateDiffDate(int index) {
@@ -204,11 +277,12 @@ public class GanttStatistics {
 
         return (int) getDifferenceDays(myTaskManager.getProjectStart(), endDate);
     }
-<<<<<<< HEAD
-=======
 
-    private int calculateRemEffData(int index) {
-        GanttCalendar dateToConvert = taskManager.getTask(index).getStart();
+
+
+
+    private int calculateOffSetInProject(Task task) {
+        GanttCalendar dateToConvert = task.getStart();
 
         int year = dateToConvert.getYear() - 1900;
         int month =dateToConvert.getMonth();
@@ -216,8 +290,12 @@ public class GanttStatistics {
 
         Date startDate = new Date(year, month, day);
 
-        return (int) getDifferenceDays(taskManager.getProjectStart(), startDate);
+        return (int) getDifferenceDays(myTaskManager.getProjectStart(), startDate);
     }
 
->>>>>>> refs/remotes/origin/BRANCH_2_8_9
+    private void resetDataStructure(List<Integer> list){
+        for(int i = 0; i < getTotalEstimatedTime() + 1; i++)
+            list.add(i,0);
+    }
+
 }
