@@ -86,13 +86,6 @@ public class RemainingEffortGraph extends Graph {
         drawPoints(g2);
     }
 
-    /**
-     * Updates the graph info based on the information of each task
-     *
-     * @param task
-     * @param taskDayOffSetInProject
-     * @param completedDuration
-     */
 
 
     public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {

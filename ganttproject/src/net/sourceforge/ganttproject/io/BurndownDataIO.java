@@ -71,7 +71,7 @@ public class BurndownDataIO {
         return doneTasks;
     }
 
-    public double[] getPastRemainingEffort(int numOfDays, int totalEffort) throws IOException {
+    public double[] getPastRemainingEffort(int numOfDays) throws IOException {
         double[] definedPoints = new double[numOfDays];
 
         for (int currDay = 0; currDay < numOfDays; currDay++) {
