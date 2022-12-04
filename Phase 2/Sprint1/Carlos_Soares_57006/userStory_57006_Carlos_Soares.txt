@@ -1,0 +1,4 @@
+
+User Story: Hi, Im Carla and i think this project is very usefull and organized,
+but i prefer to look at things that are more visually expressed, 
+with less details but easier to understand the flow of the project.

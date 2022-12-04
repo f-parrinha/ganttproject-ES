@@ -1,0 +1,6 @@
+UML Id: UML_57006_Carlos_Soares
+Name: PERT Chart
+
+Description: The project shows a window with information about the current tasks in a PERT format. 
+The User can move the tasks along the screen to have a better graphical expression of the current project. 
+Any modification in the project's tasks is updated on the PERT chart.
