@@ -20,6 +20,9 @@ import java.util.Date;
  * @author Bernardo Atalaia
  * @author Carlos Soares
  * @author Pedro Inácio
+ *
+ * GraphPanel class - paints the main panel and graph
+ *                  - it uses the correspoding curve objects to paint the right curve, such as remaining effort curve
  */
 public class GraphPanel extends PanelStyler {
     protected enum COLOR {
@@ -58,9 +61,8 @@ public class GraphPanel extends PanelStyler {
     private GanttStatistics statistics;
 
     private RemainingTasksGraph remainingTasksGraph;
-    private RemainingEffortGraph remainingEffortGraph;
 
-    private static final Date date = new Date();
+    private RemainingEffortGraph remainingEffortGraph;
 
     public GraphPanel(JPanel myPanel) {
         this.minScore = 0;
@@ -70,11 +72,19 @@ public class GraphPanel extends PanelStyler {
         this.pointWidth = 4;
         this.numberYDivisions = 15;
         this.myPanel = myPanel;
-        //init is called each paint and we dont want to recreate
-        //the select sprint folder button mid selection
+
+        /* init is called each paint and we don't want to recreate
+         * the select sprint folder button mid selection */
+
         defineUI();
     }
 
+    /**
+     * Initializes graph values, such as the scale and some statistics
+     *  - this method is called in every paint
+     *
+     * @param statistics GanttStatistics object
+     */
     public void init(GanttStatistics statistics) {
         this.statistics = statistics;
 
@@ -90,6 +100,10 @@ public class GraphPanel extends PanelStyler {
         defineCombobox();
     }
 
+    /**
+     * Defines the UI panel on the top of the frame
+     *  - Adds all the points
+     */
     private void defineUI() {
         addResetButton();
         addPathButton();
@@ -99,6 +113,10 @@ public class GraphPanel extends PanelStyler {
         addCombobox();
     }
 
+    /**
+     * Defines the combo box containing the days to choose.
+     *      The selected day will be used to paint the current burndown chart
+     */
     private void defineCombobox() {
         if (comboboxItems == null ||
                 comboboxItems.size() != statistics.getTotalEstimatedTime()) {
@@ -113,24 +131,45 @@ public class GraphPanel extends PanelStyler {
         }
     }
 
+    /**
+     * Initializes the remaining effort curve in the graph
+     */
     private void initRemainingEffortGraph() {
         this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
         remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
     }
 
+    /**
+     * Initializes the remaining tasks curve in the graph
+     */
     private void initRemainingTasksGraph() {
         this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
         remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
     }
 
+    /**
+     * Initializes the x axis, the total estimated time is the max value of this axis
+     *
+     * @return total estimated time, the max value
+     */
     private int initX() {
         return (int) statistics.getTotalEstimatedTime();
     }
 
+    /**
+     * Initializes the y axis, the sum of all the tasks' duration is the max value of this axis
+     *
+     * @return sum of all the tasks' duration, the max value
+     */
     private int initY() {
         return statistics.getSumOfTaskDurations();
     }
 
+    /**
+     * Gets the width of the graph by subtracting the screen size by the offset in the screen
+     *
+     * @return graph width
+     */
     private int getGraphWidth() {
         return getScreenSizeX() - graphInfOffSet;
     }
@@ -172,6 +211,11 @@ public class GraphPanel extends PanelStyler {
         drawGraphInfo(g2);
     }
 
+    /**
+     * Paints the marks along the x axis
+     *
+     * @param g2 graphics 2D object
+     */
     // create hatch marks, grid lines and identifiers for X axis.
     private void draw_X_Marks(Graphics2D g2) {
 
@@ -187,11 +231,25 @@ public class GraphPanel extends PanelStyler {
         }
     }
 
+    /**
+     * Draws the grid along the x axis (vertical lines)
+     *
+     * @param g2 graphics 2D object
+     * @param p0 starting point coordinate
+     * @param p1 end point coordinate
+     */
     private void draw_X_Grid(Graphics2D g2, Point p0, Point p1) {
         g2.setColor(COLOR.GRID_COLOR.color);
         g2.drawLine(resizeX(p0.x, myPanel), resizeY(getScreenSizeY() - padding - labelPadding - 1 - pointWidth, myPanel), resizeX(p1.x, myPanel), resizeY(padding, myPanel));
     }
 
+    /**
+     * Draws the markers' identifiers. The numbers along the x axis
+     *
+     * @param g2 graphics 2D object
+     * @param index day
+     * @param p0 point coordinate
+     */
     private void draw_X_Identifiers(Graphics2D g2, int index, Point p0) {
         g2.setColor(Color.BLACK);
         String xLabel = index + "";
@@ -200,7 +258,11 @@ public class GraphPanel extends PanelStyler {
         g2.drawString(xLabel, resizeX(p0.x - labelWidth / 2, myPanel), resizeY(p0.y + metrics.getHeight() + 3, myPanel));
     }
 
-    // create hatch marks, grid lines and identifiers for Y axis.
+    /**
+     * Create hatch marks, grid lines and identifiers for the y axis
+     *
+     * @param g2 graphics 2D object
+     */
     private void draw_Y_Marks(Graphics2D g2) {
         for (int i = 0; i < numberYDivisions + 1; i++) {
             Point p0 = new Point(padding + labelPadding, getScreenSizeY() - ((i * (getScreenSizeY() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding));
@@ -213,12 +275,25 @@ public class GraphPanel extends PanelStyler {
         }
     }
 
+    /**
+     * Draws the y grid. The horizontal lines
+     *
+     * @param g2 graphics 2D object
+     * @param p0 starting point coordinate
+     * @param p1 end point coordinate
+     */
     private void draw_Y_Grid(Graphics2D g2, Point p0, Point p1) {
         g2.setColor(COLOR.GRID_COLOR.color);
         g2.drawLine(resizeX(padding + labelPadding + 1 + pointWidth, myPanel), resizeY(p0.y, myPanel),
                 resizeX(getGraphWidth() - padding, myPanel), resizeY(p1.y, myPanel));
     }
 
+    /**
+     * Draws the identifiers on the y axis. The numbers.
+     * @param g2 graphics 2D object
+     * @param index day
+     * @param p0 point coordinate
+     */
     private void draw_Y_Identifiers(Graphics2D g2, int index, Point p0) {
         g2.setColor(Color.BLACK);
         String yLabel = (int) ((minScore + (maxScore - minScore) * (index * 1.0 / numberYDivisions))) + "";
@@ -227,6 +302,11 @@ public class GraphPanel extends PanelStyler {
         g2.drawString(yLabel, resizeX(p0.x - labelWidth - 5, myPanel), resizeY(p0.y + (metrics.getHeight() / 2) - 3, myPanel));
     }
 
+    /**
+     * Draws the ideal estimate, the red curve on the graph. In fact, it is a straight line
+     *
+     * @param g2 graphics 2D object
+     */
     private void drawIdealFlowLine(Graphics2D g2) {
         g2.setColor(COLOR.IDEAL_LINE_COLOR.color);
         g2.setStroke(GRAPH_STROKE);
