@@ -56,7 +56,7 @@ public class RemainingEffortGraph extends Graph {
         }
 
         try {
-            setGraphPointsFromFiles("/home/pedro/Desktop/teste", myGanttStatistics.getSumOfTaskDurations());
+            setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
