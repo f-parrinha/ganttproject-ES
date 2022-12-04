@@ -17,7 +17,7 @@ import java.net.URL;
  * <p>
  * PlannerPainter asbtract class - Adds the extra functionalities used by 'panel painters'
  */
-public abstract class PanelStyler {
+public abstract class PanelStyler extends CanUseIO {
 
     protected static final String FONT_STYLE = "Helvetica";
 
@@ -25,8 +25,8 @@ public abstract class PanelStyler {
 
     protected Dimension screenSize;
 
-    public PanelStyler(){
-        screenSize = Toolkit. getDefaultToolkit(). getScreenSize();
+    public PanelStyler() {
+        screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     }
 
     /**
@@ -34,7 +34,7 @@ public abstract class PanelStyler {
      *
      * @return screen width
      */
-    protected int getScreenSizeX(){
+    protected int getScreenSizeX() {
         return screenSize.width;
     }
 
@@ -43,7 +43,7 @@ public abstract class PanelStyler {
      *
      * @return screen height
      */
-    protected int getScreenSizeY(){
+    protected int getScreenSizeY() {
         return screenSize.height;
     }
 
@@ -54,7 +54,7 @@ public abstract class PanelStyler {
      * @return scaled x value
      */
     protected int resizeX(int i, JPanel myPanel) {
-        return i*myPanel.getWidth()/screenSize.width;
+        return i * myPanel.getWidth() / screenSize.width;
     }
 
     /**
@@ -63,8 +63,8 @@ public abstract class PanelStyler {
      * @param i y value
      * @return scaled y value
      */
-    protected int resizeY(int i,  JPanel myPanel) {
-        return i*myPanel.getHeight()/screenSize.height;
+    protected int resizeY(int i, JPanel myPanel) {
+        return i * myPanel.getHeight() / screenSize.height;
     }
 
     /**
@@ -72,8 +72,8 @@ public abstract class PanelStyler {
      *
      * @param size font size
      */
-    protected void updateFontSize(int size, JPanel myPanel){
-        fontSize = size * myPanel.getWidth()/screenSize.width;
+    protected void updateFontSize(int size, JPanel myPanel) {
+        fontSize = size * myPanel.getWidth() / screenSize.width;
     }
 
     /**

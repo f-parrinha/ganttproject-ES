@@ -23,7 +23,6 @@ import java.util.List;
  * RemainingEffortGraph Class - Adds the remaining effort graph to the Burndown Chart
  */
 public class RemainingEffortGraph extends Graph {
-
     private List<Integer> flag = new ArrayList<>();
     private boolean LinearMode;
 
@@ -41,7 +40,7 @@ public class RemainingEffortGraph extends Graph {
             flag.add(i, -1);
         }
         Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
-        System.out.println(LinearMode);
+
         if(LinearMode){
             for (Task task : myTasks) {
                 double percentage = task.getCompletionPercentage() / 100.0;
@@ -61,7 +60,7 @@ public class RemainingEffortGraph extends Graph {
             }
         } else {
             try {
-                setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
+                setGraphPointsFromFiles(sprintPath, myGanttStatistics.getSumOfTaskDurations());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -112,8 +111,6 @@ public class RemainingEffortGraph extends Graph {
         int[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
             if (dataFromFiles[currFileDay] != -1) setWorkDone(graphInfo, currFileDay, dataFromFiles[currFileDay]);
-
-        System.out.println(graphInfo);
     }
 
     private void setWorkDone(List<Integer> list, int startIndex, int value) {
