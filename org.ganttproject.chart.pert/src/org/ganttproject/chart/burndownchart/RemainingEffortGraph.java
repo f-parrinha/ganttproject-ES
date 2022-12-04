@@ -10,6 +10,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -102,28 +103,25 @@ public class RemainingEffortGraph extends Graph {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
         int[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
-             /*   int firstIndexFilled = -1;
-        int lastIndexFilled = -1;
-        boolean firstFilledBool = false;
-
-        for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++) {
-            if (dataFromFiles[currFileDay] != -1) {
-                if (!firstFilledBool) {
-                    firstFilledBool = true;
-                    firstIndexFilled = currFileDay;
-                }
-                lastIndexFilled = currFileDay;
-            }
-        }
-
-        System.out.println(lastIndexFilled);
-
+        //
+        ArrayList<Integer> filledPoints = new ArrayList<>();
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
             //if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
-            if (dataFromFiles[currFileDay] != -1)
-                setWorkDoneToday(graphInfo, currFileDay, (int) dataFromFiles[currFileDay]);
-            else if (currFileDay > firstIndexFilled && currFileDay < lastIndexFilled)
-                graphInfo.set(currFileDay, graphInfo.get(currFileDay) + 1); //NAO E MAIS UM, PODE DESCER E DPS SUBIR!!!!!*/
+            if (dataFromFiles[currFileDay] != -1) {
+                setWorkDoneToday(graphInfo, currFileDay, dataFromFiles[currFileDay]);
+                filledPoints.add(currFileDay);
+            }
+        //
+        Iterator<Integer> fillPit = filledPoints.iterator();
+        int curr = fillPit.next();
+        while (fillPit.hasNext()) {
+            int next = fillPit.next();
+            for (int currIntervalIndex = curr; currIntervalIndex < next; currIntervalIndex++) {
+                //int pastPlutFuture = graphInfo.get(curr) + graphInfo.get(next);
+                graphInfo.set(currIntervalIndex, graphInfo.get(next) / (graphInfo.get(curr) + currIntervalIndex));
+            }
+        }
+        System.out.println(graphInfo);
     }
 
     private void setWorkDoneToday(List<Integer> list, int startIndex, int value) {
