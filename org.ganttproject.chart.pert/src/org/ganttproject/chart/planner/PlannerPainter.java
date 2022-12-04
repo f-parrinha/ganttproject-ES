@@ -223,8 +223,8 @@ public class PlannerPainter extends PanelStyler {
             setOffset(offsetX + oX, offsetY + oY);
             g.setColor(Color.LIGHT_GRAY);
             g.fillRoundRect(offsetX, offsetY, mainBarX, mainBarY, 5, 5);
-            g.drawString("0", offsetX - resizeX(15, myPanel), offsetY + rectHeight + resizeY(30, myPanel));
-            g.drawString("" + max, offsetX + rectWidth, offsetY + rectHeight + resizeY(30, myPanel));
+            g.drawString("0", offsetX - resizeX(15, myPanel), offsetY + mainBarY + resizeY(30, myPanel));
+            g.drawString("" + max, offsetX + mainBarX, offsetY + mainBarY + resizeY(30, myPanel));
             g.setColor(c);
             g.fillRoundRect(offsetX + (offset/2), offsetY + (offset/2),
                     progressionBarX - offset,progressionBarY - offset, 5, 5);

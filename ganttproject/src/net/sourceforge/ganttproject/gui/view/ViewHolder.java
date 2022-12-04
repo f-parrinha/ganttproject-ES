@@ -92,11 +92,11 @@ class ViewHolder implements ChartSelectionListener, GanttLanguage.Listener {
   /**
    * Decreases the current index of the view it is not either
    *    the ganttchart view nor the resource chart view
-   *
-   * @return index
    */
-  public int decreaseIndex(){
-    return myIndex > 2 ? myIndex -- : myIndex;
+  public void decreaseIndex(){
+     if(myIndex > 2){
+       myIndex --;
+     }
   }
 
   /**

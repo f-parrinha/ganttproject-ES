@@ -1,0 +1,10 @@
+Reviewer: Bernardo Atalaia 59962
+
+1: Good example with a very good explanation, very clear and direct.
+
+2: It's a good code smell and well explained but i think there are more suitable classes 
+for that, in this case there is only 4 parameters, the thing is that 
+they have big names so it seems like more. Overall good explanation  
+aswell but i think there are better examples.
+
+3: I completly agree with this code smell, also well explained.
