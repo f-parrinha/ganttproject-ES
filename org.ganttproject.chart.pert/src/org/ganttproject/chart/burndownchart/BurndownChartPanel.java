@@ -44,6 +44,7 @@ public class BurndownChartPanel extends Panel {
 
     @Override
     public void paint(Graphics g) {
+
         myGraph.init(myGanttStatistics);
         setBackground(Color.WHITE);
         Graphics2D g2 = (Graphics2D) g;

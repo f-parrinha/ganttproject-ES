@@ -1,0 +1,4 @@
+Reviewer: Pedro Inácio 59184
+
+Metrics are very well detailed as well as explained, says everything that one would expect
+about the explained metrics plus are relevant to the project.

@@ -1,0 +1,5 @@
+UML Id: 3
+User Story: Hello! My name is Peter and as I manage an organized firm I think the gantt project 
+should be able to refer to the resourses we have in hands and establish a connection between 
+them and the tasks that exist so I can easly define how and what a single task needs along with 
+seeing in what tasks a single resourse is already being used.

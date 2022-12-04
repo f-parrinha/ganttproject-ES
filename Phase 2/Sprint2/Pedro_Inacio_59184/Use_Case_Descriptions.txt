@@ -1,0 +1,7 @@
+UML Id: 3
+Name: Resourse Tab
+
+Description: The project shows a window with information about the current resourses in the current project
+and the respective tasks related. The user can create a new resourse anfd modify an existing one.
+
+Primary Actors: User
