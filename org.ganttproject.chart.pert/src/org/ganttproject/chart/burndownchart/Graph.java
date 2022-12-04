@@ -26,7 +26,7 @@ public abstract class Graph extends PanelStyler {
     protected List<Integer> graphInfo;
     protected List<Point> graphPoints;
 
-    private WeekendCalendarImpl calendar;
+    protected WeekendCalendarImpl calendar;
 
     protected Graph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth) {
         this.myGanttStatistics = statistics;

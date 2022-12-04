@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -41,8 +42,17 @@ public class RemainingEffortGraph extends Graph {
             double percentage = task.getCompletionPercentage() / 100.0;
             int completedDuration = (int) (task.getDuration().getLength() * percentage);
             int dayOffSetInProject = calculateOffSetInProject(task.getStart());
-            // + 1 because the point with offset 0 is the starting point
-            markWorkDoneToday(graphInfo, dayOffSetInProject + 1, completedDuration);
+
+            int weekends = 0;
+            for (int currDay = 0; currDay < completedDuration + weekends; currDay++) {
+                GanttCalendar startDate = task.getStart().clone();
+                startDate.add(Calendar.DATE, currDay);
+
+                if (calendar.isWeekend(startDate.getTime()))
+                    weekends++;
+                else
+                    markWorkDoneToday(graphInfo, dayOffSetInProject + 1 + currDay, completedDuration / completedDuration);// + 1 because the point with offset 0 is the starting point
+            }
         }
 
         try {
@@ -85,7 +95,6 @@ public class RemainingEffortGraph extends Graph {
         g2.setColor(GraphPanel.COLOR.POINT_COLOR.color);
         drawPoints(g2);
     }
-
 
 
     public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
