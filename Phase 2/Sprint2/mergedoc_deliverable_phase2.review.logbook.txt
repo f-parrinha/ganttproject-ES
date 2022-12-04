@@ -28,3 +28,18 @@ about the explained metrics plus are relevant to the project.
 User story review:
 User story is relevant, simple and consise, right to the point.
 Would change nothing myself.
+
+Reviewer: Carlos Soares
+to: Martin Magdlinchev
+
+Metrics review:
+Metrics are very well explained. Plus his arguments are well suported with examples.
+
+User story review:
+User story is simple and consise.
+
+
+Reviewer: Francisco Parrinha 58360
+to: Pedro Inácio 59184
+
+I believe this metrics were well collected and explained. I agree with this metrics set
