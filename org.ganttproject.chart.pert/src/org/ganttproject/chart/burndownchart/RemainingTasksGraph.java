@@ -1,6 +1,5 @@
 package org.ganttproject.chart.burndownchart;
 
-import biz.ganttproject.core.time.GanttCalendar;
 import net.sourceforge.ganttproject.GanttStatistics;
 import net.sourceforge.ganttproject.io.BurndownDataIO;
 import net.sourceforge.ganttproject.task.Task;
@@ -9,72 +8,58 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-
-
+/**
+* @author Francisco Parrinha
+* @author Martin Magdalinchev
+* @author Bernardo Atalaia
+* @author Carlos Soares
+* @author Pedro Inácio
+* <p>
+ * <p>
+ * RemainingTasksGraph Class - Adds the remaining tasks graph to the Burndown Chart
+ */
 public class RemainingTasksGraph extends Graph {
 
-    private boolean linearMode;
-
     public RemainingTasksGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth, boolean linearMode){
-        super(statistics, panel, padding, labelPadding, pointWidth);
-        this.linearMode = linearMode;
+        super(statistics, panel, padding, labelPadding, pointWidth, linearMode);
         initGraphInfo();
     }
 
     @Override
     public void initGraphInfo() {
         graphInfo = new ArrayList<>();
-        resetDataStructure(graphInfo); // days in project fill with zeros
+        resetDataStructure(graphInfo); // days in project filled with '0'
 
-        if(linearMode){
+        if(linearMode) {
             Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
-            for (Task task : myTasks) {
-                if (task.getCompletionPercentage() == 100) {
-                    int dayInProject = calculateOffSetInProject(task.getEnd());
-                    int sum = graphInfo.get(dayInProject);
-                    sum += task.getDuration().getLength(); // task duration without weekends
-                    graphInfo.remove(dayInProject); // MAGIA
-                    graphInfo.add(dayInProject, sum);
-                }
-            }
-        } else {
+            for (Task task : myTasks)
+                loadGraphInfo(task);
+        } else
             try {
-                setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
+                setGraphPointsFromFiles(sprintPath);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-
     }
 
     @Override
     public List<Point> buildGraphPoints(double xScale, double yScale, int maxScore, int tasksTotalDuration) {
         this.graphPoints = new ArrayList<>();
 
-        int originX = (padding + labelPadding);
-        int originY = (int) ((maxScore - tasksTotalDuration) * yScale + padding);
-
-        Point pointReference = new Point(originX, originY);
-
+        Point pointReference = createPoint(0, 0, xScale, yScale, maxScore, tasksTotalDuration);
         graphPoints.add(pointReference);
-
         int yReference = 0;
 
         for (int i = 0; i < graphInfo.size(); i++) {
-
             if (graphInfo.get(i) > 0){
-                int x1 = (int) (i * xScale + padding + labelPadding);
-                int y1 = (int) ((maxScore - tasksTotalDuration + yReference + graphInfo.get(i)) * yScale + padding);
-                Point p = new Point(x1, y1);
+                Point p = createPoint(i, yReference, xScale, yScale, maxScore, tasksTotalDuration);
                 graphPoints.add(p);
                 if(linearMode)
                     yReference += graphInfo.get(i);
             }
         }
-
         return graphPoints;
     }
 
@@ -90,25 +75,22 @@ public class RemainingTasksGraph extends Graph {
         g2.setColor(GraphPanel.COLOR.POINT_COLOR.color);
         drawPoints(g2);
     }
-    private int calculateOffSetInProject(GanttCalendar date) {
-        GanttCalendar dateToConvert = date;
 
-        int year = dateToConvert.getYear() - 1900;
-        int month = dateToConvert.getMonth();
-        int day = dateToConvert.getDay();
-
-        Date startDate = new Date(year, month, day);
-
-        return (int) myGanttStatistics.getDifferenceDays(myGanttStatistics.getMyTaskManager().getProjectStart(), startDate);
+    @Override
+    public void loadGraphInfo(Task task) {
+        if (task.getCompletionPercentage() == 100) {
+            int dayInProject = calculateOffSetInProject(task.getEnd());
+            int duration = graphInfo.get(dayInProject);
+            duration += task.getDuration().getLength(); // task duration without weekends
+            graphInfo.set(dayInProject, duration);
+        }
     }
 
-    public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
+    @Override
+    public void setGraphPointsFromFiles(String folderPath) throws IOException {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
-        int[] dataFromFiles = data.getPastRemainingTasks(graphInfo.size());
-        for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
-            graphInfo.set(currFileDay, dataFromFiles[currFileDay]);
-
-        System.out.println(graphInfo);
+        List<Integer> dataFromFiles = data.getPastRemainingTasks(graphInfo.size());
+        graphInfo = dataFromFiles;
     }
 }
