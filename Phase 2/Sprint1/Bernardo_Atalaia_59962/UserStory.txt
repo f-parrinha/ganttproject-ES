@@ -1,3 +1,0 @@
-UML Id: 5
-User Story: Hi, Im laurene and as i look at myself using an app like gantt, i feel the need of having information at my disposure about this project, its inspiration for example.
-I would also feel like looking at the history of updates in itself and being able to recover a past saved project if i feel like the path this one is taking does not match my expectations.
