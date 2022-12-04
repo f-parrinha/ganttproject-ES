@@ -93,6 +93,11 @@ public class RemainingEffortGraph extends Graph {
     }
 
 
+    /**
+     * Draws the line with the current work done, the green one
+     *
+     * @param g2
+     */
     @Override
     public void drawActualFlowLine(Graphics2D g2) {
         Stroke oldStroke = g2.getStroke();
