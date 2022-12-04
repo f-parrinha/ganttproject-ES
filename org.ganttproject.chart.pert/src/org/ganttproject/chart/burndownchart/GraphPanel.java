@@ -60,9 +60,6 @@ public class GraphPanel extends PanelStyler {
     private RemainingTasksGraph remainingTasksGraph;
     private RemainingEffortGraph remainingEffortGraph;
 
-    private final String MUDAR = "C:\\Users\\marti\\IdeaProjects\\ES\\ganttproject-ES\\History";
-
-
     private static final Date date = new Date();
 
     public GraphPanel(JPanel myPanel) {
@@ -74,7 +71,27 @@ public class GraphPanel extends PanelStyler {
         this.numberYDivisions = 15;
         this.myPanel = myPanel;
 
-        // isto n vai ficar assim aqui
+        //
+        final JButton definePath = new JButton();
+        definePath.setText("Select Sprint Folder");
+
+        definePath.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser f = new JFileChooser();
+                f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                f.showSaveDialog(null);
+                //
+                sprintPath = f.getSelectedFile().getAbsolutePath();
+                System.out.println(f.getSelectedFile().getAbsolutePath());
+            }
+        });
+        this.myPanel.add(definePath);
+        //
+        //
+        //
+        //
+        //        // isto n vai ficar assim aqui
         final JTextField dayText = new JTextField();
         dayText.setText("Dia");
         this.myPanel.add(dayText);
@@ -86,7 +103,7 @@ public class GraphPanel extends PanelStyler {
             @Override
             public void actionPerformed(ActionEvent e) {
                 BurndownDataIO bd = new BurndownDataIO();
-                bd.changeSprintFolder(MUDAR);
+                bd.changeSprintFolder(sprintPath);
                 try {
                     bd.saveDay(statistics.getMyTaskManager(), Integer.parseInt(dayText.getText()));
                 } catch (IOException ex) {
@@ -94,14 +111,21 @@ public class GraphPanel extends PanelStyler {
                 }
             }
         });
-
-        changeModeButton = new JButton("Change");
+        //
+        changeModeButton = new JButton("Ideal");
         this.myPanel.add(changeModeButton);
         changeModeButton.setVisible(true);
         changeModeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 linearMode = !linearMode;
+                String currentMode = "";
+                if (linearMode)
+                    currentMode = "Ideal";
+                else
+                    currentMode = "History";
+                //
+                changeModeButton.setText(currentMode);
             }
         });
 
@@ -117,7 +141,6 @@ public class GraphPanel extends PanelStyler {
 
         this.xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (this.estimatedTime);
         this.yScale = ((double) getScreenSizeY() - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
-
         initRemainingEffortGraph();
         initRemainingTasksGraph();
 

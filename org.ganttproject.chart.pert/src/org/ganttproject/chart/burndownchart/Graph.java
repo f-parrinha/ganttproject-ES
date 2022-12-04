@@ -16,8 +16,6 @@ public abstract class Graph extends PanelStyler {
     protected static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     protected GanttStatistics myGanttStatistics;
 
-    protected static final String MUDAR = "C:\\Users\\marti\\IdeaProjects\\ES\\ganttproject-ES\\History";
-
     protected final JPanel myPanel;
     protected final int padding;
     protected final int labelPadding;
