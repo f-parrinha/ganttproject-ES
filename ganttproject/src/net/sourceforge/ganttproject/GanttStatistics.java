@@ -1,16 +1,8 @@
 package net.sourceforge.ganttproject;
 
-import biz.ganttproject.core.calendar.WeekendCalendarImpl;
-import biz.ganttproject.core.time.GanttCalendar;
-import net.sourceforge.ganttproject.io.BurndownDataIO;
-import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,12 +20,8 @@ public class GanttStatistics {
 
     private final TaskManager myTaskManager;
 
-    private List<Integer> burndownChartData;
-
-    private WeekendCalendarImpl calendar;
 
     public GanttStatistics(TaskManager taskManager) {
-        this.calendar = new WeekendCalendarImpl();
         this.myTaskManager = taskManager;
     }
 
@@ -136,72 +124,7 @@ public class GanttStatistics {
         return myTaskManager.getProjectCompletion();
     }
 
-    /**
-     * TODO - Put this in another class
-     * Gets the all the info for a burndown chart
-     *
-     * @return burndown chart data
-     */
-    public List<Integer> getBurndownInfo() {
-        initBurndownData();
-        return burndownChartData;
-    }
-
-
-    /**
-     * TODO - Put this in another class
-     */
-    private void initBurndownData() {
-        this.burndownChartData = new ArrayList<>();
-        resetDataStructure(burndownChartData); // days in project fill with zeros
-
-        int taskCount = 0;
-        int index = 0;
-
-        while (taskCount < this.myTaskManager.getTaskCount()) {
-            if (this.myTaskManager.getTask(index) != null) {
-                taskCount++;
-                if (this.myTaskManager.getTask(index).getCompletionPercentage() == 100) {
-                    int dayInProject = calculateDiffDate(index);
-                    int sum = burndownChartData.get(dayInProject);
-                    sum += myTaskManager.getTask(index).getDuration().getLength(); // task duration without weekends
-                    burndownChartData.remove(dayInProject); // MAGIA
-                    burndownChartData.add(dayInProject, sum);
-                }
-            }
-            index++;
-        }
-    }
-
-    private int calculateDiffDate(int index) {
-        GanttCalendar dateToConvert = myTaskManager.getTask(index).getEnd();
-
-        int year = dateToConvert.getYear() - 1900;
-        int month = dateToConvert.getMonth();
-        int day = dateToConvert.getDay();
-
-        Date endDate = new Date(year, month, day);
-
-        return (int) getDifferenceDays(myTaskManager.getProjectStart(), endDate);
-    }
-
-    public void resetDataStructure(List<Integer> list) {
-        for (int i = 0; i < getTotalEstimatedTime() + 2; i++)
-            list.add(i, 0);
-    }
-
     public TaskManager getMyTaskManager() {
         return myTaskManager;
-    }
-
-    public boolean todayIsWeekend(Task task, int offSetDayInProject) {
-        GanttCalendar dateToConvert = task.getStart();
-
-        int year = dateToConvert.getYear() - 1900;
-        int month = dateToConvert.getMonth();
-        int day = dateToConvert.getDay() + offSetDayInProject;
-
-        Date today = new Date(year, month, day);
-        return calendar.isWeekend(today);
     }
 }
