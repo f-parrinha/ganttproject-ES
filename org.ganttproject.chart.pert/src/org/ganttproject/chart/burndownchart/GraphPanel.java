@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -71,6 +72,21 @@ public class GraphPanel extends PanelStyler {
         this.numberYDivisions = 15;
         this.myPanel = myPanel;
 
+        final JButton reset = new JButton();
+        reset.setText("Reset ");
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!sprintPath.equals("")) {
+                    File dir = new File(sprintPath);
+                    for (File file : dir.listFiles())
+                        if (!file.isDirectory())
+                            file.delete();
+                }
+            }
+        });
+        this.myPanel.add(reset);
+
         //
         final JButton definePath = new JButton();
         definePath.setText("Select Sprint Folder");
@@ -78,12 +94,13 @@ public class GraphPanel extends PanelStyler {
         definePath.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser f = new JFileChooser();
-                f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                f.showSaveDialog(null);
-                //
-                sprintPath = f.getSelectedFile().getAbsolutePath();
-                System.out.println(f.getSelectedFile().getAbsolutePath());
+                try {
+                    JFileChooser f = new JFileChooser();
+                    f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    f.showSaveDialog(null);
+                    sprintPath = f.getSelectedFile().getAbsolutePath();
+                } catch (Exception ex) {
+                }
             }
         });
         this.myPanel.add(definePath);
@@ -151,6 +168,7 @@ public class GraphPanel extends PanelStyler {
         remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
 
     }
+
     private void initRemainingTasksGraph() {
         this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
         remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
