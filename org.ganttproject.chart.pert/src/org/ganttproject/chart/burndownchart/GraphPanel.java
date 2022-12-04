@@ -233,7 +233,9 @@ public class GraphPanel extends PanelStyler {
         g2.drawLine(resizeX(padding + labelPadding, myPanel), resizeY((int) ((maxScore - tasksTotalDuration) * yScale + padding), myPanel),
                 resizeX((int) (estimatedTime * xScale + padding + labelPadding), myPanel), resizeY((int) (maxScore * yScale + padding), myPanel));
     }
-
+    /**
+     * Draw Graph Info Panel
+     */
     private void drawGraphInfo(Graphics2D g2) {
         int infoRectYOrigin = ((getScreenSizeY() / 2) - 100 - padding);
         // draw white background in side right panel
@@ -241,7 +243,9 @@ public class GraphPanel extends PanelStyler {
         // draw strings for graph info
         drawStrings(g2, infoRectYOrigin);
     }
-
+    /**
+     * Draw background of the Graph info panel
+     */
     private void drawInfoBackGround(Graphics2D g2, int infoRectYOrigin){
         g2.setColor(Color.WHITE);
         g2.fillRect(resizeX(getGraphWidth(), myPanel), resizeY(infoRectYOrigin, myPanel), resizeX(225, myPanel), resizeY(getScreenSizeY() * 1 / 4, myPanel));
@@ -257,7 +261,9 @@ public class GraphPanel extends PanelStyler {
         g2.drawLine(resizeX(getGraphWidth() + padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 6) - padding - labelPadding, myPanel), resizeX(getGraphWidth() + 225 - padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 6) - padding - labelPadding, myPanel));
 
     }
-
+    /**
+     * Draw all Strings for the Graph info panel
+     */
     private void drawStrings(Graphics2D g2, int infoRectYOrigin){
         g2.setColor(Color.BLACK);
 
@@ -275,7 +281,9 @@ public class GraphPanel extends PanelStyler {
         g2.setTransform(at);
         g2.drawString("Sum of Task Estimates (days)", -resizeY(((getScreenSizeY() + padding) / 2) - "Sum of Task Estimates (days)".toCharArray().length, myPanel), resizeX(labelPadding, myPanel));
     }
-
+    /**
+     * Compute the max score draw in X axis
+     */
     private int getMaxScore() {
         if (tasksTotalDuration % 15 == 0) {
             return tasksTotalDuration;
@@ -283,7 +291,9 @@ public class GraphPanel extends PanelStyler {
             return (15 - (tasksTotalDuration % 15)) + tasksTotalDuration;
         }
     }
-
+    /**
+     * Creates a JButton in panel that clear all files in previews choosen directory
+     */
     private void addResetButton() {
         final JButton reset = new JButton();
         reset.setText("Reset ");
@@ -300,7 +310,9 @@ public class GraphPanel extends PanelStyler {
         });
         myPanel.add(reset);
     }
-
+    /**
+     * Creates a JButton in panel to choose the path to store memory file
+     */
     private void addPathButton() {
         final JButton definePath = new JButton();
         definePath.setText("Select Sprint Folder");
@@ -318,7 +330,9 @@ public class GraphPanel extends PanelStyler {
         });
         myPanel.add(definePath);
     }
-
+    /**
+     * Creates a JComboBox with a default data model.
+     */
     private void addSaveButton() {
         final JButton saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
@@ -336,7 +350,9 @@ public class GraphPanel extends PanelStyler {
         });
         myPanel.add(saveButton);
     }
-
+    /**
+     * Creates a JComboBox with a default data model.
+     */
     private void addModeButton() {
         final JButton changeModeButton = new JButton("Ideal");
         changeModeButton.addActionListener(new ActionListener() {
@@ -354,7 +370,9 @@ public class GraphPanel extends PanelStyler {
         });
         myPanel.add(changeModeButton);
     }
-
+    /**
+     * Creates a JComboBox with a default data model.
+     */
     private void addCombobox() {
         daySelector = new JComboBox();
         myPanel.add(daySelector);
