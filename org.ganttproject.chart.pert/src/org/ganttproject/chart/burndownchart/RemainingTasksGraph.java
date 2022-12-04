@@ -21,7 +21,15 @@ import java.util.List;
  * RemainingTasksGraph Class - Adds the remaining tasks graph to the Burndown Chart
  */
 public class RemainingTasksGraph extends Graph {
-
+    /**
+     * Creates Graph line of the remaining tasks
+     * @param statistics
+     * @param panel
+     * @param padding
+     * @param labelPadding
+     * @param pointWidth
+     * @param linearMode
+     */
     public RemainingTasksGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth, boolean linearMode){
         super(statistics, panel, padding, labelPadding, pointWidth, linearMode);
         initGraphInfo();
