@@ -42,7 +42,7 @@ public class RemainingTasksGraph extends Graph {
             }
         } else {
             try {
-                setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
+                setGraphPointsFromFiles(sprintPath, myGanttStatistics.getSumOfTaskDurations());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -74,7 +74,6 @@ public class RemainingTasksGraph extends Graph {
                     yReference += graphInfo.get(i);
             }
         }
-
         return graphPoints;
     }
 
