@@ -45,6 +45,7 @@ public class GraphPanel extends PanelStyler {
     private final JPanel myPanel;
 
     private final JButton saveButton;
+    private final JButton changeModeButton;
 
     private int estimatedTime;
     private int tasksTotalDuration;
@@ -52,12 +53,14 @@ public class GraphPanel extends PanelStyler {
     private double xScale;
     private double yScale;
 
+    private static boolean linearMode = true;
+
     private GanttStatistics statistics;
 
     private RemainingTasksGraph remainingTasksGraph;
     private RemainingEffortGraph remainingEffortGraph;
 
-    private final String MUDAR = "/home/pedro/Desktop/teste";
+    private final String MUDAR = "C:\\Users\\marti\\IdeaProjects\\ES\\ganttproject-ES\\History";
 
 
     private static final Date date = new Date();
@@ -95,6 +98,17 @@ public class GraphPanel extends PanelStyler {
             }
         });
 
+        changeModeButton = new JButton("Change");
+        this.myPanel.add(changeModeButton);
+        changeModeButton.setVisible(true);
+        changeModeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                linearMode = !linearMode;
+            }
+        });
+
+
     }
 
     public void init(GanttStatistics statistics) {
@@ -104,20 +118,17 @@ public class GraphPanel extends PanelStyler {
         this.maxScore = getMaxScore();
         this.xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (this.estimatedTime);
         this.yScale = ((double) getScreenSizeY() - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
-
-        this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth);
-
-        /*try {
-            remainingEffortGraph.setGraphPointsFromFiles(MUDAR, statistics.getSumOfTaskDurations());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
-
-        remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
-
+        System.out.println("init");
+        initRemainingEffortGraph();
 
         this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth);
         remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
+    }
+
+    private void initRemainingEffortGraph() {
+        this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
+        remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
+
     }
 
     private int initX() {
@@ -263,5 +274,6 @@ public class GraphPanel extends PanelStyler {
             return (15 - (tasksTotalDuration % 15)) + tasksTotalDuration;
         }
     }
+
 
 }

@@ -18,7 +18,7 @@ public abstract class Graph extends PanelStyler {
     protected static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     protected GanttStatistics myGanttStatistics;
 
-    protected static final String MUDAR = "/home/pedro/Desktop/teste";
+    protected static final String MUDAR = "C:\\Users\\marti\\IdeaProjects\\ES\\ganttproject-ES\\History";
 
     protected final JPanel myPanel;
     protected final int padding;
@@ -94,8 +94,10 @@ public abstract class Graph extends PanelStyler {
      * @param list
      */
     public void resetDataStructure(List<Integer> list) {
-        for (int i = 0; i < myGanttStatistics.getTotalEstimatedTime() + 2; i++)
+        for (int i = 0; i < myGanttStatistics.getTotalEstimatedTime() + 2; i++) {
             list.add(i, 0);
+
+        }
     }
 
     /**

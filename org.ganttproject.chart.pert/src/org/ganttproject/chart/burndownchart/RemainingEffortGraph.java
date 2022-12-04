@@ -8,9 +8,7 @@ import net.sourceforge.ganttproject.task.Task;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 
@@ -27,9 +25,11 @@ import java.util.List;
 public class RemainingEffortGraph extends Graph {
 
     private List<Integer> flag = new ArrayList<>();
+    private boolean LinearMode;
 
-    public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth) {
+    public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth, boolean linearMode) {
         super(statistics, panel, padding, labelPadding, pointWidth);
+        this.LinearMode = linearMode;
         initGraphInfo();
     }
 
@@ -41,31 +41,31 @@ public class RemainingEffortGraph extends Graph {
             flag.add(i, -1);
         }
         Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
+        System.out.println(LinearMode);
+        if(LinearMode){
+            for (Task task : myTasks) {
+                double percentage = task.getCompletionPercentage() / 100.0;
+                int completedDuration = (int) (task.getDuration().getLength() * percentage);
+                int dayOffSetInProject = calculateOffSetInProject(task.getStart());
 
-        //
-        try {
-            setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //
-        /*for (Task task : myTasks) {
-            double percentage = task.getCompletionPercentage() / 100.0;
-            int completedDuration = (int) (task.getDuration().getLength() * percentage);
-            int dayOffSetInProject = calculateOffSetInProject(task.getStart());
+                int weekends = 0;
+                for (int currDay = 0; currDay < completedDuration + weekends; currDay++) {
+                    GanttCalendar startDate = task.getStart().clone();
+                    startDate.add(Calendar.DATE, currDay);
 
-            int weekends = 0;
-            for (int currDay = 0; currDay < completedDuration + weekends; currDay++) {
-                GanttCalendar startDate = task.getStart().clone();
-                startDate.add(Calendar.DATE, currDay);
-
-                if (calendar.isWeekend(startDate.getTime()))
-                    weekends++;
-                else
-                    markWorkDoneToday(graphInfo, dayOffSetInProject + 1 + currDay, completedDuration / completedDuration);// + 1 because the point with offset 0 is the starting point
+                    if (calendar.isWeekend(startDate.getTime()))
+                        weekends++;
+                    else
+                        markWorkDoneToday(graphInfo, dayOffSetInProject + 1 + currDay, completedDuration / completedDuration);// + 1 because the point with offset 0 is the starting point
+                }
             }
-        }*/
-
+        } else {
+            try {
+                setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -80,7 +80,7 @@ public class RemainingEffortGraph extends Graph {
         graphPoints.add(pointReference);
 
         for (int i = 1; i < graphInfo.size() - 2; i++) {
-            if (flag.get(i)==0) {
+            if (flag.get(i)==0 || LinearMode) {
                 int x1 = (int) (i * xScale + padding + labelPadding);
                 int y1 = (int) ((maxScore - tasksTotalDuration + graphInfo.get(i)) * yScale + padding);
                 Point p = new Point(x1, y1);
@@ -111,18 +111,20 @@ public class RemainingEffortGraph extends Graph {
         data.changeSprintFolder(folderPath);
         int[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
-            if (dataFromFiles[currFileDay] != -1) markWorkDone(graphInfo, currFileDay, dataFromFiles[currFileDay]);
+            if (dataFromFiles[currFileDay] != -1) setWorkDone(graphInfo, currFileDay, dataFromFiles[currFileDay]);
 
         System.out.println(graphInfo);
     }
 
-    private void markWorkDone(List<Integer> list, int startIndex, int value) {
+    private void setWorkDone(List<Integer> list, int startIndex, int value) {
         for (int index = startIndex; index < list.size(); index++) {
             list.remove(index);
             list.add(index, value);
         }
         flag.set(startIndex, 0);
     }
+
+
     /**
      * Updates the graph info with the specified value
      *
