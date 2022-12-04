@@ -7,17 +7,38 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Francisco Parrinha
+ * @author Martin Magdalinchev
+ * @author Bernardo Atalaia
+ * @author Carlos Soares
+ * @author Pedro Inácio
+ * <p>
+ * <p>
+ * BurndownDataIO Class - Responsible for the loadings and savings of the state of the burndown chart
+ * from/into a text file. The information from the text file is used by RemainEffortGraph and
+ * RemainTasksGraph in a different way
+ */
 public class BurndownDataIO {
     private String folderPath;
 
+    /**
+     * Changes the path to a folder where the state of the project will be saved
+     *
+     * @param folderPath new folder path
+     */
     public void changeSprintFolder(String folderPath) {
         this.folderPath = folderPath;
     }
 
-    public String getSprintFolder() {
-        return folderPath;
-    }
 
+    /**
+     * Saves the state of the project of a given day into a previous chosen folder
+     *
+     * @param tasks task manager
+     * @param day   day of the project to be saved
+     * @throws IOException exception
+     */
     public void saveDay(TaskManager tasks, int day) throws IOException {
         FileWriter fileWriter = new FileWriter(folderPath + "/" + String.valueOf(day));
         PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -27,13 +48,19 @@ public class BurndownDataIO {
 
         for (int currTask = 0; currTask < allTasks.length; currTask++) {
             printWriter.println(allTasks[currTask].getCompletionPercentage());
-            printWriter.println(allTasks[currTask].getDuration().getLength()); //FALTA POR O LENGH EM DIAS!!
+            printWriter.println(allTasks[currTask].getDuration().getLength());
         }
 
         printWriter.close();
     }
 
-    //returns a list of past tasks
+    /**
+     * Calculates the overall progress at a specific date from its file
+     *
+     * @param day day to be considered
+     * @return overall progress
+     * @throws IOException exception
+     */
     private int[] loadDay(int day) throws IOException {
         BufferedReader reader;
         try {
@@ -42,14 +69,10 @@ public class BurndownDataIO {
             int numOfTasksToBeLoaded = Integer.parseInt(reader.readLine());
             int[] pastTasks = new int[numOfTasksToBeLoaded];
 
-            System.out.println(numOfTasksToBeLoaded);
-
             for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
                 double currTaskPercentage = Integer.parseInt(reader.readLine()) / 100d;
                 int currTaskDuration = Integer.parseInt(reader.readLine());
-                //
                 pastTasks[currTask] = (int) (currTaskDuration * currTaskPercentage);
-
             }
             reader.close();
             return pastTasks;
@@ -59,6 +82,13 @@ public class BurndownDataIO {
         throw new IOException();
     }
 
+    /**
+     * Calculates the finished tasks at a specific day from its saved file
+     *
+     * @param day day to be calculated
+     * @return number of finished tasks
+     * @throws IOException exception
+     */
     private int loadFinishedTasksOfDay(int day) throws IOException {
         BufferedReader reader;
         try {
@@ -70,8 +100,8 @@ public class BurndownDataIO {
             for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
                 int currTaskPercentage = Integer.parseInt(reader.readLine());
                 int currTaskDuration = Integer.parseInt(reader.readLine());
-                if(currTaskPercentage == 100)
-                    pastTasks +=currTaskDuration;
+                if (currTaskPercentage == 100)
+                    pastTasks += currTaskDuration;
             }
             reader.close();
             return pastTasks;
@@ -81,11 +111,24 @@ public class BurndownDataIO {
         throw new IOException();
     }
 
+    /**
+     * Verify if there is a saved file with information about the project state of a given day
+     *
+     * @param day day to be verified
+     * @return <code>true</code> if the file exists <code>false</code> if it does not
+     */
     private boolean isThereAFileForThatDay(int day) {
         File f = new File(folderPath + "/" + String.valueOf(day));
         return f.exists();
     }
 
+    /**
+     * Calculates the number of days of work finished, at a specific day, in the remaining effort graph
+     *
+     * @param day day to be considered
+     * @return days of finished work
+     * @throws IOException exception
+     */
     private int loadProgressAtDay(int day) throws IOException {
         int[] pastTasks = loadDay(day);
         //
@@ -95,6 +138,13 @@ public class BurndownDataIO {
         return doneTasks;
     }
 
+    /**
+     * Extract the information to be used for the graphInfo list of the remaining effort graph
+     *
+     * @param numOfDays size of the project
+     * @throws IOException exception
+     * @ graphInfo list
+     */
     public int[] getPastRemainingEffort(int numOfDays) throws IOException {
         int[] definedPoints = new int[numOfDays];
 
@@ -107,7 +157,14 @@ public class BurndownDataIO {
         return definedPoints;
     }
 
-    public List<Integer> getPastRemainingTasks(int numOfDays) throws  IOException {
+    /**
+     * Builds the graphInfo list from the files information for the remaining tasks graph
+     *
+     * @param numOfDays size of the project
+     * @return graphInfo list
+     * @throws IOException exception
+     */
+    public List<Integer> getPastRemainingTasks(int numOfDays) throws IOException {
         List<Integer> definedPoints = new ArrayList<>();
         for (int currDay = 0; currDay < numOfDays; currDay++) {
             if (isThereAFileForThatDay(currDay)) {

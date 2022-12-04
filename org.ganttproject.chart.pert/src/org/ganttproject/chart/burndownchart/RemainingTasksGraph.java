@@ -32,11 +32,11 @@ public class RemainingTasksGraph extends Graph {
         graphInfo = new ArrayList<>();
         resetDataStructure(graphInfo); // days in project filled with '0'
 
-        if(linearMode) {
+        if(linearMode) {               // 'Ideal' mode graphInfo initialization
             Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
             for (Task task : myTasks)
                 loadGraphInfo(task);
-        } else
+        } else                         // 'History' mode graphInfo initialization
             try {
                 setGraphPointsFromFiles(sprintPath);
             } catch (IOException e) {
@@ -47,7 +47,7 @@ public class RemainingTasksGraph extends Graph {
     @Override
     public List<Point> buildGraphPoints(double xScale, double yScale, int maxScore, int tasksTotalDuration) {
         this.graphPoints = new ArrayList<>();
-
+        // Adds the first point to the graph (day 0)
         Point pointReference = createPoint(0, 0, xScale, yScale, maxScore, tasksTotalDuration);
         graphPoints.add(pointReference);
         int yReference = 0;
@@ -56,7 +56,7 @@ public class RemainingTasksGraph extends Graph {
             if (graphInfo.get(i) > 0){
                 Point p = createPoint(i, yReference, xScale, yScale, maxScore, tasksTotalDuration);
                 graphPoints.add(p);
-                if(linearMode)
+                if(linearMode)      // In 'Ideal' mode we need to keep track of the previous y value to calculate the current one
                     yReference += graphInfo.get(i);
             }
         }

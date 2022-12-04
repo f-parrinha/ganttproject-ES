@@ -40,11 +40,11 @@ public class RemainingEffortGraph extends Graph {
         resetDataStructure(graphInfo);                          // days in project filled with '0'
         resetFlags();                                           // flag for each filled with '-1'
 
-        if(linearMode){
+        if(linearMode){                                         // 'Ideal' mode graphInfo initialization
             Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
             for (Task task : myTasks)
                 loadGraphInfo(task);
-        } else {
+        } else {                                                // 'History' mode graphInfo initialization
             try {
                 setGraphPointsFromFiles(sprintPath);
             } catch (IOException e) {
