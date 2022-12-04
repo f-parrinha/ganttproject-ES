@@ -27,7 +27,12 @@ public class PlannerPainter extends PanelStyler {
         private static final int OFFSET = 50;
 
         private static final int ARC_SIZE = 50;
-
+        /**
+         * paints the entire Data part.
+         * @param g Graphics swing object
+         * @param myGanttStatistics gantt statistics class. Gives important statistics
+         *
+         */
         public void paint(Graphics g, GanttStatistics myGanttStatistics) {
             updateFontSize(25, myPanel);
             setOffset(OFFSET, OFFSET);
@@ -309,6 +314,11 @@ public class PlannerPainter extends PanelStyler {
 
     private int offsetY;
 
+    /**
+     * paints the window.
+     * @param myPanel
+     * @throws IOException
+     */
     public PlannerPainter(JPanel myPanel) throws IOException {
         this.myDrawStatistics = new DrawStatistics();
         this.myDrawGraph = new DrawGraph();
