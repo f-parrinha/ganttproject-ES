@@ -14,8 +14,8 @@ Pull requests are welcome. Please read the [instructions on building the code](h
 
 Software Engineer Project done by
 
-Francsico Parrinha 58360 - f.parrinha@campus.fct.unl.pt
-Carlos Soares 57006 - 
-Pedro Inácio 59184 -
-Bernardo Atalaia 59962 -
-Martin Magdalinchev 58172 -
+Francisco Parrinha 58360 - f.parrinha@campus.fct.unl.pt
+Carlos Soares 57006 - cac.soares@campus.fct.unl.pt
+Pedro Inácio 59184 - pm.inacio@campus.fct.unl.pt 
+Bernardo Atalaia 59962 - b.atalaia@campus.fct.unl.pt
+Martin Magdalinchev 58172 - m.magdalinchev@campus.fct.unl.pt
