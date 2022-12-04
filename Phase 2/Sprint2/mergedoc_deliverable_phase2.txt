@@ -1,0 +1,77 @@
+UML Id: 5
+Name: Help
+
+Description: This buttom has three options for the user, the "About" option pops up a window with information about itself, having 2 other options: show Lincense and Library.
+The second option is to see the log, and the third recovers the last saved project.
+
+Primary Actors: User
+
+
+
+
+
+UML Id: 5
+User Story: Hi, Im laurene and as i look at myself using an app like gantt, i feel the need of having information at my disposure about this project, its inspiration for example.
+I would also feel like looking at the history of updates in itself and being able to recover a past saved project if i feel like the path this one is taking does not match my expectations.
+
+
+
+
+UML Id: UML_57006_Carlos_Soares
+Name: PERT Chart
+
+Description: The project shows a window with information about the current tasks in a PERT format.
+The User can move the tasks along the screen to have a better graphical expression of the current project.
+Any modification in the project's tasks is updated on the PERT chart.
+
+
+
+
+
+User Story: Hi, Im Carla and i think this project is very usefull and organized,
+but i prefer to look at things that are more visually expressed,
+with less details but easier to understand the flow of the project.
+
+
+
+
+
+UML Id: 1
+Name: Gantt Tab
+
+Description: The project shows a window with information about the current existent tasks and the
+overall calendar and the user can add, modify and set a complete percentage on each task.
+
+Primary Actors: User
+
+
+
+
+UML Id: 1
+User Story: Hello, i'm Sara and i have not been able to organize my weeks with all the tasks
+i have to do, i allways forget some or start by some that needed to be done after some other task,
+so i think i would beneficiate from an app that i could set my weekly tasks in, set it's deadlines
+and start dates, create a work flow so that i can do every task without having to stop it by lack of
+ability by other unfinished task and all of this in one place only.
+
+
+
+
+UML Id: 3
+User Story: Hello! My name is Peter and as I manage an organized firm I think the gantt project
+should be able to refer to the resourses we have in hands and establish a connection between
+them and the tasks that exist so I can easly define how and what a single task needs along with
+seeing in what tasks a single resourse is already being used.
+
+
+
+
+
+
+UML Id: 3
+Name: Resourse Tab
+
+Description: The project shows a window with information about the current resourses in the current project
+and the respective tasks related. The user can create a new resourse anfd modify an existing one.
+
+Primary Actors: User

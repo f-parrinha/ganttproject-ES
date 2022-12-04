@@ -1,0 +1,6 @@
+UML Id: 2
+User Story: Hello, i'm jame and i think an idea like gantt needs to be able to 
+save the current state of a project so it can be shared, for example, in my own 
+company between my collegues so we all can have acess to the project's planning. 
+Also think i would need to be able to try new implementations of the project without 
+having to worry about the stable version of the project being lost within this trys.
