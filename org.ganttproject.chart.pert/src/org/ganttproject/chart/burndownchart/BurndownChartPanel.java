@@ -33,6 +33,13 @@ public class BurndownChartPanel extends Panel {
         myGraph = new GraphPanel(myPanel);
     }
 
+    /**
+     * Create a buffered image
+     * Instantiates a graphic object
+     * Call the function paint to draw component
+     * Returns a rendered image of the current panel.
+     * @param settings GanttExportSettings
+     */
     @Override
     public RenderedImage getRenderedImage(GanttExportSettings settings) {
         BufferedImage image = new BufferedImage(myPanel.getWidth(), myPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -42,6 +49,11 @@ public class BurndownChartPanel extends Panel {
         return image;
     }
 
+    /**
+     * Paints the panel's content
+     *
+     * @param g Graphics object. Used to paint
+     */
     @Override
     public void paint(Graphics g) {
 
@@ -62,6 +74,12 @@ public class BurndownChartPanel extends Panel {
         return language.getText("burndownLongName");
     }
 
+    /**
+     * Adapter pattern. Returns either the Chart's class or the JFrame's container
+     *
+     * @param adapter adapter. Which class to get, container's or chart's
+     * @return Class or Container
+     */
     @Override
     public Object getAdapter(Class adapter) {
         if (adapter.equals(Chart.class)) {
