@@ -1,0 +1,7 @@
+UML Id: 5
+Name: Help
+
+Description: This buttom has three options for the user, the "About" option pops up a window with information about itself, having 2 other options: show Lincense and Library.
+The second option is to see the log, and the third recovers the last saved project.
+
+Primary Actors: User
