@@ -1,0 +1,18 @@
+Use case review
+reviewer: Francisco Parrinha 58360
+to: Pedro Inácio 59184
+
+I believe this use case diagram was well done. I agree with it
+
+User story review
+reviewer: Francisco Parrinha 58360
+to: Pedro Inácio 59184
+
+I this user story describes wass well written. I agree with it.
+
+
+use case description review
+Reviewer: Francisco Parrinha 58360
+to: Pedro Inácio 59184
+
+I agree with the this use case description. I believe it describes very well the use case diagram
