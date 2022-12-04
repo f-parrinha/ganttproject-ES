@@ -1,0 +1,8 @@
+UML Id: 2
+Name: Tool Bar
+
+Description: The project has a tool bar in every window that adapts depending on witch window is 
+current on display and the user has the option to save the project, undo, open another project, 
+add a task or resourse depending on the current display window and copy/paste.
+
+Primary Actors: User
