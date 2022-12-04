@@ -1,0 +1,7 @@
+Reviewer: Francisco Parrinha 58360
+
+1. Good code snippet, very clear
+2. Always displays the exact cod location
+3. The rationale is very detailed
+
+Overall, I agree with the chosen patterns

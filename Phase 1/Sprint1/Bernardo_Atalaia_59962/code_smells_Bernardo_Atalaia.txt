@@ -1,0 +1,6 @@
+Reviewer: Francisco Parrinha 58360
+
+Review:
+I agree with all the code smells. For each anti-pattern there is a screenshot, an exact location on the codebase and small rationale.
+The look of the document is good as well.
+Change “Aluno” to “Student” since the doc is written in english.

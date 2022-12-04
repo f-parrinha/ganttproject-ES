@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.ganttproject.chart.pert"
-   name="Pert Plug-in"
+   name="Plug-in Manager"
    version="1.0.0"
    provider-name="">
 
@@ -18,9 +18,21 @@
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
    <extension
-         point="net.sourceforge.ganttproject.chart">
+           name="Pert Plug-in"
+           version="1.0.0"
+           point="net.sourceforge.ganttproject.chart">
          <chart class="org.ganttproject.chart.pert.ActivityOnNodePertChart"/>
-         <chart class="org.ganttproject.chart.planner.PlannerPanel"/>
-         <chart class="org.ganttproject.chart.burndownchart.BurndownChartPanel"/>
+   </extension>
+   <extension
+           name="Planner Plug-in"
+           version="1.0.0"
+           point="net.sourceforge.ganttproject.chart">
+      <chart class="org.ganttproject.chart.planner.PlannerPanel"/>
+   </extension>
+   <extension
+           name="Burndown Chart Plug-in"
+           version="1.0.0"
+           point="net.sourceforge.ganttproject.chart">
+      <chart class="org.ganttproject.chart.burndownchart.BurndownChartPanel"/>
    </extension>
 </plugin>

@@ -27,7 +27,7 @@ import javax.swing.JTabbedPane;
 
 public class GanttTabbedPane extends JTabbedPane {
 
-  private Map<Component, Object> myUserObjectsMap = new HashMap<Component, Object>();
+  private final Map<Component, Object> myUserObjectsMap = new HashMap<Component, Object>();
 
   public GanttTabbedPane() {
     super();

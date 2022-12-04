@@ -1,0 +1,3 @@
+Reviewer: Pedro Inácio 59184
+
+The code smells are well identified as well as well specified, explains where they are and speculates wisely on the topic.

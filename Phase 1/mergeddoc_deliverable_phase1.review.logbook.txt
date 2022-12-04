@@ -1,0 +1,41 @@
+Reviewer: Carlos Soares 59184
+Code Smells: Martin Magdalinchev 58172
+
+1. - Very good two different examples. The first one is smaller than the second, but still it can be refactored in a
+smaller method with auxiliar functions. The second one is clearly a long method (with 126 lines) and, for sure, it can
+be simplified.
+
+2. - Good and succint identification and possible solution of 3 different types of code smell found in one class.
+
+3. - This code smell is pretty obvious as the coordinates should be encapsuled.
+
+-------------------------------------------
+
+Reviewer: Bernardo Atalaia 59962
+Code Smells: Francisco Parrinha 58172
+
+1: Good example with a very good explanation, very clear and direct.
+
+2: It's a good code smell and well explained but i think there are more suitable classes
+for that, in this case there is only 4 parameters, the thing is that
+they have big names so it seems like more. Overall good explanation
+aswell but i think there are better examples.
+
+3: I completly agree with this code smell, also well explained.
+
+-------------------------------------------
+
+Reviewer: Pedro Inácio 59184
+Code Smells: Carlos Soares 57006
+
+The code smells are well identified as well as well specified, explains where they are and speculates wisely on the topic.
+
+-------------------------------------------
+
+Reviewer: Francisco Parrinha 58360
+Code Smells: Bernardo Atalaia 59962
+
+Review:
+I agree with all the code smells. For each anti-pattern there is a screenshot, an exact location on the codebase and small rationale.
+The look of the document is good as well.
+Change “Aluno” to “Student” since the doc is written in english.

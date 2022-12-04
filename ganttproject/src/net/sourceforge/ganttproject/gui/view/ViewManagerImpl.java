@@ -147,7 +147,7 @@ public class ViewManagerImpl implements GPViewManager {
     ViewHolder viewHolder = myViews.get(view);
     assert viewHolder != null;
 
-    /**
+    /*
      * Stores the number of tabs because it will change in the next line
      *    if myTabs.getTabCount() is used directly in the
      *    'if' statement, the app will crash sometimes
