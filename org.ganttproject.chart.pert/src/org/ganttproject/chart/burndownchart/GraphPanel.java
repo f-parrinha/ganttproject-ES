@@ -294,11 +294,19 @@ public class GraphPanel extends PanelStyler {
         g2.setColor(COLOR.IDEAL_LINE_COLOR.color);
         g2.drawLine(resizeX(getGraphWidth() + padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 4) - padding - labelPadding, myPanel),
                 resizeX(getGraphWidth() + 225 - padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 4) - padding - labelPadding, myPanel));
+
+        g2.setColor(COLOR.REMAINING_EFFORT_LINE.color);
+        g2.drawLine(resizeX(getGraphWidth() + padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 6) - padding - labelPadding, myPanel),
+                resizeX(getGraphWidth() + 225 - padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 6) - padding - labelPadding, myPanel));
+
         g2.setColor(Color.BLACK);
-        g2.drawString("Actual Tasks Remaining", resizeX(getGraphWidth() + padding, myPanel),
-                resizeY(infoRectYOrigin + padding + labelPadding, myPanel));
-        g2.drawString(" Ideal Tasks Remaining", resizeX(getGraphWidth() + padding, myPanel),
-                resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 4) - padding, myPanel));
+
+        g2.drawString("Actual Tasks Remaining", resizeX(getGraphWidth() + padding, myPanel), resizeY(infoRectYOrigin + padding + labelPadding, myPanel));
+
+        g2.drawString("Remaining effort", resizeX(getGraphWidth() + padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 6) - padding, myPanel));
+
+        g2.drawString(" Ideal Tasks Remaining", resizeX(getGraphWidth() + padding, myPanel), resizeY(infoRectYOrigin + (getScreenSizeY() * 1 / 4) - padding, myPanel));
+
         g2.drawString("Iteration Timeline (days)", resizeX(((getGraphWidth() + padding) / 2) - "Iteration Timeline (days)".toCharArray().length, myPanel),
                 resizeY((getScreenSizeY() - padding / 2), myPanel));
 
