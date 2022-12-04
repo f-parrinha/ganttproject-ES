@@ -1,0 +1,7 @@
+UML Id: 1
+Name: Gantt Tab
+
+Description: The project shows a window with information about the current existent tasks and the
+overall calendar and the user can add, modify and set a complete percentage on each task.
+
+Primary Actors: User

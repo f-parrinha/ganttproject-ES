@@ -1,0 +1,6 @@
+UML Id: 1
+User Story: Hello, i'm Sara and i have not been able to organize my weeks with all the tasks
+i have to do, i allways forget some or start by some that needed to be done after some other task,
+so i think i would beneficiate from an app that i could set my weekly tasks in, set it's deadlines
+and start dates, create a work flow so that i can do every task without having to stop it by lack of
+ability by other unfinished task and all of this in one place only.
