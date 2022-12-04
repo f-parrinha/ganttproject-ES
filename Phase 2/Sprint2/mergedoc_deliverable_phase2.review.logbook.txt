@@ -16,3 +16,15 @@ Reviewer: Francisco Parrinha 58360
 to: Pedro Inácio 59184
 
 I agree with the this use case description. I believe it describes very well the use case diagram
+
+
+Reviewer: Pedro Inácio
+to: Carlos Soares
+
+Metrics review:
+Metrics are very well detailed as well as explained, says everything that one would expect
+about the explained metrics plus are relevant to the project.
+
+User story review:
+User story is relevant, simple and consise, right to the point.
+Would change nothing myself.
