@@ -26,6 +26,8 @@ import java.util.List;
  */
 public class RemainingEffortGraph extends Graph {
 
+    private List<Integer> flag = new ArrayList<>();
+
     public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth) {
         super(statistics, panel, padding, labelPadding, pointWidth);
         initGraphInfo();
@@ -35,7 +37,9 @@ public class RemainingEffortGraph extends Graph {
     public void initGraphInfo() {
         this.graphInfo = new ArrayList<>();
         resetDataStructure(graphInfo); // days in project fill with zeros
-
+        for(int i = 0; i < graphInfo.size(); i++){
+            flag.add(i, -1);
+        }
         Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
 
         //
@@ -75,12 +79,15 @@ public class RemainingEffortGraph extends Graph {
 
         graphPoints.add(pointReference);
 
-        for (int i = 1; i < graphInfo.size() - 1; i++) {
-            int x1 = (int) (i * xScale + padding + labelPadding);
-            int y1 = (int) ((maxScore - tasksTotalDuration + graphInfo.get(i)) * yScale + padding);
-            Point p = new Point(x1, y1);
-            graphPoints.add(p);
+        for (int i = 1; i < graphInfo.size() - 2; i++) {
+            if (flag.get(i)==0) {
+                int x1 = (int) (i * xScale + padding + labelPadding);
+                int y1 = (int) ((maxScore - tasksTotalDuration + graphInfo.get(i)) * yScale + padding);
+                Point p = new Point(x1, y1);
+                graphPoints.add(p);
+            }
         }
+        graphPoints.add(new Point((int) ((graphInfo.size()-2) * xScale + padding + labelPadding), (int) ((maxScore - tasksTotalDuration + graphInfo.get(graphInfo.size()-2)) * yScale + padding)));
         return graphPoints;
     }
 
@@ -103,34 +110,35 @@ public class RemainingEffortGraph extends Graph {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
         int[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
-        //
-        ArrayList<Integer> filledPoints = new ArrayList<>();
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
-            //if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
-            if (dataFromFiles[currFileDay] != -1) {
-                setWorkDoneToday(graphInfo, currFileDay, dataFromFiles[currFileDay]);
-                filledPoints.add(currFileDay);
-            }
-        //
-        Iterator<Integer> fillPit = filledPoints.iterator();
-        int curr = fillPit.next();
-        while (fillPit.hasNext()) {
-            int next = fillPit.next();
-            for (int currIntervalIndex = curr; currIntervalIndex < next; currIntervalIndex++) {
-                //int pastPlutFuture = graphInfo.get(curr) + graphInfo.get(next);
-                graphInfo.set(currIntervalIndex, graphInfo.get(next) / (graphInfo.get(curr) + currIntervalIndex));
-            }
-        }
+            if (dataFromFiles[currFileDay] != -1) markWorkDone(graphInfo, currFileDay, dataFromFiles[currFileDay]);
+
         System.out.println(graphInfo);
     }
 
-    private void setWorkDoneToday(List<Integer> list, int startIndex, int value) {
+    private void markWorkDone(List<Integer> list, int startIndex, int value) {
         for (int index = startIndex; index < list.size(); index++) {
-            int set = value;
             list.remove(index);
-            list.add(index, set);
+            list.add(index, value);
+        }
+        flag.set(startIndex, 0);
+    }
+    /**
+     * Updates the graph info with the specified value
+     *
+     * @param list
+     * @param startIndex
+     * @param value
+     */
+    private void markWorkDoneToday(List<Integer> list, int startIndex, int value) {
+        for (int index = startIndex; index < list.size(); index++) {
+            int sum = list.get(index);
+            sum += value;
+            list.remove(index);
+            list.add(index, sum);
         }
     }
+
 
     /**
      * Marks the weekends in the graphInfo
