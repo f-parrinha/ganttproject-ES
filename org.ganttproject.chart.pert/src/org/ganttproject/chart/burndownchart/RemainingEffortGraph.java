@@ -37,11 +37,12 @@ public class RemainingEffortGraph extends Graph {
     public void initGraphInfo() {
         this.graphInfo = new ArrayList<>();
         resetDataStructure(graphInfo); // days in project fill with zeros
+
         for(int i = 0; i < graphInfo.size(); i++){
             flag.add(i, -1);
         }
+
         Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
-        System.out.println(LinearMode);
         if(LinearMode){
             for (Task task : myTasks) {
                 double percentage = task.getCompletionPercentage() / 100.0;

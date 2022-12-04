@@ -73,11 +73,8 @@ public class GraphPanel extends PanelStyler {
         this.pointWidth = 4;
         this.numberYDivisions = 15;
         this.myPanel = myPanel;
-        //
-        //
-        //
-        //
-        //        // isto n vai ficar assim aqui
+
+        // isto n vai ficar assim aqui
         final JTextField dayText = new JTextField();
         dayText.setText("Dia");
         this.myPanel.add(dayText);
@@ -113,22 +110,27 @@ public class GraphPanel extends PanelStyler {
 
     public void init(GanttStatistics statistics) {
         this.statistics = statistics;
+
         this.tasksTotalDuration = initY();
         this.estimatedTime = initX();
         this.maxScore = getMaxScore();
+
         this.xScale = ((double) getGraphWidth() - (2 * padding) - labelPadding) / (this.estimatedTime);
         this.yScale = ((double) getScreenSizeY() - (2 * padding) - labelPadding) / (this.maxScore - this.minScore);
-        System.out.println("init");
-        initRemainingEffortGraph();
 
-        this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth);
-        remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
+        initRemainingEffortGraph();
+        initRemainingTasksGraph();
+
     }
 
     private void initRemainingEffortGraph() {
         this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
         remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
 
+    }
+    private void initRemainingTasksGraph() {
+        this.remainingTasksGraph = new RemainingTasksGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
+        remainingTasksGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
     }
 
     private int initX() {

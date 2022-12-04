@@ -8,9 +8,7 @@ import org.ganttproject.chart.PanelStyler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public abstract class Graph extends PanelStyler {

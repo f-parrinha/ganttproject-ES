@@ -57,6 +57,28 @@ public class BurndownDataIO {
         throw new IOException();
     }
 
+    private int loadFinishedTasksOfDay(int day) throws IOException {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(folderPath + "/" + String.valueOf(day)));
+
+            int numOfTasksToBeLoaded = Integer.parseInt(reader.readLine());
+            int pastTasks = 0;
+
+            for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
+                int currTaskPercentage = Integer.parseInt(reader.readLine());
+                int currTaskDuration = Integer.parseInt(reader.readLine());
+                if(currTaskPercentage == 100)
+                    pastTasks +=currTaskDuration;
+            }
+            reader.close();
+            return pastTasks;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        throw new IOException();
+    }
+
     private boolean isThereAFileForThatDay(int day) {
         File f = new File(folderPath + "/" + String.valueOf(day));
         return f.exists();
@@ -82,4 +104,16 @@ public class BurndownDataIO {
         }
         return definedPoints;
     }
+
+    public int[] getPastRemainingTasks(int numOfDays) throws  IOException {
+        int[] definedPoints = new int[numOfDays];
+        for (int currDay = 0; currDay < numOfDays; currDay++) {
+            if (isThereAFileForThatDay(currDay)) {
+                int progressAtDay = loadFinishedTasksOfDay(currDay);
+                definedPoints[currDay] = progressAtDay;
+            } else definedPoints[currDay] = 0;
+        }
+        return definedPoints;
+    }
+
 }
