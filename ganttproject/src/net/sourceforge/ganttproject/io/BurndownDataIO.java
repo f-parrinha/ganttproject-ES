@@ -43,10 +43,10 @@ public class BurndownDataIO {
             System.out.println(numOfTasksToBeLoaded);
 
             for (int currTask = 0; currTask < numOfTasksToBeLoaded; currTask++) {
-                int currTaskPercentage = Integer.parseInt(reader.readLine()) / 100;
+                double currTaskPercentage = Integer.parseInt(reader.readLine()) / 100d;
                 int currTaskDuration = Integer.parseInt(reader.readLine());
                 //
-                pastTasks[currTask] = currTaskDuration * currTaskPercentage;
+                pastTasks[currTask] = (int) (currTaskDuration * currTaskPercentage);
 
             }
             reader.close();
@@ -62,23 +62,23 @@ public class BurndownDataIO {
         return f.exists();
     }
 
-    private double loadProgressAtDay(int day) throws IOException {
+    private int loadProgressAtDay(int day) throws IOException {
         int[] pastTasks = loadDay(day);
         //
-        double doneTasks = 0;
+        int doneTasks = 0;
         for (int currTask = 0; currTask < pastTasks.length; currTask++)
             doneTasks += pastTasks[currTask];
         return doneTasks;
     }
 
-    public double[] getPastRemainingEffort(int numOfDays) throws IOException {
-        double[] definedPoints = new double[numOfDays];
+    public int[] getPastRemainingEffort(int numOfDays) throws IOException {
+        int[] definedPoints = new int[numOfDays];
 
         for (int currDay = 0; currDay < numOfDays; currDay++) {
             if (isThereAFileForThatDay(currDay)) {
-                double progressAtDay = loadProgressAtDay(currDay);
+                int progressAtDay = loadProgressAtDay(currDay);
                 definedPoints[currDay] = progressAtDay;
-            }else definedPoints[currDay] = -1;
+            } else definedPoints[currDay] = -1;
         }
         return definedPoints;
     }

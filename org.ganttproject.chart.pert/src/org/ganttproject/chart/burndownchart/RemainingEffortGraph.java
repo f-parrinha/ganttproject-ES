@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +37,14 @@ public class RemainingEffortGraph extends Graph {
 
         Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
 
-        for (Task task : myTasks) {
+        //
+        try {
+            setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //
+        /*for (Task task : myTasks) {
             double percentage = task.getCompletionPercentage() / 100.0;
             int completedDuration = (int) (task.getDuration().getLength() * percentage);
             int dayOffSetInProject = calculateOffSetInProject(task.getStart());
@@ -53,13 +59,8 @@ public class RemainingEffortGraph extends Graph {
                 else
                     markWorkDoneToday(graphInfo, dayOffSetInProject + 1 + currDay, completedDuration / completedDuration);// + 1 because the point with offset 0 is the starting point
             }
-        }
+        }*/
 
-        try {
-            setGraphPointsFromFiles(MUDAR, myGanttStatistics.getSumOfTaskDurations());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -100,24 +101,36 @@ public class RemainingEffortGraph extends Graph {
     public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
-        double[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
+        int[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
+             /*   int firstIndexFilled = -1;
+        int lastIndexFilled = -1;
+        boolean firstFilledBool = false;
+
+        for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++) {
+            if (dataFromFiles[currFileDay] != -1) {
+                if (!firstFilledBool) {
+                    firstFilledBool = true;
+                    firstIndexFilled = currFileDay;
+                }
+                lastIndexFilled = currFileDay;
+            }
+        }
+
+        System.out.println(lastIndexFilled);
+
         for (int currFileDay = 0; currFileDay < dataFromFiles.length; currFileDay++)
-            if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
+            //if (dataFromFiles[currFileDay] != -1) graphInfo.set(currFileDay, (int) dataFromFiles[currFileDay]);
+            if (dataFromFiles[currFileDay] != -1)
+                setWorkDoneToday(graphInfo, currFileDay, (int) dataFromFiles[currFileDay]);
+            else if (currFileDay > firstIndexFilled && currFileDay < lastIndexFilled)
+                graphInfo.set(currFileDay, graphInfo.get(currFileDay) + 1); //NAO E MAIS UM, PODE DESCER E DPS SUBIR!!!!!*/
     }
 
-    /**
-     * Updates the graph info with the specified value
-     *
-     * @param list
-     * @param startIndex
-     * @param value
-     */
-    private void markWorkDoneToday(List<Integer> list, int startIndex, int value) {
+    private void setWorkDoneToday(List<Integer> list, int startIndex, int value) {
         for (int index = startIndex; index < list.size(); index++) {
-            int sum = list.get(index);
-            sum += value;
+            int set = value;
             list.remove(index);
-            list.add(index, sum);
+            list.add(index, set);
         }
     }
 
