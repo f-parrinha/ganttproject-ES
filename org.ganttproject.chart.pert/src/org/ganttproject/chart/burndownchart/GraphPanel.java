@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -44,10 +45,8 @@ public class GraphPanel extends PanelStyler {
     private final int numberYDivisions;
     private final int minScore;
     private final JPanel myPanel;
-
-    private final JButton saveButton;
-    private final JButton changeModeButton;
-
+    private JComboBox daySelector;
+    private ArrayList<String> comboboxItems;
     private int estimatedTime;
     private int tasksTotalDuration;
     private int maxScore;
@@ -71,82 +70,9 @@ public class GraphPanel extends PanelStyler {
         this.pointWidth = 4;
         this.numberYDivisions = 15;
         this.myPanel = myPanel;
-
-        final JButton reset = new JButton();
-        reset.setText("Reset ");
-        reset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!sprintPath.equals("")) {
-                    File dir = new File(sprintPath);
-                    for (File file : dir.listFiles())
-                        if (!file.isDirectory())
-                            file.delete();
-                }
-            }
-        });
-        this.myPanel.add(reset);
-
-        //
-        final JButton definePath = new JButton();
-        definePath.setText("Select Sprint Folder");
-
-        definePath.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    JFileChooser f = new JFileChooser();
-                    f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    f.showSaveDialog(null);
-                    sprintPath = f.getSelectedFile().getAbsolutePath();
-                } catch (Exception ex) {
-                }
-            }
-        });
-        this.myPanel.add(definePath);
-        //
-        //
-        //
-        //
-        //        // isto n vai ficar assim aqui
-        final JTextField dayText = new JTextField();
-        dayText.setText("Dia");
-        this.myPanel.add(dayText);
-        //
-        saveButton = new JButton("Save");
-        this.myPanel.add(saveButton);
-        saveButton.setVisible(true);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                BurndownDataIO bd = new BurndownDataIO();
-                bd.changeSprintFolder(sprintPath);
-                try {
-                    bd.saveDay(statistics.getMyTaskManager(), Integer.parseInt(dayText.getText()));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        //
-        changeModeButton = new JButton("Ideal");
-        this.myPanel.add(changeModeButton);
-        changeModeButton.setVisible(true);
-        changeModeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                linearMode = !linearMode;
-                String currentMode = "";
-                if (linearMode)
-                    currentMode = "Ideal";
-                else
-                    currentMode = "History";
-                //
-                changeModeButton.setText(currentMode);
-            }
-        });
-
-
+        //init is called each paint and we dont want to recreate
+        //the select sprint folder button mid selection
+        defineUI();
     }
 
     public void init(GanttStatistics statistics) {
@@ -161,12 +87,35 @@ public class GraphPanel extends PanelStyler {
         initRemainingEffortGraph();
         initRemainingTasksGraph();
 
+        defineCombobox();
+    }
+
+    private void defineUI() {
+        addResetButton();
+        addPathButton();
+        //
+        addModeButton();
+        addSaveButton();
+        addCombobox();
+    }
+
+    private void defineCombobox() {
+        if (comboboxItems == null ||
+                comboboxItems.size() != statistics.getTotalEstimatedTime()) {
+            comboboxItems = new ArrayList<String>();
+            for (int currDay = 1; currDay < statistics.getTotalEstimatedTime() + 1; currDay++)
+                comboboxItems.add(String.valueOf(currDay));
+
+            myPanel.remove(daySelector);
+            daySelector = new JComboBox(comboboxItems.toArray());
+            myPanel.add(daySelector);
+            myPanel.validate();
+        }
     }
 
     private void initRemainingEffortGraph() {
         this.remainingEffortGraph = new RemainingEffortGraph(statistics, myPanel, padding, labelPadding, pointWidth, linearMode);
         remainingEffortGraph.buildGraphPoints(xScale, yScale, maxScore, tasksTotalDuration);
-
     }
 
     private void initRemainingTasksGraph() {
@@ -318,5 +267,79 @@ public class GraphPanel extends PanelStyler {
         }
     }
 
+    private void addResetButton() {
+        final JButton reset = new JButton();
+        reset.setText("Reset ");
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!sprintPath.equals("")) {
+                    File dir = new File(sprintPath);
+                    for (File file : dir.listFiles())
+                        if (!file.isDirectory())
+                            file.delete();
+                }
+            }
+        });
+        myPanel.add(reset);
+    }
 
+    private void addPathButton() {
+        final JButton definePath = new JButton();
+        definePath.setText("Select Sprint Folder");
+        definePath.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    JFileChooser f = new JFileChooser();
+                    f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    f.showSaveDialog(null);
+                    sprintPath = f.getSelectedFile().getAbsolutePath();
+                } catch (Exception ex) {
+                }
+            }
+        });
+        myPanel.add(definePath);
+    }
+
+    private void addSaveButton() {
+        final JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BurndownDataIO bd = new BurndownDataIO();
+                bd.changeSprintFolder(sprintPath);
+                try {
+                    bd.saveDay(statistics.getMyTaskManager(),
+                            Integer.parseInt(String.valueOf(daySelector.getSelectedItem())));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        myPanel.add(saveButton);
+    }
+
+    private void addModeButton() {
+        final JButton changeModeButton = new JButton("Ideal");
+        changeModeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                linearMode = !linearMode;
+                String currentMode = "";
+                if (linearMode)
+                    currentMode = "Ideal";
+                else
+                    currentMode = "History";
+                //
+                changeModeButton.setText(currentMode);
+            }
+        });
+        myPanel.add(changeModeButton);
+    }
+
+    private void addCombobox() {
+        daySelector = new JComboBox();
+        myPanel.add(daySelector);
+    }
 }
