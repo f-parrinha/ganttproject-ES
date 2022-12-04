@@ -35,6 +35,6 @@ public class Tests extends TestCase {
         month = 5;
         day = 1;
         endDate = new Date(year, month, day);
-        assertEquals(1, gstatistics.getDifferenceDays(startDate, endDate));
+        assertEquals(2, gstatistics.getDifferenceDays(startDate, endDate));
     }
 }
