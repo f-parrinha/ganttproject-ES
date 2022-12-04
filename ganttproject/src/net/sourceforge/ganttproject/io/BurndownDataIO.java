@@ -4,6 +4,8 @@ import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BurndownDataIO {
     private String folderPath;
@@ -105,13 +107,13 @@ public class BurndownDataIO {
         return definedPoints;
     }
 
-    public int[] getPastRemainingTasks(int numOfDays) throws  IOException {
-        int[] definedPoints = new int[numOfDays];
+    public List<Integer> getPastRemainingTasks(int numOfDays) throws  IOException {
+        List<Integer> definedPoints = new ArrayList<>();
         for (int currDay = 0; currDay < numOfDays; currDay++) {
             if (isThereAFileForThatDay(currDay)) {
                 int progressAtDay = loadFinishedTasksOfDay(currDay);
-                definedPoints[currDay] = progressAtDay;
-            } else definedPoints[currDay] = 0;
+                definedPoints.add(currDay, progressAtDay);
+            } else definedPoints.add(currDay, 0);
         }
         return definedPoints;
     }

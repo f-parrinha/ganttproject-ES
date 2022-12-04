@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-
 /**
  * @author Francisco Parrinha
  * @author Martin Magdalinchev
@@ -23,46 +22,31 @@ import java.util.List;
  * RemainingEffortGraph Class - Adds the remaining effort graph to the Burndown Chart
  */
 public class RemainingEffortGraph extends Graph {
+
+    /**
+     * A list that keeps track of the points that should be drawn when in "history" mode
+     * '0' -> draw point    '-1' -> do not draw the point
+     */
     private List<Integer> flag = new ArrayList<>();
-    private boolean LinearMode;
 
     public RemainingEffortGraph(GanttStatistics statistics, JPanel panel, int padding, int labelPadding, int pointWidth, boolean linearMode) {
-        super(statistics, panel, padding, labelPadding, pointWidth);
-        this.LinearMode = linearMode;
+        super(statistics, panel, padding, labelPadding, pointWidth, linearMode);
         initGraphInfo();
     }
 
     @Override
     public void initGraphInfo() {
         this.graphInfo = new ArrayList<>();
-        resetDataStructure(graphInfo); // days in project fill with zeros
+        resetDataStructure(graphInfo);                          // days in project filled with '0'
+        resetFlags();                                           // flag for each filled with '-1'
 
-        for(int i = 0; i < graphInfo.size(); i++){
-            flag.add(i, -1);
-        }
-
-        Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
-
-        if(LinearMode){
-            for (Task task : myTasks) {
-                double percentage = task.getCompletionPercentage() / 100.0;
-                int completedDuration = (int) (task.getDuration().getLength() * percentage);
-                int dayOffSetInProject = calculateOffSetInProject(task.getStart());
-
-                int weekends = 0;
-                for (int currDay = 0; currDay < completedDuration + weekends; currDay++) {
-                    GanttCalendar startDate = task.getStart().clone();
-                    startDate.add(Calendar.DATE, currDay);
-
-                    if (calendar.isWeekend(startDate.getTime()))
-                        weekends++;
-                    else
-                        markWorkDoneToday(graphInfo, dayOffSetInProject + 1 + currDay, completedDuration / completedDuration);// + 1 because the point with offset 0 is the starting point
-                }
-            }
+        if(linearMode){
+            Task[] myTasks = myGanttStatistics.getMyTaskManager().getTasks();
+            for (Task task : myTasks)
+                loadGraphInfo(task);
         } else {
             try {
-                setGraphPointsFromFiles(sprintPath, myGanttStatistics.getSumOfTaskDurations());
+                setGraphPointsFromFiles(sprintPath);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -73,22 +57,19 @@ public class RemainingEffortGraph extends Graph {
     public List<Point> buildGraphPoints(double xScale, double yScale, int maxScore, int tasksTotalDuration) {
         this.graphPoints = new ArrayList<>();
 
-        int originX = (padding + labelPadding);
-        int originY = (int) ((maxScore - tasksTotalDuration) * yScale + padding);
-
-        Point pointReference = new Point(originX, originY);
-
-        graphPoints.add(pointReference);
+        Point firstPoint = createPoint(0, 0, xScale, yScale, maxScore, tasksTotalDuration);
+        graphPoints.add(firstPoint);
 
         for (int i = 1; i < graphInfo.size() - 2; i++) {
-            if (flag.get(i)==0 || LinearMode) {
-                int x1 = (int) (i * xScale + padding + labelPadding);
-                int y1 = (int) ((maxScore - tasksTotalDuration + graphInfo.get(i)) * yScale + padding);
-                Point p = new Point(x1, y1);
-                graphPoints.add(p);
+            if ( flag.get(i) == 0 || linearMode) { // if we are in 'history' mode, cheks the flag for that day
+                Point middlePoint = createPoint(i, 0, xScale, yScale, maxScore, tasksTotalDuration);
+                graphPoints.add(middlePoint);
             }
         }
-        graphPoints.add(new Point((int) ((graphInfo.size()-2) * xScale + padding + labelPadding), (int) ((maxScore - tasksTotalDuration + graphInfo.get(graphInfo.size()-2)) * yScale + padding)));
+
+        Point lastPoint = createPoint(graphInfo.size()-2, 0, xScale, yScale, maxScore, tasksTotalDuration);
+        graphPoints.add(lastPoint);
+
         return graphPoints;
     }
 
@@ -111,8 +92,27 @@ public class RemainingEffortGraph extends Graph {
         drawPoints(g2);
     }
 
+    @Override
+    public void loadGraphInfo(Task task) {
 
-    public void setGraphPointsFromFiles(String folderPath, int totalEffort) throws IOException {
+        double percentage = task.getCompletionPercentage() / 100.0;
+        int completedDuration = (int) (task.getDuration().getLength() * percentage);
+        int dayOffSetInProject = calculateOffSetInProject(task.getStart());
+
+        int weekends = 0;
+        for (int currDay = 0; currDay < completedDuration + weekends; currDay++) {
+            GanttCalendar startDate = task.getStart().clone();
+            startDate.add(Calendar.DATE, currDay);
+
+            if (calendar.isWeekend(startDate.getTime()))
+                weekends++;
+            else
+                markWorkDoneToday(graphInfo, dayOffSetInProject + 1 + currDay, 1);// + 1 because the point with offset 0 is the starting point
+        }
+    }
+
+    @Override
+    public void setGraphPointsFromFiles(String folderPath) throws IOException {
         BurndownDataIO data = new BurndownDataIO();
         data.changeSprintFolder(folderPath);
         int[] dataFromFiles = data.getPastRemainingEffort(graphInfo.size());
@@ -120,70 +120,41 @@ public class RemainingEffortGraph extends Graph {
             if (dataFromFiles[currFileDay] != -1) setWorkDone(graphInfo, currFileDay, dataFromFiles[currFileDay]);
     }
 
+    /**
+     * Updates the graph info by overwriting with the specified value, from the given position until the end of the list.
+     * The flag for the 'startIndex' date is updated to 0 -> a point should be drawn in that position.
+     * @param list list to be updated
+     * @param startIndex starting index of updating
+     * @param value value to be added
+     */
     private void setWorkDone(List<Integer> list, int startIndex, int value) {
         for (int index = startIndex; index < list.size(); index++) {
-            list.remove(index);
-            list.add(index, value);
+            list.set(index, value);
         }
-        flag.set(startIndex, 0);
+        flag.set(startIndex, 0); //updates the flag -> a point should be drawn in that day
     }
 
-
     /**
-     * Updates the graph info with the specified value
-     *
-     * @param list
-     * @param startIndex
-     * @param value
+     * Updates the graph info by adding the specified value, from the given position until the end of the list.
+     * Used when in 'Ideal' mode.
+     * @param list list to be updated
+     * @param startIndex starting index of updating
+     * @param value value to be added
      */
     private void markWorkDoneToday(List<Integer> list, int startIndex, int value) {
         for (int index = startIndex; index < list.size(); index++) {
-            int sum = list.get(index);
-            sum += value;
-            list.remove(index);
-            list.add(index, sum);
-        }
-    }
-
-
-    /**
-     * Marks the weekends in the graphInfo
-     *
-     * @param index
-     */
-    private void markWeekend(int index) {
-        if (!(graphInfo.get(index) < 0)) {
-            graphInfo.remove(index);
-            graphInfo.add(index, 0);
+            int duration = list.get(index);
+            duration += value;
+            list.set(index, duration);
         }
     }
 
     /**
-     * Calculates the offset of a given date in the project
-     *
-     * @param date
-     * @return
+     * Initializes the flag´s list with '-1' (no points to be drawn)
      */
-    private int calculateOffSetInProject(GanttCalendar date) {
-        GanttCalendar dateToConvert = date;
-
-        int year = dateToConvert.getYear() - 1900;
-        int month = dateToConvert.getMonth();
-        int day = dateToConvert.getDay();
-
-        Date startDate = new Date(year, month, day);
-
-        return (int) myGanttStatistics.getDifferenceDays(myGanttStatistics.getMyTaskManager().getProjectStart(), startDate);
-    }
-
-    /**
-     * Returns the current day offset in the project calendar
-     *
-     * @return
-     */
-    private int getTodayOffset() {
-        Date date = new Date();
-        return (int) myGanttStatistics.getDifferenceDays(myGanttStatistics.getMyTaskManager().getProjectStart(), date);
+    private void resetFlags() {
+        for(int i = 0; i < graphInfo.size(); i++)
+            flag.add(i, -1);
     }
 
 }
